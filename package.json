@@ -1,0 +1,27 @@
+{
+  "name": "canvas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "run-p sass js",
+    "build": "run-p sass:build js:build",
+    "sass": "node-sass ./src/scss -o ./dist/css --output-style compact --linefeed crlf -w",
+    "sass:build": "node-sass ./src/scss -o ./dist/css --output-style compact --linefeed crlf",
+    "js": "webpack --mode development -w",
+    "js:build": "webpack --mode production"
+  },
+  "author": "Tomohito Arakawa",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/core": "^7.6.0",
+    "@babel/preset-env": "^7.6.0",
+    "axios": "^0.19.0",
+    "babel-loader": "^8.0.6",
+    "node-sass": "^4.12.0",
+    "npm-run-all": "^4.1.5",
+    "uikit": "^3.2.0",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.8"
+  }
+}
