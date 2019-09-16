@@ -1,0 +1,19 @@
+@mixin plain-text {
+	font-size: 1.4rem;
+	font-weight: normal;
+	line-height: 1.5;
+}
+
+@mixin anchor-text {
+	font-size: 1.4rem;
+	font-weight: normal;
+	line-height: 1.5;
+	text-decoration: none;
+}
+
+%nav-structure {
+  display: flex;
+  width: 100%;
+  list-style: none;
+  margin: 0;
+}

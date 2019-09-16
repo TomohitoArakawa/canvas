@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/js/index.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/js/customize.js");
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -152,15 +152,15 @@ eval("function _typeof(obj) { if (typeof Symbol === \"function\" && typeof Symbo
 
 /***/ }),
 
-/***/ "./src/js/index.js":
-/*!*************************!*\
-  !*** ./src/js/index.js ***!
-  \*************************/
+/***/ "./src/js/customize.js":
+/*!*****************************!*\
+  !*** ./src/js/customize.js ***!
+  \*****************************/
 /*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var uikit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! uikit */ \"./node_modules/uikit/dist/js/uikit.js\");\n/* harmony import */ var uikit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(uikit__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var uikit_dist_js_uikit_icons__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! uikit/dist/js/uikit-icons */ \"./node_modules/uikit/dist/js/uikit-icons.js\");\n/* harmony import */ var uikit_dist_js_uikit_icons__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(uikit_dist_js_uikit_icons__WEBPACK_IMPORTED_MODULE_1__);\n\n // loads the Icon plugin\n\nuikit__WEBPACK_IMPORTED_MODULE_0___default.a.use(uikit_dist_js_uikit_icons__WEBPACK_IMPORTED_MODULE_1___default.a);\n\n//# sourceURL=webpack:///./src/js/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var uikit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! uikit */ \"./node_modules/uikit/dist/js/uikit.js\");\n/* harmony import */ var uikit__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(uikit__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var uikit_dist_js_uikit_icons__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! uikit/dist/js/uikit-icons */ \"./node_modules/uikit/dist/js/uikit-icons.js\");\n/* harmony import */ var uikit_dist_js_uikit_icons__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(uikit_dist_js_uikit_icons__WEBPACK_IMPORTED_MODULE_1__);\n\n // loads the Icon plugin\n\nuikit__WEBPACK_IMPORTED_MODULE_0___default.a.use(uikit_dist_js_uikit_icons__WEBPACK_IMPORTED_MODULE_1___default.a);\nvar counter = 0;\nvar origx = 180;\nvar origy = 180;\nvar rotation = 0;\nvar scalex = 1;\nvar scaley = 1;\nvar uploadImgSrc;\nvar file = document.getElementById('js-file');\nvar rotateSlider = document.getElementById('js-range');\nvar canvas = document.getElementById('js-canvas');\nvar ctx = canvas.getContext('2d'); //Canvas描画\n\nfunction showCanvas() {\n  ctx.setTransform(1, 0, 0, 1, 0, 0);\n  ctx.fillStyle = '#eee';\n  ctx.fillRect(0, 0, 200, 400);\n  counter++;\n  var img = new Image();\n  img.src = uploadImgSrc;\n  var angle = Math.PI * rotation / 180;\n  ctx.setTransform(scalex * Math.cos(angle), scalex * Math.sin(angle), -scaley * Math.sin(angle), scaley * Math.cos(angle), origx, origy);\n\n  img.onload = function () {\n    ctx.drawImage(img, 0, 0, img.width, img.height, -img.width / 2, -img.height / 2, img.width, img.height);\n  };\n} // ファイルアップロード\n\n\nfunction loadLocalImage(e) {\n  var fileData = e.target.files[0];\n\n  if (!fileData.type.match('image.*')) {\n    alert('画像を選択してください');\n    return;\n  }\n\n  var reader = new FileReader();\n\n  reader.onload = function () {\n    uploadImgSrc = reader.result;\n    showCanvas();\n  };\n\n  reader.readAsDataURL(fileData);\n}\n\nfile.addEventListener('change', loadLocalImage, false); // レンジスライダー\n\nfunction setVal(which, val) {\n  console.log(which + ',' + val);\n\n  switch (which) {\n    case 'x':\n      origx = parseFloat(val);\n      break;\n\n    case 'y':\n      origy = parseFloat(val);\n      break;\n\n    case 'sx':\n      scalex = parseFloat(val);\n      break;\n\n    case 'sy':\n      scaley = parseFloat(val);\n      break;\n\n    case 'r':\n      rotation = parseFloat(val);\n      break;\n  }\n\n  showCanvas();\n}\n\nrotateSlider.addEventListener('input', function () {\n  setVal('r', this.value);\n}, false);\nrotateSlider.addEventListener('change', function () {\n  setVal('r', this.value);\n}, false); // レンジスライダー開閉\n\n(function () {\n  var rangeToggle = document.getElementById('js-rotate');\n  var rangeTarget = document.getElementById('js-range-slider');\n  rangeToggle.addEventListener('click', function () {\n    rangeTarget.classList.toggle('is-show');\n  }, false);\n})();\n\n//# sourceURL=webpack:///./src/js/customize.js?");
 
 /***/ })
 

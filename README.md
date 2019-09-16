@@ -63,3 +63,7 @@
 #### □canvas
 * setTransform(a, b, c, d, e, f)
 * drawImage(image, sx, sy, sw, sh, dx, dy, dw, dh)
+
+
+
+http://matz.hatenablog.jp/entry/2017/03/26/014615

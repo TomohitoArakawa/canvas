@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Customize | MOBICUL</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<link rel="stylesheet" href="../css/customize.css">
+</head>
+<body>
+
+	<div class="container" style="text-align: center;">
+
+		<form action="">
+
+			<nav class="nav-bar-top nav-bar-black">
+				<ul class="nav-holizontal space-between">
+					<li class="list-item">
+						<a href="javascript:history.back();" id="" class="anchor anchor-with-icon">
+							<i class="uk-icon-link text-white" uk-icon="chevron-left"></i>
+							<span class="text text-white">戻る</span>
+						</a>
+					</li>
+					<li class="list-item">
+						<a href="./preview.html" id="" class="anchor anchor-with-icon">
+							<span class="text text-white">完了</span>
+							<i class="uk-icon-link text-white" uk-icon="chevron-right"></i>
+						</a>
+					</li>
+				</ul>
+			</nav>
+
+			<div class="canvas-container">
+				<canvas id="js-canvas" class="canvas" width="" height=""></canvas>
+			</div>
+
+			<nav class="nav-bar-bottom nav-bar-white">
+				<ul class="nav-holizontal space-around">
+					<li class="nav-item">
+						<label uk-form-custom>
+							<input type="file" id="js-file">
+							<a href="" class="uk-icon-link" uk-icon="icon:image; ratio:2;"></a>
+						</label>
+					</li>
+					<li class="nav-item">
+						<a href="javascript:void(0)" id="js-pinch" class="uk-icon-link" uk-icon="icon:expand; ratio:2;"></a>
+					</li>
+					<li class="nav-item">
+						<a href="javascript:void(0)" id="js-rotate" class="uk-icon-link" uk-icon="icon:refresh; ratio:2;"></a>
+					</li>
+					<li class="nav-item">
+						<a href="javascript:void(0)" id="js-remove" class="uk-icon-link" uk-icon="icon:trash; ratio:2;"></a>
+					</li>
+				</ul>
+				<div id="js-range-slider" class="range-slider">
+					<input type="range" id="js-range" class="uk-range" min=-180 max=180>		
+				</div>
+			</nav>
+
+		</form>
+
+	</div>
+	<script src="../js/customize.js"></script>
+</body>
+</html>

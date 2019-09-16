@@ -1,0 +1,268 @@
+@import "../../node_modules/uikit/src/scss/variables-theme.scss";
+@import "../../node_modules/uikit/src/scss/mixins-theme.scss";
+@import "../../node_modules/uikit/src/scss/uikit-theme.scss";
+
+@import "../../node_modules/reset-css/sass/_reset.scss";
+
+@import "./partial/_base.scss";
+
+@import "./partial/_modal.scss";
+
+html {
+  font-size: 10px;
+}
+
+body {
+  overflow-y: hidden;
+  width: 100vw;
+  height: 100vh;
+  background: rgb(255, 255, 255);
+  background-image: linear-gradient(45deg, rgb(230, 230, 230) 25%, transparent 0),
+  linear-gradient(45deg, transparent 75%, rgb(230, 230, 230) 0),
+  linear-gradient(45deg, rgb(230, 230, 230) 25%, transparent 0),
+  linear-gradient(45deg, transparent 75%, rgb(230, 230, 230) 0);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px,
+    15px 15px, 30px 30px;
+}
+
+.container {
+  overflow-y: hidden; 
+  height: calc(100vh - 40px - 60px);
+  padding: 40px 0 60px;
+}
+
+.canvas-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: calc(100vh - 40px - 60px);
+}
+
+.canvas {
+  width: auto;
+  height: 400px;
+}
+
+.text {
+  @include plain-text;
+  &-white {
+    color: #fff;
+  }
+}
+
+.anchor {
+  @include anchor-text;
+  &.anchor-with-icon {
+    display: flex;
+    align-items: center;
+    vertical-align: middle;
+  }
+}
+
+.nav-bar-top {
+  top: 0;
+  height: 40px;
+}
+.nav-bar-bottom {
+  flex-direction: column;
+  bottom: 0;
+}
+
+.nav-bar-top , .nav-bar-bottom {
+  position: fixed;
+  left: 0;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  &.nav-bar-black {
+    background-color: #000;
+  }
+  &.nav-bar-white {
+    background-color: #fff;
+  }
+  &.nav-bar-gray {
+    background-color: #999;
+  }
+}
+
+.nav {
+  &-holizontal {
+    @extend %nav-structure;
+    flex-direction: row;
+    align-items: center;
+  }
+  &-vertical {
+    @extend %nav-structure;
+    flex-direction: column;
+  }
+}
+
+.nav-item {
+  padding: 10px;
+}
+
+.space-around {
+  justify-content: space-around;
+}
+.space-between {
+  justify-content: space-between;
+}
+
+.range-slider {
+  display: flex;
+  align-items: center;
+  background-color: #999;
+  width: 100%;
+  height: 60px;
+  margin-bottom: -60px; 
+  transition: .2s ease-out margin;
+  &.is-show {
+    margin-bottom: 0;
+  }
+}
+
+/*
+1. Normalize and defaults
+2. Prevent content overflow if a fixed width is used
+3. Take the full width
+4. Remove default style
+5. Remove white background in Chrome
+6. Remove padding in IE11
+*/
+.uk-range {
+  /* 1 */
+  box-sizing:
+  border-box; margin: 0;
+  vertical-align: middle;
+  /* 2 */ max-width: 100%;
+  /* 3 */ width: 100%;
+  /* 4 */
+  -webkit-appearance: none;
+  /* 5 */
+  background: transparent;
+  /* 6 */
+  padding: 0;
+}
+
+/* Focus */
+.uk-range:focus {
+  outline: none;
+}
+
+.uk-range::-moz-focus-outer {
+  border: none;
+}
+
+/* IE11 Reset */
+.uk-range::-ms-track {
+  height: 15px; background:
+  transparent;
+  border-color: transparent;
+  color: transparent;
+}
+
+/* Improves consistency of cursor style for clickable elements */
+.uk-range:not(:disabled)::-webkit-slider-thumb {
+  cursor: pointer;
+}
+
+.uk-range:not(:disabled)::-moz-range-thumb {
+  cursor: pointer;
+}
+
+.uk-range:not(:disabled)::-ms-thumb {
+  cursor: pointer;
+}
+
+/* Thumb ========================================================================== */
+/*
+1. Reset
+2. Style
+*/
+/* Webkit */
+.uk-range::-webkit-slider-thumb {
+  /* 1 */
+  -webkit-appearance: none; margin-top: -7px;
+  /* 2 */
+  height: 15px;
+  width: 15px;
+  border-radius: 500px;
+  background: #fff;
+  border: 1px solid #cccccc;
+}
+
+/* Firefox */
+.uk-range::-moz-range-thumb {
+  /* 1 */
+  border: none;
+  /* 2 */
+  height: 15px;
+  width: 15px;
+  border-radius: 500px;
+  background: #fff;
+  border: 1px solid #cccccc;
+}
+
+/* Edge */
+.uk-range::-ms-thumb {
+  /* 1 */
+  margin-top: 0;
+}
+
+/* IE11 */
+.uk-range::-ms-thumb {
+  /* 1 */
+  border: none;
+  /* 2 */
+  height: 15px;
+  width: 15px;
+  border-radius: 500px;
+  background: #fff;
+  border: 1px solid #cccccc;
+}
+
+/* Edge + IE11 */
+.uk-range::-ms-tooltip {
+  display: none;
+}
+
+/* Track ========================================================================== */
+/*1. Safari doesn't have a focus state. Using active instead. */
+/* Webkit */
+.uk-range::-webkit-slider-runnable-track {
+  height: 3px;
+  background: #ebebeb;
+  border-radius: 500px;
+}
+
+.uk-range:focus::-webkit-slider-runnable-track,
+.uk-range:active::-webkit-slider-runnable-track {
+  background: #d2d2d2;
+}
+
+/* Firefox */
+.uk-range::-moz-range-track {
+  height: 3px;
+  background: #ebebeb;
+  border-radius: 500px;
+}
+
+.uk-range:focus::-moz-range-track {
+  background: #d2d2d2;
+}
+
+/* Edge */
+.uk-range::-ms-fill-lower,
+.uk-range::-ms-fill-upper {
+  height: 3px;
+  background: #ebebeb;
+  border-radius: 500px;
+}
+
+.uk-range:focus::-ms-fill-lower,
+.uk-range:focus::-ms-fill-upper {
+  background: #d2d2d2;
+}
+
+
