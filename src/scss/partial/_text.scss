@@ -1,0 +1,12 @@
+.text {
+  @include plain-text;
+  &.text-color-primary {
+    color: #ff0;
+  }
+  &.text-color-secondary {
+    color: #000;
+  }
+  &.text-color-tertiary {
+    color: #fff;
+  }
+}

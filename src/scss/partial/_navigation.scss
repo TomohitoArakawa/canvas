@@ -1,0 +1,47 @@
+/* Nav Container */
+.nav-wrapper {
+  width: 100%;
+  &.nav-wrapper-position-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  &.nav-wrapper-position-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  &.nav-wrapper-color-primary {
+    background-color: #ff0;
+  }
+  &.nav-wrapper-color-secondary {
+    background-color: #000;
+  }
+  &.nav-wrapper-color-tertiary {
+    background-color: #fff;
+  }
+}
+
+/* Nav - Holizontal/Vertical */
+.nav {
+  &-holizontal {
+    @extend %nav-structure;
+    flex-direction: row;
+    align-items: center;
+  }
+  &-vertical {
+    @extend %nav-structure;
+    flex-direction: column;
+  }
+}
+
+/* Nav Spase - Around/Between */
+.nav-space-around {
+  justify-content: space-around;
+}
+.nav-space-between {
+  justify-content: space-between;
+}

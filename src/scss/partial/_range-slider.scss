@@ -1,0 +1,158 @@
+.range-slider-wrapper {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  width: 100%;
+  height: 60px;
+  margin-bottom: -60px; 
+  transition: .2s ease-out margin;
+  &.is-show {
+    margin-bottom: 0;
+  }
+}
+
+/*
+1. Normalize and defaults
+2. Prevent content overflow if a fixed width is used
+3. Take the full width
+4. Remove default style
+5. Remove white background in Chrome
+6. Remove padding in IE11
+*/
+.range-slider {
+  /* 1 */
+  box-sizing:
+  border-box; margin: 0;
+  vertical-align: middle;
+  /* 2 */
+  max-width: 100%;
+  /* 3 */
+  width: 100%;
+  /* 4 */
+  -webkit-appearance: none;
+  /* 5 */
+  background: transparent;
+  /* 6 */
+  padding: 0;
+}
+
+/* Focus */
+.range-slider:focus {
+  outline: none;
+}
+
+.range-slider::-moz-focus-outer {
+  border: 0;
+}
+
+/* IE11 Reset */
+.range-slider::-ms-track {
+  height: 24px;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+
+/* Improves consistency of cursor style for clickable elements */
+.range-slider:not(:disabled)::-webkit-slider-thumb {
+  cursor: pointer;
+}
+
+.range-slider:not(:disabled)::-moz-range-thumb {
+  cursor: pointer;
+}
+
+.range-slider:not(:disabled)::-ms-thumb {
+  cursor: pointer;
+}
+
+/* Thumb ========================================================================== */
+/*
+1. Reset
+2. Style
+*/
+/* Webkit */
+.range-slider::-webkit-slider-thumb {
+  /* 1 */
+  -webkit-appearance: none;
+  margin-top: -12px;
+  /* 2 */
+  height: 24px;
+  width: 24px;
+  border-radius: 0;
+  border: 0;
+  background: #000;
+}
+
+/* Firefox */
+.range-slider::-moz-range-thumb {
+  /* 1 */
+  border: none;
+  /* 2 */
+  height: 24px;
+  width: 24px;
+  border-radius: 0;
+  border: 0;
+  background: #000;
+}
+
+/* Edge */
+.range-slider::-ms-thumb {
+  /* 1 */
+  margin-top: 0;
+}
+
+/* IE11 */
+.range-slider::-ms-thumb {
+  /* 1 */
+  border: none;
+  /* 2 */
+  height: 24px;
+  width: 24px;
+  border-radius: 0;
+  border: 0;
+  background: #000;
+}
+
+/* Edge + IE11 */
+.range-slider::-ms-tooltip {
+  display: none;
+}
+
+/* Track ========================================================================== */
+/*1. Safari doesn't have a focus state. Using active instead. */
+/* Webkit */
+.range-slider::-webkit-slider-runnable-track {
+  height: 3px;
+  background: #000;
+  border-radius: 0;
+}
+
+.range-slider:focus::-webkit-slider-runnable-track,
+.range-slider:active::-webkit-slider-runnable-track {
+  background: #000;
+}
+
+/* Firefox */
+.range-slider::-moz-range-track {
+  height: 3px;
+  background: #000;
+  border-radius: 0;
+}
+
+.range-slider:focus::-moz-range-track {
+  background: #000;
+}
+
+/* Edge */
+.range-slider::-ms-fill-lower,
+.range-slider::-ms-fill-upper {
+  height: 3px;
+  background: #000;
+  border-radius: 0;
+}
+
+.range-slider:focus::-ms-fill-lower,
+.range-slider:focus::-ms-fill-upper {
+  background: #000;
+}

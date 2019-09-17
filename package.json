@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "run-p serve sass js",
-    "serve": "webpack-dev-server --open-page dist/detail/customize.html --host 0.0.0.0",
+    "serve": "webpack-dev-server --open-page dist/detail/customize.html --host 10.10.2.62",
     "build": "run-p sass:build js:build",
-    "sass": "node-sass ./src/scss -o ./dist/css --output-style compact --linefeed crlf -w",
-    "sass:build": "node-sass ./src/scss -o ./dist/css --output-style compact --linefeed crlf",
+    "sass": "node-sass ./src/scss -o ./dist/css --output-style compressed --linefeed crlf -w",
+    "sass:build": "node-sass ./src/scss -o ./dist/css --output-style compressed --linefeed crlf",
     "js": "webpack --mode development -w",
     "js:build": "webpack --mode production"
   },
@@ -23,7 +23,6 @@
     "npm-run-all": "^4.1.5",
     "reset-css": "^4.0.1",
     "store": "^2.0.12",
-    "uikit": "^3.2.0",
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.8",
     "webpack-dev-server": "^3.8.0"

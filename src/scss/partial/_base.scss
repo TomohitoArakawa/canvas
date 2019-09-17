@@ -1,14 +1,30 @@
+/* 変数 */
+// コーポレートカラー
+$color-yellow: #ff0;
+// エラー・アラート(注意・警告)
+$color-red: #f00;
+
+/* mixin */
 @mixin plain-text {
 	font-size: 1.4rem;
 	font-weight: normal;
 	line-height: 1.5;
 }
 
-@mixin anchor-text {
+@mixin link-text {
 	font-size: 1.4rem;
 	font-weight: normal;
 	line-height: 1.5;
 	text-decoration: none;
+}
+
+/* extend */
+%button-reset {
+	-webkit-appearance: none;
+	background-color: transparent;
+	padding: 0;
+	border: 0;
+	cursor: pointer;
 }
 
 %nav-structure {

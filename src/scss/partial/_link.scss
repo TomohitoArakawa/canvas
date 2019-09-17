@@ -1,0 +1,17 @@
+.link {
+  @include link-text;
+  &.link-color-primary {
+    color: #ff0;
+  }
+  &.link-color-secondary {
+    color: #000;
+  }
+  &.link-color-tertiary {
+    color: #fff;
+  }
+  &.link-with-icon {
+    display: flex;
+    align-items: center;
+    vertical-align: middle;
+  }
+}

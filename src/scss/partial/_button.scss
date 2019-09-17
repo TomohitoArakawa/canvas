@@ -1,0 +1,46 @@
+.button {
+	@extend %button-reset;
+	&:focus {
+
+	}
+	&:active {
+
+	}
+	&:disabled {
+
+	}
+	.button-primary { //yellow:backgound
+
+	}
+	.button-secondary { //yellow:line
+
+	}
+	.button-tertiary { //balck:line
+
+	}
+	.button-alert { //red:line
+
+	}
+	.button-with-icon {
+
+	}
+}
+
+.button-icon {
+	@extend %button-reset;
+	width: 40px;
+	height: 40px;
+	svg {
+		vertical-align: middle;
+	}
+	svg * {
+		fill: none;
+		stroke: #000;
+	}
+	&:disabled {
+		cursor: not-allowed;
+		svg * {
+				stroke: #ccc;
+		}
+	}
+}
