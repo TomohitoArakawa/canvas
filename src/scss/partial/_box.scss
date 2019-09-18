@@ -1,0 +1,6 @@
+.box {
+	@include padding-all;
+	&.box-color-white {
+		background-color: #fff;
+	}
+}

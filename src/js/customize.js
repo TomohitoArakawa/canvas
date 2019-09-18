@@ -7,8 +7,29 @@ var scaley=1;
 var uploadImgSrc;
 const file = document.getElementById('js-file');
 const rotateSlider = document.getElementById('js-range');
+const wrapper = document.getElementById('js-wrapper');
 const canvas = document.getElementById('js-canvas');
+const canvasWrapper = document.getElementById('js-canvas-wrapper');
 const ctx = canvas.getContext('2d');
+
+//Canvasレスポンシブ対応
+(function() {
+  sizing();
+
+  function sizing() {
+  	wrapper.style.height = window.innerHeight + 'px';
+    canvas.width = canvasWrapper.offsetWidth;
+    canvas.height = canvasWrapper.offsetHeight;
+  }
+
+  window.addEventListener('resize', function() {
+    (!window.requestAnimationFrame) ? setTimeout(sizing, 300): window.requestAnimationFrame(sizing);
+  });
+  //TODO: orientationのイベント発火？ 
+  // window.addEventListener('onorientationchange', function() {
+  //   (!window.requestAnimationFrame) ? setTimeout(sizing, 300): window.requestAnimationFrame(sizing);
+  // });
+})();
 
 //Canvas描画
 function showCanvas() {

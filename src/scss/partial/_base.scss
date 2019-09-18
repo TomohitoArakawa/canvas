@@ -18,6 +18,10 @@ $color-red: #f00;
 	text-decoration: none;
 }
 
+@mixin padding-all {
+	padding: 16px;
+}
+
 /* extend */
 %button-reset {
 	-webkit-appearance: none;
