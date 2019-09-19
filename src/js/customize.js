@@ -5,6 +5,8 @@ var rotation=0;
 var scalex=1;
 var scaley=1;
 var uploadImgSrc;
+// const navTop = document.getElementById('js-nav-top');
+// const navBottom = document.getElementById('js-nav-bottom');
 const file = document.getElementById('js-file');
 const rotateSlider = document.getElementById('js-range');
 const wrapper = document.getElementById('js-wrapper');
@@ -12,12 +14,14 @@ const canvas = document.getElementById('js-canvas');
 const canvasWrapper = document.getElementById('js-canvas-wrapper');
 const ctx = canvas.getContext('2d');
 
-//Canvasレスポンシブ対応
+//レスポンシブ対応
 (function() {
   sizing();
 
   function sizing() {
   	wrapper.style.height = window.innerHeight + 'px';
+    // canvas.style.width = window.innerWidth + 'px'; //canvasWrapper.offsetWidth
+    // canvas.style.height = window.innerHeight + 'px'; //canvasWrapper.offsetHeight
     canvas.width = canvasWrapper.offsetWidth;
     canvas.height = canvasWrapper.offsetHeight;
   }
@@ -25,8 +29,8 @@ const ctx = canvas.getContext('2d');
   window.addEventListener('resize', function() {
     (!window.requestAnimationFrame) ? setTimeout(sizing, 300): window.requestAnimationFrame(sizing);
   });
-  //TODO: orientationのイベント発火？ 
-  // window.addEventListener('onorientationchange', function() {
+  //TODO: orientationのイベント発火？
+  // window.addEventListener('orientationchange', function() {
   //   (!window.requestAnimationFrame) ? setTimeout(sizing, 300): window.requestAnimationFrame(sizing);
   // });
 })();
@@ -34,8 +38,7 @@ const ctx = canvas.getContext('2d');
 //Canvas描画
 function showCanvas() {
 	ctx.setTransform(1 , 0 , 0 , 1 , 0 , 0);
-	ctx.fillStyle='#eee';
-	ctx.fillRect(0 , 0 , 200 , 400 );
+	ctx.clearRect(0 , 0, canvasWrapper.offsetWidth , canvasWrapper.offsetHeight);
 	counter++;
 	var img = new Image();
 	img.src = uploadImgSrc;
@@ -94,9 +97,14 @@ rotateSlider.addEventListener('change', function() {
 
 // レンジスライダー開閉
 (function () {
-	const rangeToggle = document.getElementById('js-rotate');
-	const rangeTarget = document.getElementById('js-range-slider');
-	rangeToggle.addEventListener('click', function() {
-		rangeTarget.classList.toggle('is-show');
+	const rotateToggle = document.getElementById('js-rotate-toggle');
+	const rotateTarget = document.getElementById('js-rotate');
+	const menuTarget = document.getElementById('js-menu');
+	rotateToggle.addEventListener('click', function() {
+		event.preventDefault();
+		rotateTarget.classList.toggle('is-show');
+		menuTarget.classList.toggle('is-show');
 	}, false);
 })();
+
+// ローカル保存・再帰

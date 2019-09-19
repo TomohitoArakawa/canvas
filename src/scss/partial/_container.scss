@@ -1,3 +1,29 @@
+%container-absolute {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	transform: translateY(114px);
+	transition: transform ease-out .4s;
+	&.is-show {
+		transform: translateY(0);
+	}
+}
+
 .container {
-	
+	width: 100%;
+	&.container-parent {
+		position: relative;
+		// position: fixed;
+		// bottom: 0;
+		// left: 0;
+		height: 114px;
+	}
+	&.container-rotate {
+		z-index: 1;
+		@extend %container-absolute;
+	}
+	&.container-menu {
+		z-index: 2;
+		@extend %container-absolute;
+	}
 }

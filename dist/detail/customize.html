@@ -12,7 +12,7 @@
 		<div id="js-wrapper" class="wrapper wrapper-for-cutomize">
 
 			<!-- navigation -->
-			<nav class="nav-wrapper nav-wrapper-color-secondary nav-wrapper-height-low">
+			<nav id="js-nav-top" class="nav-wrapper nav-wrapper-top nav-wrapper-color-secondary nav-wrapper-height-low">
 				<ul class="nav-holizontal nav-space-between">
 					<li class="nav-item">
 						<a href="javascript:history.back();" id="" class="link link-color-tertiary">戻る</a>
@@ -29,7 +29,7 @@
 			</div>
 
 			<!-- setting -->
-			<div class="container">
+			<div id="js-nav-bottom" class="container container-parent">
 				
 				<!-- 拡大・縮小 -->
 <!-- 				<div class="container">
@@ -49,7 +49,7 @@
 				</div> -->
 
 				<!-- 回転 -->
-<!-- 				<div class="container">
+				<div id="js-rotate" class="container container-rotate">
 					<div id="js-range-slider" class="range-slider-wrapper">
 						<input type="range" id="js-range" class="range-slider" min="-180" max="180">
 					</div>
@@ -63,44 +63,46 @@
 							</li>
 						</ul>
 					</nav>
-				</div> -->
+				</div>
 
 				<!-- 機能ボタン -->
-				<nav class="nav-wrapper nav-wrapper-color-tertiary nav-wrapper-height-high">
-					<ul class="nav-holizontal nav-space-around">
-						<li class="nav-item">
-							<div class="file-uploader-wrapper">
-								<input type="file" id="js-file" class="file-uploader">
+				<div id="js-menu" class="container container-menu is-show">
+					<nav class="nav-wrapper nav-wrapper-color-tertiary nav-wrapper-height-high">
+						<ul class="nav-holizontal nav-space-around">
+							<li class="nav-item">
+								<div class="file-uploader-wrapper">
+									<input type="file" id="js-file" class="file-uploader">
+									<button class="button-icon">
+										<svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-svg="image">
+											<circle cx="16.1" cy="6.1" r="1.1"></circle><rect fill="none" stroke="#000" x=".5" y="2.5" width="19" height="15"></rect><polyline fill="none" stroke="#000" stroke-width="1.01" points="4,13 8,9 13,14"></polyline><polyline fill="none" stroke="#000" stroke-width="1.01" points="11,12 12.5,10.5 16,14"></polyline>
+										</svg>
+									</button>
+								</div>
+							</li>
+							<li class="nav-item">
 								<button class="button-icon">
-									<svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-svg="image">
-										<circle cx="16.1" cy="6.1" r="1.1"></circle><rect fill="none" stroke="#000" x=".5" y="2.5" width="19" height="15"></rect><polyline fill="none" stroke="#000" stroke-width="1.01" points="4,13 8,9 13,14"></polyline><polyline fill="none" stroke="#000" stroke-width="1.01" points="11,12 12.5,10.5 16,14"></polyline>
+									<svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-svg="trash">
+										<polyline fill="none" stroke="#000" points="6.5 3 6.5 1.5 13.5 1.5 13.5 3"></polyline><polyline fill="none" stroke="#000" points="4.5 4 4.5 18.5 15.5 18.5 15.5 4"></polyline><rect x="8" y="7" width="1" height="9"></rect><rect x="11" y="7" width="1" height="9"></rect><rect x="2" y="3" width="16" height="1"></rect>
 									</svg>
 								</button>
-							</div>
-						</li>
-						<li class="nav-item">
-							<button class="button-icon">
-								<svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-svg="expand">
-									<polygon points="13 2 18 2 18 7 17 7 17 3 13 3"></polygon><polygon points="2 13 3 13 3 17 7 17 7 18 2 18"></polygon><path fill="none" stroke="#000" stroke-width="1.1" d="M11,9 L17,3"></path><path fill="none" stroke="#000" stroke-width="1.1" d="M3,17 L9,11"></path>
-								</svg>
-							</button>
-						</li>
-						<li class="nav-item">
-							<button id="js-rotate" class="button-icon">
-								<svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-svg="refresh">
-									<path fill="none" stroke="#000" stroke-width="1.1" d="M17.08,11.15 C17.09,11.31 17.1,11.47 17.1,11.64 C17.1,15.53 13.94,18.69 10.05,18.69 C6.16,18.68 3,15.53 3,11.63 C3,7.74 6.16,4.58 10.05,4.58 C10.9,4.58 11.71,4.73 12.46,5"></path><polyline fill="none" stroke="#000" points="9.9 2 12.79 4.89 9.79 7.9"></polyline>
-								</svg>
-							</button>
-						</li>
-						<li class="nav-item">
-							<button class="button-icon">
-								<svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-svg="trash">
-									<polyline fill="none" stroke="#000" points="6.5 3 6.5 1.5 13.5 1.5 13.5 3"></polyline><polyline fill="none" stroke="#000" points="4.5 4 4.5 18.5 15.5 18.5 15.5 4"></polyline><rect x="8" y="7" width="1" height="9"></rect><rect x="11" y="7" width="1" height="9"></rect><rect x="2" y="3" width="16" height="1"></rect>
-								</svg>
-							</button>
-						</li>
-					</ul>
-				</nav>
+							</li>
+							<li class="nav-item">
+								<button id="js-rotate-toggle" class="button-icon">
+									<svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-svg="refresh">
+										<path fill="none" stroke="#000" stroke-width="1.1" d="M17.08,11.15 C17.09,11.31 17.1,11.47 17.1,11.64 C17.1,15.53 13.94,18.69 10.05,18.69 C6.16,18.68 3,15.53 3,11.63 C3,7.74 6.16,4.58 10.05,4.58 C10.9,4.58 11.71,4.73 12.46,5"></path><polyline fill="none" stroke="#000" points="9.9 2 12.79 4.89 9.79 7.9"></polyline>
+									</svg>
+								</button>
+							</li>
+							<li class="nav-item">
+								<button class="button-icon">
+									<svg width="40" height="40" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-svg="expand">
+										<polygon points="13 2 18 2 18 7 17 7 17 3 13 3"></polygon><polygon points="2 13 3 13 3 17 7 17 7 18 2 18"></polygon><path fill="none" stroke="#000" stroke-width="1.1" d="M11,9 L17,3"></path><path fill="none" stroke="#000" stroke-width="1.1" d="M3,17 L9,11"></path>
+									</svg>
+								</button>
+							</li>
+						</ul>
+					</nav>					
+				</div>
 
 			</div>
 
