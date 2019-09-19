@@ -5,8 +5,8 @@ var rotation=0;
 var scalex=1;
 var scaley=1;
 var uploadImgSrc;
-// const navTop = document.getElementById('js-nav-top');
-// const navBottom = document.getElementById('js-nav-bottom');
+const navTop = document.getElementById('js-nav-top');
+const navBottom = document.getElementById('js-nav-bottom');
 const file = document.getElementById('js-file');
 const rotateSlider = document.getElementById('js-range');
 const wrapper = document.getElementById('js-wrapper');
@@ -19,11 +19,28 @@ const ctx = canvas.getContext('2d');
   sizing();
 
   function sizing() {
-  	wrapper.style.height = window.innerHeight + 'px';
+  	// document.body.style.height = window.innerHeight + 'px';
     // canvas.style.width = window.innerWidth + 'px'; //canvasWrapper.offsetWidth
     // canvas.style.height = window.innerHeight + 'px'; //canvasWrapper.offsetHeight
     canvas.width = canvasWrapper.offsetWidth;
-    canvas.height = canvasWrapper.offsetHeight;
+    canvas.height = window.innerHeight - navTop.clientHeight - navBottom.clientHeight;
+
+    // if (window.innerHeight > window.innerWidth) {
+    //     /* 縦画面時の処理 */
+    //     portlateWidth = canvasWrapper.offsetWidth;
+    //     portlateHeight = canvasWrapper.offsetHeight;
+    //     canvasWrapper.style.width = portlateWidth;
+    //     canvasWrapper.style.height = portlateHeight;
+    //     alert(canvasWrapper.offsetWidth + ',' + canvasWrapper.offsetHeight);
+    // } else {
+    //     /* 横画面時の処理 */
+    //     landScapeWidth = canvasWrapper.offsetWidth;
+    //     landScapeHeight = canvasWrapper.offsetHeight;
+    //     canvasWrapper.style.width = landScapeWidth;
+    //     canvasWrapper.style.height = landScapeHeight;
+    //     alert(canvasWrapper.offsetWidth + ',' + canvasWrapper.offsetHeight);
+    // }
+
   }
 
   window.addEventListener('resize', function() {
