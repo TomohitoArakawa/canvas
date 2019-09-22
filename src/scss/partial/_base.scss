@@ -22,6 +22,14 @@ $color-red: #f00;
 	padding: 16px;
 }
 
+@mixin padding-holizontal {
+	padding: 0 16px;
+}
+
+@mixin padding-vertical {
+	padding: 16px 0;
+}
+
 /* extend */
 %button-reset {
 	-webkit-appearance: none;
@@ -32,6 +40,7 @@ $color-red: #f00;
 }
 
 %nav-structure {
+	box-sizing: border-box;
   display: flex;
   width: 100%;
   list-style: none;

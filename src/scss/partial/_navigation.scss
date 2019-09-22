@@ -42,6 +42,7 @@
 .nav {
   &-holizontal {
     @extend %nav-structure;
+    @include padding-holizontal;
     flex-direction: row;
     align-items: center;
   }
