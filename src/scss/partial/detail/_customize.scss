@@ -7,7 +7,7 @@ html , body{
 }
 
 .canvas-wrapper {
-  // position: relative;
+  position: relative;
   width: 100%;
   min-height: 100%;
   background: rgb(255, 255, 255);
@@ -19,6 +19,17 @@ html , body{
   background-position: 0 0, 15px 15px,
     15px 15px, 30px 30px;
 }
+
+.template-case {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: auto;
+  height: 400px;
+  user-select: none;
+}
+
 
 .canvas {
   width: 100%;

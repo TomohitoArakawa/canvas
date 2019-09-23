@@ -4,12 +4,13 @@ var counter=0;
 var origx=180;
 var origy=180;
 var rotation=0;
-var scalex=1;
-var scaley=1;
+var scaleX=1;
+var scaleY=1;
 var uploadImgSrc;
 const navTop = document.getElementById('js-nav-top');
 const navBottom = document.getElementById('js-nav-bottom');
 const file = document.getElementById('js-file');
+const removeCanvas = document.getElementById('js-remove');
 const rotateSlider = document.getElementById('js-range');
 const wrapper = document.getElementById('js-wrapper');
 const canvasWrapper = document.getElementById('js-canvas-wrapper');
@@ -36,6 +37,42 @@ window.addEventListener("resize", () => {
   }, 100);
 });
 
+//** Konva.js | Start **//
+
+// first we need to create a stage
+var stage = new Konva.Stage({ 
+  container: 'js-canvas-wrapper',// id of container <div> 
+  width: window.innerWidth,
+  height: window.innerHeight - 140
+});
+
+// then create layer
+var layer = new Konva.Layer();
+var guide = new Konva.Layer();
+
+function initCanvas(deviceImgPath) {
+	var template = new Image();
+	template.onload = () => {
+
+		var phoneCase = new Konva.Image({
+			x: stage.width() / 2 - 125,
+			y: stage.height() / 2 - 250 / template.width * template.height / 2,
+		  image: template,
+		  width: 250,
+		  height: 250 / template.width * template.height,
+		  draggable: false
+		});
+
+		guide.add(phoneCase);
+		stage.add(guide);
+
+	};
+	template.src = deviceImgPath;
+}
+initCanvas('../img/temp_iphone_x_xs.svg');
+
+//** Konva.js | End **//
+
 // fileUpload
 function loadLocalImage(e) {
 	var fileData = e.target.files[0];
@@ -54,33 +91,79 @@ function loadLocalImage(e) {
 
 			//** Konva.js | Start **//
 
-			// first we need to create a stage
-			var stage = new Konva.Stage({ 
-			  container: 'js-canvas-wrapper',// id of container <div> 
-			  width: window.innerWidth,
-			  height: window.innerHeight - 140
-			});
-
-			// then create layer
-			var layer = new Konva.Layer();
-
-    	// Konva
       var uploadImg = new Konva.Image({
       	x: stage.width() / 2 - 125,
       	y: stage.height() / 2 - 250 / img.width * img.height / 2,
         image: img,
-        width: 250,
-        height: 250 / img.width * img.height,
+        width: 250 * scaleX,
+        height: 250 / img.width * img.height * scaleY,
         draggable: true
       });
-      console.log(stage.width() / 2 - 125);
-      console.log(stage.height() / 2 - 250 / img.width * img.height / 2);
 
-      // Konva
-      // add the shape to the layer
+      var transForm = new Konva.Transformer({
+        node: uploadImg,
+        keepRatio: true,
+        centeredScaling: true,
+        enabledAnchors: [],
+        rotateEnabled: true,
+        rotateAnchorOffset: 0
+      });
+
+      layer.add(transForm);
+      transForm.attachTo(uploadImg);
+      layer.draw();
+
+      // add the image to the layer
       layer.add(uploadImg);
       layer.batchDraw();
       stage.add(layer);
+
+			// Pinch In Out
+			var lastDist = 0;
+			var startScale = 1;
+
+			function getDistance(p1, p2) {
+			  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+			}
+
+			stage.getContent().addEventListener(
+			  'touchmove',
+			  function(evt) {
+			    var touch1 = evt.touches[0];
+			    var touch2 = evt.touches[1];
+
+			    if (touch1 && touch2) {
+			      var dist = getDistance(
+			        {
+			          x: touch1.clientX,
+			          y: touch1.clientY
+			        },
+			        {
+			          x: touch2.clientX,
+			          y: touch2.clientY
+			        }
+			      );
+
+			      if (!lastDist) {
+			        lastDist = dist;
+			      }
+
+			      var scale = (uploadImg.scaleX() * dist) / lastDist;
+
+			      uploadImg.scaleX(scale);
+			      uploadImg.scaleY(scale);
+			      layer.draw();
+			      lastDist = dist;
+			    }
+			  },
+			  false
+			);
+
+			stage.getContent().addEventListener('touchend', function() {
+			    lastDist = 0;
+			  },
+			  false
+			);
 
       //** Konva.js | End **//
       
@@ -88,6 +171,20 @@ function loadLocalImage(e) {
 	}
 }
 file.addEventListener('change', loadLocalImage, false);
+
+// Remove
+removeCanvas.addEventListener('click', () => {
+	event.preventDefault();
+
+	//** Konva.js | Start **//
+
+	layer.destroy();
+
+	//** Konva.js | End **//
+
+},false);
+
+
 
 // // ファイルアップロード
 // function loadLocalImage(e) {
