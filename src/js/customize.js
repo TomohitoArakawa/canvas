@@ -6,6 +6,7 @@ var origy=180;
 var rotation=0;
 var scaleX=1;
 var scaleY=1;
+var uploadImg;
 var uploadImgSrc;
 const navTop = document.getElementById('js-nav-top');
 const navBottom = document.getElementById('js-nav-bottom');
@@ -47,31 +48,98 @@ var stage = new Konva.Stage({
 });
 
 // then create layer
-var layer = new Konva.Layer();
 var guide = new Konva.Layer();
+var overLay = new Konva.Layer();
+var layer = new Konva.Layer();
+var template = new Konva.Layer();
 
-function initCanvas(deviceImgPath) {
-	var template = new Image();
-	template.onload = () => {
+// OverLay
+function overLayCanvas( templateImgPath ) {
+	var overLayImg = new Image();
+	overLayImg.onload = () => {
 
-		var phoneCase = new Konva.Image({
+		// OverLayGroup
+		var overLayGroup = new Konva.Group({
+			clipFunc: (ctx) => {
+				ctx.fillStyle = '#000';
+				ctx.fillRect( 0 , 0 , window.innerWidth , window.innerHeight - 140 );
+				ctx.globalCompositeOperation = 'xor';
+				ctx.beginPath();
+				ctx.fillStyle = '#000';
+				ctx.fillRect( stage.width() / 2 - 125 , stage.height() / 2 - 250 / overLayImg.width * overLayImg.height / 2 , 250 , 250 / overLayImg.width * overLayImg.height );
+				ctx.fill();
+			}
+		});
+
+		overLay.add(overLayGroup);
+		stage.add(overLay);
+
+	};
+	overLayImg.src = templateImgPath;
+}
+overLayCanvas('../img/temp_iphone_x_xs.png');
+
+// Guide 
+function guideCanvas( guideImgPath ) {
+	var guideImg = new Image();
+	guideImg.onload = () => {
+
+		// GuideImage
+		var guideImgObj = new Konva.Image({
 			x: stage.width() / 2 - 125,
-			y: stage.height() / 2 - 250 / template.width * template.height / 2,
-		  image: template,
+			y: stage.height() / 2 - 250 / guideImg.width * guideImg.height / 2,
+		  image: guideImg,
 		  width: 250,
-		  height: 250 / template.width * template.height,
+		  height: 250 / guideImg.width * guideImg.height,
 		  draggable: false
 		});
 
-		guide.add(phoneCase);
+		// OverLayGroup
+		// var overLayGroup = new Konva.Group({
+		// 	clipFunc: (ctx) => {
+		// 		ctx.fillStyle = '#000';
+		// 		ctx.fillRect( 0 , 0 , window.innerWidth , window.innerHeight - 140 );
+		// 		ctx.globalCompositeOperation = 'xor';
+		// 		ctx.beginPath();
+		// 		ctx.fillStyle = '#000';
+		// 		ctx.fillRect( stage.width() / 2 - 125 , stage.height() / 2 - 250 / guideImg.width * guideImg.height / 2 , 250 , 250 / guideImg.width * guideImg.height );
+		// 		ctx.fill();
+		// 	},
+		// 	draggable: false,
+
+		// });
+
+		// guide.add(overLayGroup);
+
+		guide.add(guideImgObj);
 		stage.add(guide);
 
 	};
-	template.src = deviceImgPath;
+	guideImg.src = guideImgPath;
 }
-initCanvas('../img/temp_iphone_x_xs.svg');
+guideCanvas('../img/guide_iphone_x_xs.png');
 
-//** Konva.js | End **//
+// Template
+function templateCanvas( templateImgPath ) {
+	var templateImg = new Image();
+	templateImg.onload = () => {
+
+		var templateImgObj = new Konva.Image({
+			x: stage.width() / 2 - 125,
+			y: stage.height() / 2 - 250 / templateImg.width * templateImg.height / 2,
+		  image: templateImg,
+		  width: 250,
+		  height: 250 / templateImg.width * templateImg.height,
+		  draggable: false
+		});
+
+		template.add(templateImgObj);
+		stage.add(template);
+
+	};
+	templateImg.src = templateImgPath;
+}
+templateCanvas('../img/temp_iphone_x_xs.png');
 
 // fileUpload
 function loadLocalImage(e) {
@@ -89,9 +157,7 @@ function loadLocalImage(e) {
     img.src = uploadImgSrc;
     img.onload = () => {
 
-			//** Konva.js | Start **//
-
-      var uploadImg = new Konva.Image({
+      uploadImg = new Konva.Image({
       	x: stage.width() / 2 - 125,
       	y: stage.height() / 2 - 250 / img.width * img.height / 2,
         image: img,
@@ -164,8 +230,6 @@ function loadLocalImage(e) {
 			  },
 			  false
 			);
-
-      //** Konva.js | End **//
       
     };
 	}
@@ -176,11 +240,8 @@ file.addEventListener('change', loadLocalImage, false);
 removeCanvas.addEventListener('click', () => {
 	event.preventDefault();
 
-	//** Konva.js | Start **//
-
-	layer.destroy();
-
-	//** Konva.js | End **//
+	// location.reload();
+  layer.destroy();
 
 },false);
 
