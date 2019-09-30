@@ -12,7 +12,7 @@
 		<div id="js-wrapper" class="wrapper wrapper-for-cutomize">
 
 			<!-- navigation -->
-			<nav id="js-nav-top" class="nav-wrapper nav-wrapper-top nav-wrapper-color-tertiary nav-wrapper-height-low">
+			<nav id="js-head" class="nav-wrapper nav-wrapper-top nav-wrapper-color-tertiary nav-wrapper-height-low">
 				<ul class="nav-holizontal nav-space-between">
 					<li class="nav-item">
 						<a href="javascript:history.back();" id="" class="link link-color-secondary">戻る</a>
@@ -25,63 +25,58 @@
 
 			<!-- canvas -->
 			<div id="js-canvas-wrapper" class="canvas-wrapper">
+
+				<div id="js-konva-wrapper" class="konva-wrapper"></div>
+
+				<!-- 回転 -->
+				<div id="js-rotate-slider" class="range-slider-wrapper">
+					<button id="js-rotate-negative" class="button-icon">
+						<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 40 40">
+						  <title>rotate-left</title>
+						  <g id="rotate-left">
+						    <path d="M9.41,25.51a14.12,14.12,0,1,1,13.28,9.28c-.34,0-.66,0-1,0" style="fill: none;stroke: #000;stroke-width: 2px"/>
+						    <polyline points="15.21 20.17 9.19 26.17 3.41 20.39" style="fill: none;stroke: #000"/>
+						  </g>
+						</svg>
+					</button>
+					<input type="range" id="js-range" class="range-slider" min="-180" max="180">
+					<button class="button-icon">
+						<svg id="rotate-right" xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 40 40">
+						  <title>rotate-right</title>
+						  <path d="M18.49,34.75c-.32,0-.64,0-1,0a14.07,14.07,0,1,1,13.28-9.28" style="fill: none;stroke: #000;stroke-width: 2px"/>
+						  <polyline points="36.79 20.39 31.01 26.17 24.99 20.17" style="fill: none;stroke: #000"/>
+						</svg>
+					</button>
+				</div>
+
 			</div>
 <!-- 			<div id="js-canvas-wrapper" class="canvas-wrapper">
 				<img src="../img/temp_iphone_x_xs.svg" class="template-case">
 				<div id="js-konva-wrapper"></div>
 			</div> -->
 
-			<!-- tool bar -->
-			<div id="js-nav-bottom" class="container container-parent">
-
 				<!-- ボタン -->
-				<div id="js-menu" class="container container-menu is-show">
-					<nav class="nav-wrapper nav-wrapper-color-tertiary nav-space-between">
-						<ul class="nav-holizontal nav-space-between">
-							<li class="nav-item">
-								<div class="file-uploader-wrapper">
-									<input type="file" id="js-file" class="file-uploader">
-									<button class="button-icon">
-										<svg width="36" height="36" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-svg="image">
-											<circle cx="16.1" cy="6.1" r="1.1"></circle><rect fill="none" stroke="#000" x=".5" y="2.5" width="19" height="15"></rect><polyline fill="none" stroke="#000" stroke-width="1.01" points="4,13 8,9 13,14"></polyline><polyline fill="none" stroke="#000" stroke-width="1.01" points="11,12 12.5,10.5 16,14"></polyline>
-										</svg>
-									</button>
-								</div>
-							</li>
-							<li class="nav-item">
-								<button class="button-icon" id="js-remove">
-									<svg width="36" height="36" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-svg="trash">
-										<polyline fill="none" stroke="#000" points="6.5 3 6.5 1.5 13.5 1.5 13.5 3"></polyline><polyline fill="none" stroke="#000" points="4.5 4 4.5 18.5 15.5 18.5 15.5 4"></polyline><rect x="8" y="7" width="1" height="9"></rect><rect x="11" y="7" width="1" height="9"></rect><rect x="2" y="3" width="16" height="1"></rect>
-									</svg>
-								</button>
-							</li>
-						</ul>
-					</nav>
-
-					<!-- 回転 -->
-					<div class="range-slider-wrapper">
-						<button id="js-rotate-negative" class="button-icon">
-							<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 40 40">
-							  <title>rotate-left</title>
-							  <g id="rotate-left">
-							    <path d="M9.41,25.51a14.12,14.12,0,1,1,13.28,9.28c-.34,0-.66,0-1,0" style="fill: none;stroke: #000;stroke-width: 2px"/>
-							    <polyline points="15.21 20.17 9.19 26.17 3.41 20.39" style="fill: none;stroke: #000"/>
-							  </g>
+			<nav id="js-foot" class="nav-wrapper nav-wrapper-color-tertiary nav-space-between nav-wrapper-height-low">
+				<ul class="nav-holizontal nav-space-between">
+					<li class="nav-item">
+						<div class="file-uploader-wrapper">
+							<input type="file" id="js-file" class="file-uploader">
+							<button class="button-icon">
+								<svg width="32" height="32" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-svg="image">
+									<circle cx="16.1" cy="6.1" r="1.1"></circle><rect fill="none" stroke="#000" x=".5" y="2.5" width="19" height="15"></rect><polyline fill="none" stroke="#000" stroke-width="1.01" points="4,13 8,9 13,14"></polyline><polyline fill="none" stroke="#000" stroke-width="1.01" points="11,12 12.5,10.5 16,14"></polyline>
+								</svg>
+							</button>
+						</div>
+					</li>
+					<li class="nav-item">
+						<button class="button-icon" id="js-remove">
+							<svg width="32" height="32" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-svg="trash">
+								<polyline fill="none" stroke="#000" points="6.5 3 6.5 1.5 13.5 1.5 13.5 3"></polyline><polyline fill="none" stroke="#000" points="4.5 4 4.5 18.5 15.5 18.5 15.5 4"></polyline><rect x="8" y="7" width="1" height="9"></rect><rect x="11" y="7" width="1" height="9"></rect><rect x="2" y="3" width="16" height="1"></rect>
 							</svg>
 						</button>
-						<input type="range" id="js-range" class="range-slider" min="-180" max="180">
-						<button class="button-icon">
-							<svg id="rotate-right" xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 40 40">
-							  <title>rotate-right</title>
-							  <path d="M18.49,34.75c-.32,0-.64,0-1,0a14.07,14.07,0,1,1,13.28-9.28" style="fill: none;stroke: #000;stroke-width: 2px"/>
-							  <polyline points="36.79 20.39 31.01 26.17 24.99 20.17" style="fill: none;stroke: #000"/>
-							</svg>
-						</button>
-					</div>
-
-				</div>
-
-			</div>
+					</li>
+				</ul>
+			</nav>
 
 		</div>
 

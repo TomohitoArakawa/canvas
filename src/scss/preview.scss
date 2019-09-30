@@ -1,0 +1,21 @@
+/* Restet */
+@import "../../node_modules/reset-css/sass/_reset.scss";
+
+/* Base Component */
+@import "./partial/_base.scss";
+@import "./partial/_reset-override.scss";
+
+/* Parts Component */
+@import "./partial/_wrapper.scss";
+@import "./partial/_container.scss";
+@import "./partial/_box.scss";
+@import "./partial/_navigation.scss";
+@import "./partial/_text.scss";
+@import "./partial/_link.scss";
+@import "./partial/_button.scss";
+@import "./partial/_file-uploader.scss";
+@import "./partial/_range-slider.scss";
+@import "./partial/_modal.scss";
+
+/* Page Component */
+@import "./partial/detail/_customize.scss";

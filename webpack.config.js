@@ -1,9 +1,13 @@
 var path = require('path');
 
 module.exports = {
-    entry: './src/js/customize.js',
+    entry: {
+        select: './src/select.js',
+        customize: './src/customize.js',
+        preview: './src/preview.js'
+    },
     output: {
-        filename: 'customize.js',
+        filename: '[name].js',
         path: path.resolve(__dirname, 'dist/js')
     },
     module: {

@@ -4,27 +4,29 @@
 	<meta charset="UTF-8">
 	<title>Preview | MOBICUL</title>
 	<meta name="viewport" content="width=device-width,initial-scale=1.0">
-	<link rel="stylesheet" href="../css/customize.css">
+	<link rel="stylesheet" href="../css/preview.css">
 </head>
 <body>
-	<div class="container" style="text-align: center;">
 
-		<form action="">
+	<form action="">
+		
+		<div id="js-wrapper" class="wrapper">
 
-			<nav class="tool-bar tool-bar-black tool-bar-fixed-top">
-				<ul class="tool-holizontal space-between">
-					<li class="list-item">
-						<a href="javascript:history.back();" id="" class="anchor anchor-with-icon">
-							<i class="uk-icon-link text-white" uk-icon="chevron-left"></i>
-							<span class="text text-white">戻る</span>
-						</a>
+			<!-- navigation -->
+			<nav id="js-nav-top" class="nav-wrapper nav-wrapper-top nav-wrapper-color-tertiary nav-wrapper-height-low">
+				<ul class="nav-holizontal nav-space-between">
+					<li class="nav-item">
+						<a href="javascript:history.back();" id="" class="link link-color-secondary">戻る</a>
 					</li>
 				</ul>
 			</nav>
 
-		</form>
+			<div id="js-konva-wrapper" class="konva-wrapper"></div>
 
-	</div>
-	<script src="../js/customize.js"></script>
+		</div>
+
+	</form>
+
+	<script src="../js/preview.js"></script>
 </body>
 </html>

@@ -1,28 +1,30 @@
 import Konva from 'konva';
+import Store from 'store';
 
-var counter=0;
-var origx=180;
-var origy=180;
-var rotation=0;
-var scaleX=1;
-var scaleY=1;
-var uploadImg;
-var uploadImgSrc;
-const navTop = document.getElementById('js-nav-top');
-const navBottom = document.getElementById('js-nav-bottom');
+var origx = 0;
+var origy = 0;
+var rotation = 0;
+var scaleX = 1;
+var scaleY = 1;
+
 const file = document.getElementById('js-file');
 const removeCanvas = document.getElementById('js-remove');
 const rotateSlider = document.getElementById('js-range');
+
+const head = document.getElementById('js-head');
+const foot = document.getElementById('js-foot');
 const wrapper = document.getElementById('js-wrapper');
 const canvasWrapper = document.getElementById('js-canvas-wrapper');
-// const canvas = document.getElementById('js-canvas');
-// const ctx = canvas.getContext('2d');
+const konvaWrapper = document.getElementById('js-konva-wrapper');
+
+var uploadImg;
+var uploadImgSrc;
 
 //レスポンシブ対応
 // body読み込み時に一度だけbodyサイズを設定
 document.body.onload = ()=>{
   wrapper.style.minHeight = window.innerHeight + 'px';
-  canvasWrapper.style.minHeight = window.innerHeight - 140 + 'px';
+  konvaWrapper.style.minHeight = window.innerHeight - 140 + 'px';
   // canvas.style.minHeight = window.innerHeight - 140 + 'px';
 }
 
@@ -33,7 +35,7 @@ window.addEventListener("resize", () => {
 
   timeoutId = setTimeout(() => {
       wrapper.style.minHeight = window.innerHeight + 'px';
-      canvasWrapper.style.minHeight = window.innerHeight - 140 + 'px';
+      konvaWrapper.style.minHeight = window.innerHeight - 140 + 'px';
       // canvas.style.minHeight = window.innerHeight - 140 + 'px';
   }, 100);
 });
@@ -42,42 +44,16 @@ window.addEventListener("resize", () => {
 
 // first we need to create a stage
 var stage = new Konva.Stage({ 
-  container: 'js-canvas-wrapper',// id of container <div> 
+  container: 'js-konva-wrapper',// id of container <div> 
   width: window.innerWidth,
   height: window.innerHeight - 140
 });
 
 // then create layer
-var guide = new Konva.Layer();
-var overLay = new Konva.Layer();
-var layer = new Konva.Layer();
 var template = new Konva.Layer();
+var guide = new Konva.Layer();
+var layer = new Konva.Layer();
 
-// OverLay
-function overLayCanvas( templateImgPath ) {
-	var overLayImg = new Image();
-	overLayImg.onload = () => {
-
-		// OverLayGroup
-		var overLayGroup = new Konva.Group({
-			clipFunc: (ctx) => {
-				ctx.fillStyle = '#000';
-				ctx.fillRect( 0 , 0 , window.innerWidth , window.innerHeight - 140 );
-				ctx.globalCompositeOperation = 'xor';
-				ctx.beginPath();
-				ctx.fillStyle = '#000';
-				ctx.fillRect( stage.width() / 2 - 125 , stage.height() / 2 - 250 / overLayImg.width * overLayImg.height / 2 , 250 , 250 / overLayImg.width * overLayImg.height );
-				ctx.fill();
-			}
-		});
-
-		overLay.add(overLayGroup);
-		stage.add(overLay);
-
-	};
-	overLayImg.src = templateImgPath;
-}
-overLayCanvas('../img/temp_iphone_x_xs.png');
 
 // Guide 
 function guideCanvas( guideImgPath ) {
@@ -86,30 +62,13 @@ function guideCanvas( guideImgPath ) {
 
 		// GuideImage
 		var guideImgObj = new Konva.Image({
-			x: stage.width() / 2 - 125,
-			y: stage.height() / 2 - 250 / guideImg.width * guideImg.height / 2,
+			x: stage.width() / 2 - 75,
+			y: stage.height() / 2 - 150 / guideImg.width * guideImg.height / 2,
 		  image: guideImg,
-		  width: 250,
-		  height: 250 / guideImg.width * guideImg.height,
+		  width: 150,
+		  height: 150 / guideImg.width * guideImg.height,
 		  draggable: false
 		});
-
-		// OverLayGroup
-		// var overLayGroup = new Konva.Group({
-		// 	clipFunc: (ctx) => {
-		// 		ctx.fillStyle = '#000';
-		// 		ctx.fillRect( 0 , 0 , window.innerWidth , window.innerHeight - 140 );
-		// 		ctx.globalCompositeOperation = 'xor';
-		// 		ctx.beginPath();
-		// 		ctx.fillStyle = '#000';
-		// 		ctx.fillRect( stage.width() / 2 - 125 , stage.height() / 2 - 250 / guideImg.width * guideImg.height / 2 , 250 , 250 / guideImg.width * guideImg.height );
-		// 		ctx.fill();
-		// 	},
-		// 	draggable: false,
-
-		// });
-
-		// guide.add(overLayGroup);
 
 		guide.add(guideImgObj);
 		stage.add(guide);
@@ -125,11 +84,11 @@ function templateCanvas( templateImgPath ) {
 	templateImg.onload = () => {
 
 		var templateImgObj = new Konva.Image({
-			x: stage.width() / 2 - 125,
-			y: stage.height() / 2 - 250 / templateImg.width * templateImg.height / 2,
+			x: stage.width() / 2 - 75,
+			y: stage.height() / 2 - 150 / templateImg.width * templateImg.height / 2,
 		  image: templateImg,
-		  width: 250,
-		  height: 250 / templateImg.width * templateImg.height,
+		  width: 150,
+		  height: 150 / templateImg.width * templateImg.height,
 		  draggable: false
 		});
 
@@ -158,11 +117,11 @@ function loadLocalImage(e) {
     img.onload = () => {
 
       uploadImg = new Konva.Image({
-      	x: stage.width() / 2 - 125,
-      	y: stage.height() / 2 - 250 / img.width * img.height / 2,
+      	x: stage.width() / 2 - 75,
+      	y: stage.height() / 2 - 150 / img.width * img.height / 2,
         image: img,
-        width: 250 * scaleX,
-        height: 250 / img.width * img.height * scaleY,
+        width: 150 * scaleX,
+        height: 150 / img.width * img.height * scaleY,
         draggable: true
       });
 
@@ -238,10 +197,13 @@ file.addEventListener('change', loadLocalImage, false);
 
 // Remove
 removeCanvas.addEventListener('click', () => {
+
 	event.preventDefault();
 
-	// location.reload();
-  layer.destroy();
+	layer.destroy();
+	uploadImg.clearCache();
+	
+	file.value = null;
 
 },false);
 
