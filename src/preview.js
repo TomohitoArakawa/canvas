@@ -1,11 +1,15 @@
-import Konva from 'konva';
+// import Konva from 'konva';
 import Store from 'store';
 
-const konvaWrapper = document.getElementById('js-konva-wrapper');
+const store = require('store');
 
-// first we need to create a stage
-var stage = new Konva.Stage({ 
-  container: 'js-konva-wrapper',// id of container <div> 
-  width: window.innerWidth,
-  height: window.innerHeight - 140
-});
+let cropData = store.get('mobicul').cropData;
+
+function showCanvas() {
+
+  var crop = document.getElementById('js-crop-image');
+
+  crop.src = cropData;
+
+}
+window.addEventListener('load', showCanvas , false);

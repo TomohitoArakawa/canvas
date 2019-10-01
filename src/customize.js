@@ -7,18 +7,28 @@ var rotation = 0;
 var scaleX = 1;
 var scaleY = 1;
 
+const store = require('store');
+
 const file = document.getElementById('js-file');
 const removeCanvas = document.getElementById('js-remove');
 const rotateSlider = document.getElementById('js-range');
+const confirm = document.getElementById('js-confirm');
 
 const head = document.getElementById('js-head');
 const foot = document.getElementById('js-foot');
 const wrapper = document.getElementById('js-wrapper');
 const canvasWrapper = document.getElementById('js-canvas-wrapper');
 const konvaWrapper = document.getElementById('js-konva-wrapper');
+const konvaPreview = document.getElementById('js-konva-preview');
 
 var uploadImg;
 var uploadImgSrc;
+
+var guideImg;
+var guideImgObj;
+
+var templateImg;
+var templateImgObj;
 
 //レスポンシブ対応
 // body読み込み時に一度だけbodyサイズを設定
@@ -57,11 +67,11 @@ var layer = new Konva.Layer();
 
 // Guide 
 function guideCanvas( guideImgPath ) {
-	var guideImg = new Image();
+	guideImg = new Image();
 	guideImg.onload = () => {
 
 		// GuideImage
-		var guideImgObj = new Konva.Image({
+		guideImgObj = new Konva.Image({
 			x: stage.width() / 2 - 75,
 			y: stage.height() / 2 - 150 / guideImg.width * guideImg.height / 2,
 		  image: guideImg,
@@ -80,10 +90,10 @@ guideCanvas('../img/guide_iphone_x_xs.png');
 
 // Template
 function templateCanvas( templateImgPath ) {
-	var templateImg = new Image();
+	templateImg = new Image();
 	templateImg.onload = () => {
 
-		var templateImgObj = new Konva.Image({
+		templateImgObj = new Konva.Image({
 			x: stage.width() / 2 - 75,
 			y: stage.height() / 2 - 150 / templateImg.width * templateImg.height / 2,
 		  image: templateImg,
@@ -130,7 +140,7 @@ function loadLocalImage(e) {
         keepRatio: true,
         centeredScaling: true,
         enabledAnchors: [],
-        rotateEnabled: true,
+        rotateEnabled: false,
         rotateAnchorOffset: 0
       });
 
@@ -202,11 +212,158 @@ removeCanvas.addEventListener('click', () => {
 
 	layer.destroy();
 	uploadImg.clearCache();
-	
+
 	file.value = null;
 
 },false);
 
+// 確定画面へ
+confirm.addEventListener('click', () => {
+
+	event.preventDefault();
+
+	showCanvas();
+	// cropCanvas();
+
+	document.location.href = './preview.html'
+
+},false);
+
+// トリミング
+function showCanvas() {
+
+	// first we need to create a stage
+	let stageForPreview = new Konva.Stage({ 
+	  container: 'js-konva-preview',// id of container <div> 
+	  width: 150,
+	  height: 150 / guideImg.width * guideImg.height + 2
+	});
+
+	// then create layer
+	let preview = new Konva.Layer();
+
+	let previewGroup = new Konva.Group({
+			x: -( stage.width() / 2 - 75 ),
+			y: -( stage.height() / 2 - 150 / templateImg.width * templateImg.height / 2 ),
+      clipFunc: function(ctx) {
+				  drawRect({
+				    ctx : ctx,
+				    x : stage.width() / 2 - 75,
+				    y : stage.height() / 2 - 150 / guideImg.width * guideImg.height / 2,
+				    width: 150,
+				    height: 150 / guideImg.width * guideImg.height,
+				    radius: 21,
+				    color: "rgba(0, 0, 0, 0)"
+				});
+        // ctx.rect(stage.width() / 2 - 75 , stage.height() / 2 - 150 / guideImg.width * guideImg.height / 2 , 150 , 150 / guideImg.width * guideImg.height);
+      },
+      draggable: false
+	});
+
+	var cloneGuide = guideImgObj.clone();
+	var cloneTemplate = templateImgObj.clone();
+	var cloneUploadImg = uploadImg.clone();
+
+	previewGroup.add(cloneGuide);
+  previewGroup.add(cloneTemplate);
+  previewGroup.add(cloneUploadImg);
+  cloneGuide.moveToTop();
+  cloneTemplate.moveToBottom();
+  preview.draw();
+
+  preview.add(previewGroup);
+  stageForPreview.add(preview);
+
+  let cropData = stageForPreview.toDataURL();
+
+  console.log(cropData);
+
+  store.set('mobicul', {
+  	cropData: cropData
+  });
+
+  // var previewData = preview.toDataURL();
+
+ //  var resizeCanvas = document.getElementById('js-trim-canvas');
+ //  var ctx = resizeCanvas.getContext('2d');
+
+ //  resizeCanvas.width = 150;
+ //  resizeCanvas.height = 150 / guideImg.width * guideImg.height;
+
+	// var previewImg = new Image();
+	// previewImg.src = previewData;
+	// previewImg.onload = () => {
+
+	// 	ctx.drawImage( previewImg , 
+	// 		         stage.width() / 2 - 75 ,
+	// 		         stage.height() / 2 - 150 / guideImg.width * guideImg.height / 2 ,
+	// 		         150 , 
+	// 		         150 / guideImg.width * guideImg.height , 
+	// 		         0 , 
+	// 		         0 ,
+	// 		         150 , 
+	// 		         150 / guideImg.width * guideImg.height
+	// 						);
+
+	// };
+
+	// console.log( previewData );
+
+}
+
+// 角丸長方形生成
+function drawRect(param) {
+    var ctx = param.ctx;
+    var x = param.x;
+    var y =param.y;
+    var width = param.width;
+    var height = param.height;
+    var radius = param.radius || 0;
+    var color = param.color;
+    
+    ctx.save();
+        ctx.fillStyle = color;
+        ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.arc(x + width - radius, y + radius, radius, Math.PI * 1.5, 0, false);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.arc(x + width - radius, y + height - radius, radius, 0, Math.PI * 0.5, false);
+            ctx.lineTo(x + radius, y + height);
+            ctx.arc(x + radius, y + height - radius, radius, Math.PI * 0.5, Math.PI, false);
+            ctx.lineTo(x, y + radius);
+            ctx.arc(x + radius, y + radius, radius, Math.PI, Math.PI * 1.5, false);
+        ctx.closePath();
+        ctx.fill();
+    ctx.restore();
+}
+
+
+// function cropCanvas() {
+
+// 	// first we need to create a stage
+// 	stageForCrop = new Konva.Stage({ 
+// 	  container: 'js-konva-crop',// id of container <div> 
+// 	  width: 150,
+// 	  height: 150 / guideImg.width * guideImg.height
+// 	});
+
+// 	// then create layer
+// 	crop = new Konva.Layer({
+// 		x: -( stage.width() / 2 - 75 ),
+// 		y: -( stage.height() / 2 - 150 / templateImg.width * templateImg.height / 2 ),
+// 	});
+
+//   crop.add(previewGroup);
+//   stageForCrop.add(crop);
+
+//   let cropData = stageForCrop.toDataURL();
+
+//   store.set('mobicul', {
+//   	cropData: cropData
+//   });
+
+// }
 
 
 // // ファイルアップロード
