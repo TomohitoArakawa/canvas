@@ -19,7 +19,7 @@ const foot = document.getElementById('js-foot');
 const wrapper = document.getElementById('js-wrapper');
 const canvasWrapper = document.getElementById('js-canvas-wrapper');
 const konvaWrapper = document.getElementById('js-konva-wrapper');
-const konvaPreview = document.getElementById('js-konva-preview');
+const toggleWrapper = document.querySelectorAll('.js-toggle-wrapper');
 
 var uploadImg;
 var uploadImgSrc;
@@ -62,7 +62,71 @@ var stage = new Konva.Stage({
 // then create layer
 var template = new Konva.Layer();
 var guide = new Konva.Layer();
+var overLay = new Konva.Layer();
 var layer = new Konva.Layer();
+
+templateCanvas('../img/temp_iphone_x_xs.png');
+overLayCanvas('../img/guide_iphone_x_xs.png');
+
+// Template
+function templateCanvas( templateImgPath ) {
+	templateImg = new Image();
+	templateImg.onload = () => {
+
+		templateImgObj = new Konva.Image({
+			x: stage.width() / 2 - 75,
+			y: stage.height() / 2 - 150 / templateImg.width * templateImg.height / 2,
+		  image: templateImg,
+		  width: 150,
+		  height: 150 / templateImg.width * templateImg.height,
+		  draggable: false
+		});
+
+		template.add(templateImgObj);
+		stage.add(template);
+
+	};
+	templateImg.src = templateImgPath;
+}
+
+
+// OverLay
+function overLayCanvas( guideImgPath ) {
+
+	var overLayImg = new Image();
+	overLayImg.onload = () => {
+
+		// OverLayGroup
+		var overLayGroup = new Konva.Group({
+			x: 0,
+			y: 0,
+			clipFunc: (ctx) => {
+				ctx.fillStyle = '#000';
+				ctx.fillRect( 0 , 0 , stage.width() , stage.height() );
+				ctx.globalCompositeOperation = 'xor';
+				ctx.beginPath();
+				ctx.fillStyle = '#000';
+				drawRect({
+				    ctx : ctx,
+				    x : stage.width() / 2 - 75,
+				    y : stage.height() / 2 - 150 / overLayImg.width * overLayImg.height / 2,
+				    width: 150,
+				    height: 150 / overLayImg.width * overLayImg.height,
+				    radius: 22,
+				    color: 'rgba(0, 0, 0, 0)'
+				});
+				ctx.fill();
+			},
+			draggable: false
+		});
+
+		overLay.add(overLayGroup);
+		stage.add(overLay);
+		console.log(overLay);
+
+	};
+	overLayImg.src = guideImgPath;
+}
 
 
 // Guide 
@@ -86,37 +150,24 @@ function guideCanvas( guideImgPath ) {
 	};
 	guideImg.src = guideImgPath;
 }
-guideCanvas('../img/guide_iphone_x_xs.png');
-
-// Template
-function templateCanvas( templateImgPath ) {
-	templateImg = new Image();
-	templateImg.onload = () => {
-
-		templateImgObj = new Konva.Image({
-			x: stage.width() / 2 - 75,
-			y: stage.height() / 2 - 150 / templateImg.width * templateImg.height / 2,
-		  image: templateImg,
-		  width: 150,
-		  height: 150 / templateImg.width * templateImg.height,
-		  draggable: false
-		});
-
-		template.add(templateImgObj);
-		stage.add(template);
-
-	};
-	templateImg.src = templateImgPath;
-}
-templateCanvas('../img/temp_iphone_x_xs.png');
 
 // fileUpload
 function loadLocalImage(e) {
 	var fileData = e.target.files[0];
-	if(!fileData.type.match('image.*')) {
+	if ( !fileData.type.match( 'image.*' ) ) {
+
 		alert('画像を選択してください');
 		return;
-	}	
+
+	}	else if ( fileData.type === undefined ) {
+
+		alert('undefined');
+		return;
+
+	}
+
+	guideCanvas('../img/guide_iphone_x_xs.png');
+
 	var reader = new FileReader();
 	reader.readAsDataURL(fileData);
 	reader.onload = () => {
@@ -215,7 +266,7 @@ removeCanvas.addEventListener('click', () => {
 
 	file.value = null;
 
-},false);
+} , false );
 
 // 確定画面へ
 confirm.addEventListener('click', () => {
@@ -223,11 +274,23 @@ confirm.addEventListener('click', () => {
 	event.preventDefault();
 
 	showCanvas();
-	// cropCanvas();
+	// historyToggle();
 
-	document.location.href = './preview.html'
+	window.history.pushState( null , null , 'preview.html' );
 
-},false);
+} , false );
+
+// 
+// function historyToggle() {
+
+// 	toggleWrapper.forEach (() => {
+
+// 		toggleWrapper.classList.toggle('is-hide');
+
+// 	});
+// 	console.log(toggleWrapper);
+
+// }
 
 // トリミング
 function showCanvas() {
@@ -252,10 +315,9 @@ function showCanvas() {
 				    y : stage.height() / 2 - 150 / guideImg.width * guideImg.height / 2,
 				    width: 150,
 				    height: 150 / guideImg.width * guideImg.height,
-				    radius: 21,
+				    radius: 22,
 				    color: "rgba(0, 0, 0, 0)"
 				});
-        // ctx.rect(stage.width() / 2 - 75 , stage.height() / 2 - 150 / guideImg.width * guideImg.height / 2 , 150 , 150 / guideImg.width * guideImg.height);
       },
       draggable: false
 	});
@@ -281,33 +343,6 @@ function showCanvas() {
   store.set('mobicul', {
   	cropData: cropData
   });
-
-  // var previewData = preview.toDataURL();
-
- //  var resizeCanvas = document.getElementById('js-trim-canvas');
- //  var ctx = resizeCanvas.getContext('2d');
-
- //  resizeCanvas.width = 150;
- //  resizeCanvas.height = 150 / guideImg.width * guideImg.height;
-
-	// var previewImg = new Image();
-	// previewImg.src = previewData;
-	// previewImg.onload = () => {
-
-	// 	ctx.drawImage( previewImg , 
-	// 		         stage.width() / 2 - 75 ,
-	// 		         stage.height() / 2 - 150 / guideImg.width * guideImg.height / 2 ,
-	// 		         150 , 
-	// 		         150 / guideImg.width * guideImg.height , 
-	// 		         0 , 
-	// 		         0 ,
-	// 		         150 , 
-	// 		         150 / guideImg.width * guideImg.height
-	// 						);
-
-	// };
-
-	// console.log( previewData );
 
 }
 
