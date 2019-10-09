@@ -18,8 +18,11 @@ const head = document.getElementById('js-head');
 const foot = document.getElementById('js-foot');
 const wrapper = document.getElementById('js-wrapper');
 const canvasWrapper = document.getElementById('js-canvas-wrapper');
-const konvaWrapper = document.getElementById('js-konva-wrapper');
+const konvaOverLay = document.getElementById('js-konva-overlay');
+const konvaEdit = document.getElementById('js-konva-edit');
 const toggleWrapper = document.querySelectorAll('.js-toggle-wrapper');
+
+// const overLayCtx = canvasOverLay.getContext('2d');
 
 var uploadImg;
 var uploadImgSrc;
@@ -30,12 +33,15 @@ var guideImgObj;
 var templateImg;
 var templateImgObj;
 
+var overLayImg;
+
 //レスポンシブ対応
 // body読み込み時に一度だけbodyサイズを設定
 document.body.onload = ()=>{
+
   wrapper.style.minHeight = window.innerHeight + 'px';
-  konvaWrapper.style.minHeight = window.innerHeight - 140 + 'px';
-  // canvas.style.minHeight = window.innerHeight - 140 + 'px';
+  konvaEdit.style.minHeight = window.innerHeight - 140 + 'px';
+
 }
 
 // リサイズを停止して500ms後にbodyサイズを設定
@@ -44,17 +50,30 @@ window.addEventListener("resize", () => {
   clearTimeout(timeoutId);
 
   timeoutId = setTimeout(() => {
+
       wrapper.style.minHeight = window.innerHeight + 'px';
-      konvaWrapper.style.minHeight = window.innerHeight - 140 + 'px';
-      // canvas.style.minHeight = window.innerHeight - 140 + 'px';
+      konvaEdit.style.minHeight = window.innerHeight - 140 + 'px';
+
   }, 100);
 });
 
 //** Konva.js | Start **//
 
 // first we need to create a stage
+var stageForGuide = new Konva.Stage({ 
+  container: 'js-konva-guide',// id of container <div> 
+  width: window.innerWidth,
+  height: window.innerHeight - 140
+});
+
+var stageForOverlay = new Konva.Stage({ 
+  container: 'js-konva-overlay',// id of container <div> 
+  width: window.innerWidth,
+  height: window.innerHeight - 140
+});
+
 var stage = new Konva.Stage({ 
-  container: 'js-konva-wrapper',// id of container <div> 
+  container: 'js-konva-edit',// id of container <div> 
   width: window.innerWidth,
   height: window.innerHeight - 140
 });
@@ -65,8 +84,6 @@ var guide = new Konva.Layer();
 var overLay = new Konva.Layer();
 var layer = new Konva.Layer();
 
-templateCanvas('../img/temp_iphone_x_xs.png');
-overLayCanvas('../img/guide_iphone_x_xs.png');
 
 // Template
 function templateCanvas( templateImgPath ) {
@@ -88,12 +105,13 @@ function templateCanvas( templateImgPath ) {
 	};
 	templateImg.src = templateImgPath;
 }
+templateCanvas('../img/temp_iphone_x_xs.png');
 
 
-// OverLay
 function overLayCanvas( guideImgPath ) {
 
 	var overLayImg = new Image();
+	overLayImg.src = guideImgPath;
 	overLayImg.onload = () => {
 
 		// OverLayGroup
@@ -121,12 +139,12 @@ function overLayCanvas( guideImgPath ) {
 		});
 
 		overLay.add(overLayGroup);
-		stage.add(overLay);
-		console.log(overLay);
+		stageForOverlay.add(overLay);
 
 	};
-	overLayImg.src = guideImgPath;
+
 }
+overLayCanvas('../img/guide_iphone_x_xs.png');
 
 
 // Guide 
@@ -145,11 +163,12 @@ function guideCanvas( guideImgPath ) {
 		});
 
 		guide.add(guideImgObj);
-		stage.add(guide);
+		stageForGuide.add(guide);
 
 	};
 	guideImg.src = guideImgPath;
 }
+guideCanvas('../img/guide_iphone_x_xs.png');
 
 // fileUpload
 function loadLocalImage(e) {
@@ -165,8 +184,6 @@ function loadLocalImage(e) {
 		return;
 
 	}
-
-	guideCanvas('../img/guide_iphone_x_xs.png');
 
 	var reader = new FileReader();
 	reader.readAsDataURL(fileData);

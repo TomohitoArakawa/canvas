@@ -1,78 +1,26 @@
-html , body{
-    // display: flex;
-    // flex-direction: column;
-
-    /* コメントアウトして削除するよ！！ */
-    /* min-height: 100vh; */
-}
-
-// Konva.js | Guide Layer
-.konva-wrapper {
-  .konvajs-content canvas:nth-child(2) {
-    z-index: 1;
-    opacity: .5;
-  }
-
-  .konvajs-content canvas:nth-child(3) {
-    z-index: 2;
-  }
-
-  .konvajs-content canvas:last-child {
-    z-index: initial;
-  }
-}
-
-.konva-preview {
-  display: none;
-}
-
-.konva-crop {
-  // display: none;
-}
-
-// Konva.js | OverLay Layer
-// .konvajs-content canvas:nth-child(2) {
-//   z-index: 1;
-//   opacity: .5;
-// }
-
 .canvas-wrapper {
   position: relative;
   width: 100%;
   min-height: 100%;
 }
 
-.template-case {
+.konva-guide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.konva-overlay {
   position: absolute;
   top: 0;
   left: 0;
   z-index: 1;
-  width: auto;
-  height: 400px;
-  user-select: none;
+  pointer-events: none;
+  opacity: .5;
 }
 
-
-.canvas {
-  width: 100%;
-  min-height: 100%;
+.konva-preview {
+  // display: none;
 }
-
-// .canvas {
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-// }
-
-// .canvas-image-wrapper {
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   width: 100%;
-// }
-
-// .canvas-image {
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-// }
