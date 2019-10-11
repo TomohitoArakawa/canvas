@@ -8,7 +8,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 2;
+  z-index: 3;
   pointer-events: none;
 }
 
@@ -16,10 +16,18 @@
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1;
+  z-index: 2;
   pointer-events: none;
-  opacity: .5;
+  opacity: .2;
 }
+
+.konva-edit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
 
 .konva-preview {
   // display: none;

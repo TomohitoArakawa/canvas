@@ -1,11 +1,20 @@
 import Konva from 'konva';
 import Store from 'store';
 
+var initOrigx = 0;
+var initOrigy = 0;
+var initAngle = 0;
+var initScalex = 1;
+var initScaley = 1;
+
 var origx = 0;
 var origy = 0;
-var rotation = 0;
-var scaleX = 1;
-var scaleY = 1;
+var angle = 0;
+var scalex = 1;
+var scaley = 1;
+
+var windowWidth;
+var windowHeight;
 
 const store = require('store');
 
@@ -25,6 +34,7 @@ const toggleWrapper = document.querySelectorAll('.js-toggle-wrapper');
 // const overLayCtx = canvasOverLay.getContext('2d');
 
 var uploadImg;
+var uploadImgObj;
 var uploadImgSrc;
 
 var guideImg;
@@ -34,55 +44,127 @@ var templateImg;
 var templateImgObj;
 
 var overLayImg;
+var overLayGroup;
+
+var template;
+var guide;
+var overLay;
+var edit;
+
+var stageForEdit;
+var stageForGuide;
+var stageForOverlay;
+
+var transFormForEdit;
 
 //レスポンシブ対応
 // body読み込み時に一度だけbodyサイズを設定
 document.body.onload = ()=>{
 
   wrapper.style.minHeight = window.innerHeight + 'px';
-  konvaEdit.style.minHeight = window.innerHeight - 140 + 'px';
+  canvasWrapper.style.minHeight = window.innerHeight - 140 + 'px';
 
 }
 
 // リサイズを停止して500ms後にbodyサイズを設定
 let timeoutId;
-window.addEventListener("resize", () => {
+
+window.addEventListener( 'resize' , () => {
+
   clearTimeout(timeoutId);
 
   timeoutId = setTimeout(() => {
 
       wrapper.style.minHeight = window.innerHeight + 'px';
-      konvaEdit.style.minHeight = window.innerHeight - 140 + 'px';
+      canvasWrapper.style.minHeight = window.innerHeight - 140 + 'px';
 
-  }, 100);
+      createStageLayer();
+
+      guideImgObj
+      .x( stageForEdit.width() / 2 - 75 )
+      .y( stageForEdit.height() / 2 - 150 / templateImg.width * templateImg.height / 2 );
+      guide.add( guideImgObj );
+      guide.batchDraw();
+      stageForGuide.add( guide );
+
+      overLayGroup
+      .x( 0 )
+      .y( 0 );
+      overLay.batchDraw();
+			overLay.add( overLayGroup );
+			stageForOverlay.add( overLay );
+
+      templateImgObj
+      .x( stageForEdit.width() / 2 - 75 )
+      .y( stageForEdit.height() / 2 - 150 / templateImg.width * templateImg.height / 2 );
+      template.batchDraw();
+			template.add( templateImgObj );
+			stageForEdit.add( template );
+
+			if ( !file.value == '' || !file.value == null ) {
+
+				uploadImgObj
+				.x( origx )
+				.y( origy )
+				.scaleX( scalex )
+				.scaleY( scaley )
+				.rotation( angle );
+
+	      edit.batchDraw();
+				edit.add( uploadImgObj );
+				stageForEdit.add( edit );
+
+				console.log( uploadImgObj.x() );
+				console.log( uploadImgObj.y() );
+				console.log( uploadImgObj.scaleX() );
+				console.log( uploadImgObj.scaleY() );
+				console.log( uploadImgObj.rotation() );
+
+			}
+
+			pinchInOut();
+
+  }, 50);
 });
 
 //** Konva.js | Start **//
 
 // first we need to create a stage
-var stageForGuide = new Konva.Stage({ 
-  container: 'js-konva-guide',// id of container <div> 
-  width: window.innerWidth,
-  height: window.innerHeight - 140
-});
+function createStageLayer() {
+	stageForGuide = new Konva.Stage({ 
+	  container: 'js-konva-guide',// id of container <div> 
+	  width: window.innerWidth,
+	  height: window.innerHeight - 140
+	});
 
-var stageForOverlay = new Konva.Stage({ 
-  container: 'js-konva-overlay',// id of container <div> 
-  width: window.innerWidth,
-  height: window.innerHeight - 140
-});
+	stageForOverlay = new Konva.Stage({ 
+	  container: 'js-konva-overlay',// id of container <div> 
+	  width: window.innerWidth,
+	  height: window.innerHeight - 140
+	});
 
-var stage = new Konva.Stage({ 
-  container: 'js-konva-edit',// id of container <div> 
-  width: window.innerWidth,
-  height: window.innerHeight - 140
-});
+	stageForEdit = new Konva.Stage({ 
+	  container: 'js-konva-edit',// id of container <div> 
+	  width: window.innerWidth,
+	  height: window.innerHeight - 140
+	});
+}
+createStageLayer();
+
+var startOrigX = stageForEdit.width() / 2;
+var startOrigY = stageForEdit.height() / 2;
+
+console.log(startOrigX);
+console.log(startOrigY);
+
+console.log(stageForEdit);
+
 
 // then create layer
-var template = new Konva.Layer();
-var guide = new Konva.Layer();
-var overLay = new Konva.Layer();
-var layer = new Konva.Layer();
+template = new Konva.Layer();
+guide = new Konva.Layer();
+overLay = new Konva.Layer();
+edit = new Konva.Layer();
 
 
 // Template
@@ -91,8 +173,8 @@ function templateCanvas( templateImgPath ) {
 	templateImg.onload = () => {
 
 		templateImgObj = new Konva.Image({
-			x: stage.width() / 2 - 75,
-			y: stage.height() / 2 - 150 / templateImg.width * templateImg.height / 2,
+			x: stageForEdit.width() / 2 - 75,
+			y: stageForEdit.height() / 2 - 150 / templateImg.width * templateImg.height / 2,
 		  image: templateImg,
 		  width: 150,
 		  height: 150 / templateImg.width * templateImg.height,
@@ -100,7 +182,7 @@ function templateCanvas( templateImgPath ) {
 		});
 
 		template.add(templateImgObj);
-		stage.add(template);
+		stageForEdit.add(template);
 
 	};
 	templateImg.src = templateImgPath;
@@ -110,24 +192,24 @@ templateCanvas('../img/temp_iphone_x_xs.png');
 
 function overLayCanvas( guideImgPath ) {
 
-	var overLayImg = new Image();
+	overLayImg = new Image();
 	overLayImg.src = guideImgPath;
 	overLayImg.onload = () => {
 
 		// OverLayGroup
-		var overLayGroup = new Konva.Group({
+		overLayGroup = new Konva.Group({
 			x: 0,
 			y: 0,
 			clipFunc: (ctx) => {
 				ctx.fillStyle = '#000';
-				ctx.fillRect( 0 , 0 , stage.width() , stage.height() );
+				ctx.fillRect( 0 , 0 , stageForOverlay.width() , stageForOverlay.height() );
 				ctx.globalCompositeOperation = 'xor';
 				ctx.beginPath();
 				ctx.fillStyle = '#000';
 				drawRect({
 				    ctx : ctx,
-				    x : stage.width() / 2 - 75,
-				    y : stage.height() / 2 - 150 / overLayImg.width * overLayImg.height / 2,
+				    x : stageForOverlay.width() / 2 - 75,
+				    y : stageForOverlay.height() / 2 - 150 / overLayImg.width * overLayImg.height / 2,
 				    width: 150,
 				    height: 150 / overLayImg.width * overLayImg.height,
 				    radius: 22,
@@ -154,8 +236,8 @@ function guideCanvas( guideImgPath ) {
 
 		// GuideImage
 		guideImgObj = new Konva.Image({
-			x: stage.width() / 2 - 75,
-			y: stage.height() / 2 - 150 / guideImg.width * guideImg.height / 2,
+			x: stageForGuide.width() / 2 - 75,
+			y: stageForGuide.height() / 2 - 150 / guideImg.width * guideImg.height / 2,
 		  image: guideImg,
 		  width: 150,
 		  height: 150 / guideImg.width * guideImg.height,
@@ -190,98 +272,156 @@ function loadLocalImage(e) {
 	reader.onload = () => {
 		uploadImgSrc = reader.result;
 
-    var img = new Image();
-    img.src = uploadImgSrc;
-    img.onload = () => {
+    uploadImg = new Image();
+    uploadImg.src = uploadImgSrc;
+    uploadImg.onload = () => {
 
-      uploadImg = new Konva.Image({
-      	x: stage.width() / 2 - 75,
-      	y: stage.height() / 2 - 150 / img.width * img.height / 2,
-        image: img,
-        width: 150 * scaleX,
-        height: 150 / img.width * img.height * scaleY,
+      uploadImgObj = new Konva.Image({
+      	id: 'uploadImg',
+      	x: stageForEdit.width() / 2 - 75,
+      	y: stageForEdit.height() / 2 - 150 / uploadImg.width * uploadImg.height / 2,
+        image: uploadImg,
+        width: 150,
+        height: 150 / uploadImg.width * uploadImg.height,
         draggable: true
       });
 
-      var transForm = new Konva.Transformer({
-        node: uploadImg,
+      transFormForEdit = new Konva.Transformer({
+        node: uploadImgObj,
         keepRatio: true,
         centeredScaling: true,
-        enabledAnchors: [],
+        enabledAnchors: [ 'top-left', 'top-right', 'bottom-left', 'bottom-right' ],
         rotateEnabled: false,
+        resizeEnabled: true,
         rotateAnchorOffset: 0
       });
 
-      layer.add(transForm);
-      transForm.attachTo(uploadImg);
-      layer.draw();
+      // add the image to the edit
+      edit.add(uploadImgObj);
+      edit.batchDraw();
 
-      // add the image to the layer
-      layer.add(uploadImg);
-      layer.batchDraw();
-      stage.add(layer);
+      edit.add(transFormForEdit);
+      transFormForEdit.attachTo(uploadImgObj);
+      edit.draw();
 
-			// Pinch In Out
-			var lastDist = 0;
-			var startScale = 1;
+      stageForEdit.add(edit);
 
-			function getDistance(p1, p2) {
-			  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
-			}
+	    	origx = uploadImgObj.x();
+	    	origy = uploadImgObj.y();
+		    console.log( origx );
+		    console.log( origy );
 
-			stage.getContent().addEventListener(
-			  'touchmove',
-			  function(evt) {
-			    var touch1 = evt.touches[0];
-			    var touch2 = evt.touches[1];
+	    	initOrigx = uploadImgObj.x();
+	    	initOrigy = uploadImgObj.y();
+		    console.log( initOrigx );
+		    console.log( initOrigx );
 
-			    if (touch1 && touch2) {
-			      var dist = getDistance(
-			        {
-			          x: touch1.clientX,
-			          y: touch1.clientY
-			        },
-			        {
-			          x: touch2.clientX,
-			          y: touch2.clientY
-			        }
-			      );
+		    console.log(uploadImgObj);
 
-			      if (!lastDist) {
-			        lastDist = dist;
-			      }
+		    console.log(file.value);
 
-			      var scale = (uploadImg.scaleX() * dist) / lastDist;
+      uploadImgObj.on( 'transformend' , () => {
 
-			      uploadImg.scaleX(scale);
-			      uploadImg.scaleY(scale);
-			      layer.draw();
-			      lastDist = dist;
-			    }
-			  },
-			  false
-			);
+		    scalex = uploadImgObj.scaleX();
+		    scaley = uploadImgObj.scaleY();
+		    console.log(scalex);
+		    console.log(scaley);
 
-			stage.getContent().addEventListener('touchend', function() {
-			    lastDist = 0;
-			  },
-			  false
-			);
+      });
+
+      uploadImgObj.on( 'dragend' , () => {
+
+      	origx = uploadImgObj.x();
+      	origy = uploadImgObj.y();
+		    console.log( origx );
+		    console.log( origy );
+
+      });
       
     };
+
 	}
+
 }
 file.addEventListener('change', loadLocalImage, false);
 
-// Remove
+
+// Pinch In Out
+function pinchInOut() {
+
+	var lastDist = 0;
+	var startScale = 1;
+
+	function getDistance(p1, p2) {
+	  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+	}
+
+	stageForEdit.getContent().addEventListener(
+	  'touchmove',
+	  function(evt) {
+	    var touch1 = evt.touches[0];
+	    var touch2 = evt.touches[1];
+
+	    if (touch1 && touch2) {
+	      var dist = getDistance(
+	        {
+	          x: touch1.clientX,
+	          y: touch1.clientY
+	        },
+	        {
+	          x: touch2.clientX,
+	          y: touch2.clientY
+	        }
+	      );
+
+	      if (!lastDist) {
+	        lastDist = dist;
+	      }
+
+	      var scale = (uploadImgObj.scaleX() * dist) / lastDist;
+
+	      uploadImgObj.scaleX(scale);
+	      uploadImgObj.scaleY(scale);
+	      edit.draw();
+	      lastDist = dist;
+
+	    }
+
+	  },
+
+	  false
+
+	);
+
+	stageForEdit.getContent().addEventListener( 'touchend' , function() {
+
+	    lastDist = 0;
+
+	    scalex = uploadImgObj.scaleX();
+	    scaley = uploadImgObj.scaleY();
+	    console.log(scalex);
+	    console.log(scaley);
+	  
+	  },
+	  
+	  false
+
+	);
+
+}
+pinchInOut();
+
+
+// 削除
 removeCanvas.addEventListener('click', () => {
 
 	event.preventDefault();
 
-	layer.destroy();
-	uploadImg.clearCache();
+	edit.destroy();
+	uploadImgObj.clearCache();
 
 	file.value = null;
+	console.log(file.value);
 
 } , false );
 
@@ -297,17 +437,6 @@ confirm.addEventListener('click', () => {
 
 } , false );
 
-// 
-// function historyToggle() {
-
-// 	toggleWrapper.forEach (() => {
-
-// 		toggleWrapper.classList.toggle('is-hide');
-
-// 	});
-// 	console.log(toggleWrapper);
-
-// }
 
 // トリミング
 function showCanvas() {
@@ -323,13 +452,13 @@ function showCanvas() {
 	let preview = new Konva.Layer();
 
 	let previewGroup = new Konva.Group({
-			x: -( stage.width() / 2 - 75 ),
-			y: -( stage.height() / 2 - 150 / templateImg.width * templateImg.height / 2 ),
+			x: -( stageForEdit.width() / 2 - 75 ),
+			y: -( stageForEdit.height() / 2 - 150 / templateImg.width * templateImg.height / 2 ),
       clipFunc: function(ctx) {
 				  drawRect({
 				    ctx : ctx,
-				    x : stage.width() / 2 - 75,
-				    y : stage.height() / 2 - 150 / guideImg.width * guideImg.height / 2,
+				    x : stageForEdit.width() / 2 - 75,
+				    y : stageForEdit.height() / 2 - 150 / guideImg.width * guideImg.height / 2,
 				    width: 150,
 				    height: 150 / guideImg.width * guideImg.height,
 				    radius: 22,
@@ -341,11 +470,11 @@ function showCanvas() {
 
 	var cloneGuide = guideImgObj.clone();
 	var cloneTemplate = templateImgObj.clone();
-	var cloneUploadImg = uploadImg.clone();
+	var cloneUploadImg = uploadImgObj.clone();
 
 	previewGroup.add(cloneGuide);
   previewGroup.add(cloneTemplate);
-  previewGroup.add(cloneUploadImg);
+  previewGroup.add(cloneUploadImgObj);
   cloneGuide.moveToTop();
   cloneTemplate.moveToBottom();
   preview.draw();
@@ -365,6 +494,7 @@ function showCanvas() {
 
 // 角丸長方形生成
 function drawRect(param) {
+
     var ctx = param.ctx;
     var x = param.x;
     var y =param.y;
@@ -374,20 +504,21 @@ function drawRect(param) {
     var color = param.color;
     
     ctx.save();
-        ctx.fillStyle = color;
-        ctx.beginPath();
-            ctx.moveTo(x + radius, y);
-            ctx.lineTo(x + width - radius, y);
-            ctx.arc(x + width - radius, y + radius, radius, Math.PI * 1.5, 0, false);
-            ctx.lineTo(x + width, y + height - radius);
-            ctx.arc(x + width - radius, y + height - radius, radius, 0, Math.PI * 0.5, false);
-            ctx.lineTo(x + radius, y + height);
-            ctx.arc(x + radius, y + height - radius, radius, Math.PI * 0.5, Math.PI, false);
-            ctx.lineTo(x, y + radius);
-            ctx.arc(x + radius, y + radius, radius, Math.PI, Math.PI * 1.5, false);
-        ctx.closePath();
-        ctx.fill();
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.arc(x + width - radius, y + radius, radius, Math.PI * 1.5, 0, false);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.arc(x + width - radius, y + height - radius, radius, 0, Math.PI * 0.5, false);
+    ctx.lineTo(x + radius, y + height);
+    ctx.arc(x + radius, y + height - radius, radius, Math.PI * 0.5, Math.PI, false);
+    ctx.lineTo(x, y + radius);
+    ctx.arc(x + radius, y + radius, radius, Math.PI, Math.PI * 1.5, false);
+    ctx.closePath();
+    ctx.fill();
     ctx.restore();
+
 }
 
 
@@ -400,10 +531,10 @@ function drawRect(param) {
 // 	  height: 150 / guideImg.width * guideImg.height
 // 	});
 
-// 	// then create layer
+// 	// then create edit
 // 	crop = new Konva.Layer({
-// 		x: -( stage.width() / 2 - 75 ),
-// 		y: -( stage.height() / 2 - 150 / templateImg.width * templateImg.height / 2 ),
+// 		x: -( stageForEdit.width() / 2 - 75 ),
+// 		y: -( stageForEdit.height() / 2 - 150 / templateImg.width * templateImg.height / 2 ),
 // 	});
 
 //   crop.add(previewGroup);
@@ -428,7 +559,7 @@ function drawRect(param) {
 // 	var reader = new FileReader();
 // 	reader.readAsDataURL(fileData);
 // 	reader.onload = function() {
-// 		uploadImgSrc = reader.result;
+// 		uploadImgObjSrc = reader.result;
 // 		// showCanvas();
 
 // 		customImg = document.getElementById('canvas-image');
