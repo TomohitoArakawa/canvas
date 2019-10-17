@@ -277,7 +277,7 @@ function loadLocalImage(e) {
     uploadImg.onload = () => {
 
       uploadImgObj = new Konva.Image({
-      	id: 'uploadImg',
+      	name: 'uploadImg',
       	x: stageForEdit.width() / 2 - 75,
       	y: stageForEdit.height() / 2 - 150 / uploadImg.width * uploadImg.height / 2,
         image: uploadImg,
@@ -351,10 +351,30 @@ function pinchInOut() {
 
 	var lastDist = 0;
 	var startScale = 1;
+	var activeImg = null;
 
 	function getDistance(p1, p2) {
 	  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 	}
+
+  stageForEdit.on( 'tap' , ( evt ) => {
+    // set active imgObj
+    var img = evt.target;
+    activeImg =
+      activeImg && activeImg.getName() === img.getName()
+        ? null
+        : img;
+
+    // sync scene graph
+    uploadImgObj.setAttrs({
+      stroke:
+        activeImg && activeImg.getName() === img.getName()
+          ? 'yellow'
+          : 'transparent'
+    });
+
+    edit.draw();
+  });
 
 	stageForEdit.getContent().addEventListener(
 	  'touchmove',
@@ -362,7 +382,7 @@ function pinchInOut() {
 	    var touch1 = evt.touches[0];
 	    var touch2 = evt.touches[1];
 
-	    if (touch1 && touch2) {
+	    if (touch1 && touch2 && activeImg) {
 	      var dist = getDistance(
 	        {
 	          x: touch1.clientX,
