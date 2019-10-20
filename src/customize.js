@@ -1,61 +1,83 @@
 import Konva from 'konva';
 import Store from 'store';
 
-var initOrigx = 0;
-var initOrigy = 0;
-var initAngle = 0;
-var initScalex = 1;
-var initScaley = 1;
+let initOrigX = 0;
+let initOrigY = 0;
+let initAngle = 0;
+let initScaleX = 1;
+let initScaleY = 1;
+let initGuideWidth;
+let initGuideHight;
 
-var origx = 0;
-var origy = 0;
-var angle = 0;
-var scalex = 1;
-var scaley = 1;
+let origX = 0;
+let origY = 0;
+let angle = 0;
+let scaleX = 1;
+let scaleY = 1;
 
-var windowWidth;
-var windowHeight;
+let initWindowWidth = window.innerWidth;
+let initWindowHight = window.innerHeight;
+let startWindowWidth = window.innerWidth;
+let startWindowHight = window.innerHeight;
+let resizeWindowWidth;
+let resizeWindowHight;
 
-const store = require('store');
+const store = require( 'store' );
 
-const file = document.getElementById('js-file');
-const removeCanvas = document.getElementById('js-remove');
-const rotateSlider = document.getElementById('js-range');
-const confirm = document.getElementById('js-confirm');
+// save value
+let saveValues = new Object;
 
-const head = document.getElementById('js-head');
-const foot = document.getElementById('js-foot');
-const wrapper = document.getElementById('js-wrapper');
-const canvasWrapper = document.getElementById('js-canvas-wrapper');
-const konvaOverLay = document.getElementById('js-konva-overlay');
-const konvaEdit = document.getElementById('js-konva-edit');
-const toggleWrapper = document.querySelectorAll('.js-toggle-wrapper');
+// submit value
+let submitValues = new Object;
 
-// const overLayCtx = canvasOverLay.getContext('2d');
+// trigger
+const fileUpload = document.getElementById( 'js-file' );
+const removeCanvas = document.getElementById( 'js-remove' );
+const rotateRange = document.getElementById( 'js-range' );
+const confirm = document.getElementById( 'js-confirm' );
 
-var uploadImg;
-var uploadImgObj;
-var uploadImgSrc;
+// target
+const head = document.getElementById( 'js-head' );
+const foot = document.getElementById( 'js-foot' );
+const wrapper = document.getElementById( 'js-wrapper' );
+const canvasWrapper = document.getElementById( 'js-canvas-wrapper' );
+const canvasQuality = document.getElementById( 'js-canvas-quality' );
+const konvaOverLay = document.getElementById( 'js-konva-overlay' );
+const konvaEdit = document.getElementById( 'js-konva-edit' );
+const customizeElement = document.querySelectorAll( '.js-customize-element' );
 
-var guideImg;
-var guideImgObj;
+// const overLayCtx = canvasOverLay.getContext( '2d' );
 
-var templateImg;
-var templateImgObj;
+let uploadImg;
+let uploadImgObj;
+let uploadImgSrc;
 
-var overLayImg;
-var overLayGroup;
+let guideImg;
+let guideImgObj;
 
-var template;
-var guide;
-var overLay;
-var edit;
+let templateImg;
+let templateImgObj;
 
-var stageForEdit;
-var stageForGuide;
-var stageForOverlay;
+let overLayImg;
+let overLayGroup;
 
-var transFormForEdit;
+let previewImgSrc;
+
+let template;
+let guide;
+let overLay;
+let edit;
+
+let stageForEdit;
+let stageForGuide;
+let stageForOverlay;
+
+let transFormForEdit;
+
+//
+
+
+
 
 //レスポンシブ対応
 // body読み込み時に一度だけbodyサイズを設定
@@ -66,68 +88,74 @@ document.body.onload = ()=>{
 
 }
 
-// リサイズを停止して500ms後にbodyサイズを設定
+// リサイズを停止して1ms後にbodyサイズを設定
 let timeoutId;
 
 window.addEventListener( 'resize' , () => {
 
-  clearTimeout(timeoutId);
+  clearTimeout( timeoutId );
 
   timeoutId = setTimeout(() => {
 
-      wrapper.style.minHeight = window.innerHeight + 'px';
-      canvasWrapper.style.minHeight = window.innerHeight - 140 + 'px';
+  	resizeWindowWidth = window.innerWidth;
+  	resizeWindowHight = window.innerHeight;
 
-      createStageLayer();
+    wrapper.style.minHeight = window.innerHeight + 'px';
+    canvasWrapper.style.minHeight = window.innerHeight - 140 + 'px';
 
-      guideImgObj
-      .x( stageForEdit.width() / 2 - 75 )
-      .y( stageForEdit.height() / 2 - 150 / templateImg.width * templateImg.height / 2 );
-      guide.add( guideImgObj );
-      guide.batchDraw();
-      stageForGuide.add( guide );
+    createStageLayer();
 
-      overLayGroup
-      .x( 0 )
-      .y( 0 );
-      overLay.batchDraw();
-			overLay.add( overLayGroup );
-			stageForOverlay.add( overLay );
+    guideImgObj
+    .x( stageForEdit.width() / 2 - 75 )
+    .y( stageForEdit.height() / 2 - 150 / templateImg.width * templateImg.height / 2 );
+    guide.add( guideImgObj );
+    guide.batchDraw();
+    stageForGuide.add( guide );
 
-      templateImgObj
-      .x( stageForEdit.width() / 2 - 75 )
-      .y( stageForEdit.height() / 2 - 150 / templateImg.width * templateImg.height / 2 );
-      template.batchDraw();
-			template.add( templateImgObj );
-			stageForEdit.add( template );
+    overLayGroup
+    .x( 0 )
+    .y( 0 );
+    overLay.batchDraw();
+		overLay.add( overLayGroup );
+		stageForOverlay.add( overLay );
 
-			if ( !file.value == '' || !file.value == null ) {
+    templateImgObj
+    .x( stageForEdit.width() / 2 - 75 )
+    .y( stageForEdit.height() / 2 - 150 / templateImg.width * templateImg.height / 2 );
+    template.batchDraw();
+		template.add( templateImgObj );
+		stageForEdit.add( template );
 
-				uploadImgObj
-				.x( origx )
-				.y( origy )
-				.scaleX( scalex )
-				.scaleY( scaley )
-				.rotation( angle );
+		if ( canvasQuality.classList.contains( 'is-show' ) ) {
 
-	      edit.batchDraw();
-				edit.add( uploadImgObj );
-				stageForEdit.add( edit );
+			uploadImgObj
+			.x( uploadImgObj.x() + ( resizeWindowWidth - startWindowWidth ) / 2 )
+			.y( uploadImgObj.y() + ( resizeWindowHight - startWindowHight ) / 2 )
+			.scaleX( scaleX )
+			.scaleY( scaleY )
+			.rotation( angle );
 
-				console.log( uploadImgObj.x() );
-				console.log( uploadImgObj.y() );
-				console.log( uploadImgObj.scaleX() );
-				console.log( uploadImgObj.scaleY() );
-				console.log( uploadImgObj.rotation() );
+      edit.batchDraw();
+			edit.add( uploadImgObj );
+			stageForEdit.add( edit );
 
-			}
+			console.log( uploadImgObj.x() );
+			console.log( uploadImgObj.y() );
+			console.log( uploadImgObj.scaleX() );
+			console.log( uploadImgObj.scaleY() );
+			console.log( uploadImgObj.rotation() );
 
-			pinchInOut();
+		}
 
-  }, 50);
+		pinchInOut();
+
+		startWindowWidth = resizeWindowWidth;
+		startWindowHight = resizeWindowHight;
+
+  }, 100);
+
 });
 
-//** Konva.js | Start **//
 
 // first we need to create a stage
 function createStageLayer() {
@@ -151,14 +179,6 @@ function createStageLayer() {
 }
 createStageLayer();
 
-var startOrigX = stageForEdit.width() / 2;
-var startOrigY = stageForEdit.height() / 2;
-
-console.log(startOrigX);
-console.log(startOrigY);
-
-console.log(stageForEdit);
-
 
 // then create layer
 template = new Konva.Layer();
@@ -181,13 +201,13 @@ function templateCanvas( templateImgPath ) {
 		  draggable: false
 		});
 
-		template.add(templateImgObj);
-		stageForEdit.add(template);
+		template.add( templateImgObj );
+		stageForEdit.add( template );
 
 	};
 	templateImg.src = templateImgPath;
 }
-templateCanvas('../img/temp_iphone_x_xs.png');
+templateCanvas( '../img/temp_iphone_x_xs.png' );
 
 
 function overLayCanvas( guideImgPath ) {
@@ -200,7 +220,7 @@ function overLayCanvas( guideImgPath ) {
 		overLayGroup = new Konva.Group({
 			x: 0,
 			y: 0,
-			clipFunc: (ctx) => {
+			clipFunc: ( ctx ) => {
 				ctx.fillStyle = '#000';
 				ctx.fillRect( 0 , 0 , stageForOverlay.width() , stageForOverlay.height() );
 				ctx.globalCompositeOperation = 'xor';
@@ -220,13 +240,13 @@ function overLayCanvas( guideImgPath ) {
 			draggable: false
 		});
 
-		overLay.add(overLayGroup);
-		stageForOverlay.add(overLay);
+		overLay.add( overLayGroup );
+		stageForOverlay.add( overLay );
 
 	};
 
 }
-overLayCanvas('../img/guide_iphone_x_xs.png');
+overLayCanvas( '../img/guide_iphone_x_xs.png' );
 
 
 // Guide 
@@ -244,146 +264,294 @@ function guideCanvas( guideImgPath ) {
 		  draggable: false
 		});
 
-		guide.add(guideImgObj);
-		stageForGuide.add(guide);
+		guide.add( guideImgObj );
+		stageForGuide.add( guide );
 
 	};
 	guideImg.src = guideImgPath;
 }
-guideCanvas('../img/guide_iphone_x_xs.png');
+guideCanvas( '../img/guide_iphone_x_xs.png' );
+
 
 // fileUpload
-function loadLocalImage(e) {
-	var fileData = e.target.files[0];
-	if ( !fileData.type.match( 'image.*' ) ) {
+function loadLocalImage( e ) {
 
-		alert('画像を選択してください');
-		return;
+  const getOrientation = buffer => {
+    const dv = new DataView( buffer )
+    if ( dv.getUint16( 2 ) !== 65505 ) {
+      return 0
+    }
+    const littleEndian = dv.getUint8( 12 ) === 73
+    const count = dv.getUint16( 20, littleEndian )
+    for ( let i = 0; i < count; i++ ) {
+      const start = 22 + i * 12
+      const tag = dv.getUint16( start, littleEndian )
+      if ( tag === 274 ) {
+        const value = dv.getUint16( start + 8, littleEndian )
+        return value
+      }
+    }
+    return 0
+  }
 
-	}	else if ( fileData.type === undefined ) {
+  const arrayBufferToDataURL = arrBuf => {
+    const blob = new Blob([arrBuf], { type: 'image/jpeg' })
+    return window.URL.createObjectURL( blob )
+  }
 
-		alert('undefined');
-		return;
+  const embedImageTag = dataURL => {
+    const img = new Image()
+    img.src = dataURL
+    return img
+  }
 
-	}
+  const createTransformedCanvas = ( orientation, img ) => {
+    const canvas = document.createElement( 'canvas' )
+    const ctx = canvas.getContext( '2d' )
+    if ( [ 5 , 6 , 7 , 8 ].indexOf( orientation ) > -1 ) {
+      canvas.width = img.height
+      canvas.height = img.width
+    } else {
+      canvas.width = img.width
+      canvas.height = img.height
+    }
+    switch ( orientation ) {
+      case 2: ctx.transform( -1, 0, 0, 1, img.width, 0 ); break
+      case 3: ctx.transform( -1, 0, 0, -1, img.width, img.height ); break
+      case 4: ctx.transform( 1, 0, 0, -1, 0, img.height ); break
+      case 5: ctx.transform( 0, 1, 1, 0, 0, 0 ); break
+      case 6: ctx.transform( 0, 1, -1, 0, img.height, 0 ); break
+      case 7: ctx.transform( 0, -1, -1, 0, img.height, img.width ); break
+      case 8: ctx.transform( 0, -1, 1, 0, 0, img.width ); break
+      default: break;
+    }
+    ctx.drawImage( img, 0, 0 )
+    return canvas
+  }
 
-	var reader = new FileReader();
-	reader.readAsDataURL(fileData);
-	reader.onload = () => {
-		uploadImgSrc = reader.result;
+  const fileData = e.target.files[ 0 ]
+  const reader = new FileReader()
+
+  reader.addEventListener( 'load', () => {
+
+  	const orientation = getOrientation( reader.result )
+  	const img = new Image()
+
+    img.src = arrayBufferToDataURL( reader.result )
+
+    img.addEventListener( 'load', () => {
+
+      const canvas = createTransformedCanvas( orientation, img )
+      window.URL.revokeObjectURL( img.src )
+      embedImageTag( canvas.toDataURL( 'image/jpeg' ) )
+
+      uploadImgSrc = canvas.toDataURL( 'image/jpeg' )
+
+      optimisationImg( uploadImgSrc );
+
+    })
+
+  })
+
+  reader.readAsArrayBuffer( fileData )
+
+}
+fileUpload.addEventListener( 'change', loadLocalImage, false);
+
+
+// 
+function optimisationImg( uploadImgSrc ) {
 
     uploadImg = new Image();
     uploadImg.src = uploadImgSrc;
     uploadImg.onload = () => {
 
-      uploadImgObj = new Konva.Image({
-      	name: 'uploadImg',
-      	x: stageForEdit.width() / 2 - 75,
-      	y: stageForEdit.height() / 2 - 150 / uploadImg.width * uploadImg.height / 2,
-        image: uploadImg,
-        width: 150,
-        height: 150 / uploadImg.width * uploadImg.height,
-        draggable: true
-      });
+    uploadImgObj = new Konva.Image({
+    	name: 'uploadImg',
+    	x: stageForEdit.width() / 2 - 75,
+    	y: stageForEdit.height() / 2 - 150 / uploadImg.width * uploadImg.height / 2,
+      image: uploadImg,
+      width: 150,
+      height: 150 / uploadImg.width * uploadImg.height,
+      draggable: true
+    });
 
-      transFormForEdit = new Konva.Transformer({
-        node: uploadImgObj,
-        keepRatio: true,
-        centeredScaling: true,
-        enabledAnchors: [ 'top-left', 'top-right', 'bottom-left', 'bottom-right' ],
-        rotateEnabled: false,
-        resizeEnabled: true,
-        rotateAnchorOffset: 0
-      });
+    transFormForEdit = new Konva.Transformer({
+      node: uploadImgObj,
+      keepRatio: true,
+      centeredScaling: true,
+      enabledAnchors: [ 'top-left', 'top-right', 'bottom-left', 'bottom-right' ],
+      rotateEnabled: false,
+      resizeEnabled: true,
+      rotateAnchorOffset: 0,
+      anchorSize: 20,
+      anchorStroke: 'black',
+      anchorStrokeWidth: 1,
+      anchorFill: 'white',
+      borderStrokeWidth: 0
+    });
 
-      // add the image to the edit
-      edit.add(uploadImgObj);
-      edit.batchDraw();
+    // add the image to the edit
+    edit.add( uploadImgObj) ;
+    edit.batchDraw();
 
-      edit.add(transFormForEdit);
-      transFormForEdit.attachTo(uploadImgObj);
-      edit.draw();
+    edit.add( transFormForEdit );
+    transFormForEdit.attachTo( uploadImgObj );
+    edit.draw();
 
-      stageForEdit.add(edit);
+    stageForEdit.add( edit );
 
-	    	origx = uploadImgObj.x();
-	    	origy = uploadImgObj.y();
-		    console.log( origx );
-		    console.log( origy );
+  	origX = uploadImgObj.x();
+  	origY = uploadImgObj.y();
+  	initOrigX = uploadImgObj.x();
+  	initOrigY = uploadImgObj.y();
 
-	    	initOrigx = uploadImgObj.x();
-	    	initOrigy = uploadImgObj.y();
-		    console.log( initOrigx );
-		    console.log( initOrigx );
+    console.log( origX );
+    console.log( origY );
+    console.log( initOrigX );
+    console.log( initOrigX );
+    console.log( uploadImgSrc );
+    console.log( fileUpload.value );
 
-		    console.log(uploadImgObj);
+    uploadImgObj.on( 'transformend' , () => {
 
-		    console.log(file.value);
+	    scaleX = uploadImgObj.scaleX();
+	    scaleY = uploadImgObj.scaleY();
+			origX = uploadImgObj.x();
+			origY = uploadImgObj.y();
+	    console.log( scaleX );
+	    console.log( scaleY );
+	    console.log( origX );
+	    console.log( origY );
 
-      uploadImgObj.on( 'transformend' , () => {
+    });
 
-		    scalex = uploadImgObj.scaleX();
-		    scaley = uploadImgObj.scaleY();
-		    console.log(scalex);
-		    console.log(scaley);
+    uploadImgObj.on( 'dragend' , () => {
 
-      });
+    	origX = uploadImgObj.x();
+    	origY = uploadImgObj.y();
+	    console.log( origX );
+	    console.log( origY );
 
-      uploadImgObj.on( 'dragend' , () => {
-
-      	origx = uploadImgObj.x();
-      	origy = uploadImgObj.y();
-		    console.log( origx );
-		    console.log( origy );
-
-      });
+    });
       
-    };
+  }
 
-	}
+  canvasQuality.classList.add( 'is-show' );
 
 }
-file.addEventListener('change', loadLocalImage, false);
+
+
+// 回転軸を中心に
+const rotatePoint = ( { x, y } , rad ) => {
+
+  const rcos = Math.cos( rad );
+  const rsin = Math.sin( rad );
+  return { x: x * rcos - y * rsin, y: y * rcos + x * rsin };
+
+};
+
+
+// will work for shapes with top-left origin, like rectangle
+function rotateAroundCenter( target , angle ) {
+
+  //current angle origin (0, 0) relative to desired origin - center (target.width()/2, target.height()/2)
+  const topLeft = { x: - target.width() * scaleX / 2, y: - target.height() * scaleY / 2 };
+  const current = rotatePoint( topLeft , Konva.getAngle( target.rotation() ) );
+  const rotated = rotatePoint( topLeft, Konva.getAngle( Number( angle ) ) );
+  const dx = rotated.x - current.x,
+        dy = rotated.y - current.y;
+
+  target.rotation( Number( angle ) );
+  target.x( target.x() + dx );
+  target.y( target.y() + dy );
+
+}
+
+
+// TODO:回転スライダー
+function rotateSlider( angle ) {
+
+	rotateAroundCenter( uploadImgObj , angle );
+
+	uploadImgObj
+	.rotation( Number( angle ) );
+
+  edit.batchDraw();
+	edit.add( uploadImgObj );
+	stageForEdit.add( edit );
+
+}
+
+rotateRange.addEventListener( 'input', function() {
+
+	rotateSlider( Number( this.value ) );
+
+	angle = Number( this.value );
+	origX = uploadImgObj.x();
+	origY = uploadImgObj.y();
+
+	console.log( angle );
+	console.log( origX );
+	console.log( origY );
+
+}, false);
+
+rotateRange.addEventListener( 'change', function() {
+
+	rotateSlider( Number( this.value ) );
+
+	angle = Number( this.value );
+	origX = uploadImgObj.x();
+	origY = uploadImgObj.y();
+
+	console.log( angle );
+	console.log( origX );
+	console.log( origY );
+
+}, false);
 
 
 // Pinch In Out
 function pinchInOut() {
 
-	var lastDist = 0;
-	var startScale = 1;
-	var activeImg = null;
+	let lastDist = 0;
+	let startScale = 1;
+	// let activeImg = null;
 
-	function getDistance(p1, p2) {
-	  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+	function getDistance( p1, p2 ) {
+
+	  return Math.sqrt( Math.pow( p2.x - p1.x, 2 ) + Math.pow( p2.y - p1.y, 2 ) );
+	
 	}
 
-  stageForEdit.on( 'tap' , ( evt ) => {
-    // set active imgObj
-    var img = evt.target;
-    activeImg =
-      activeImg && activeImg.getName() === img.getName()
-        ? null
-        : img;
+  // stageForEdit.on( 'tap' , ( evt ) => {
+  //   // set active imgObj
+  //   let img = evt.target;
+  //   activeImg =
+  //     activeImg && activeImg.getName() === img.getName()
+  //       ? null
+  //       : img;
 
-    // sync scene graph
-    uploadImgObj.setAttrs({
-      stroke:
-        activeImg && activeImg.getName() === img.getName()
-          ? 'yellow'
-          : 'transparent'
-    });
+  //   // sync scene graph
+  //   uploadImgObj.setAttrs({
+  //     stroke:
+  //       activeImg && activeImg.getName() === img.getName()
+  //         ? 'yellow'
+  //         : 'transparent'
+  //   });
 
-    edit.draw();
-  });
+  //   edit.draw();
+  // });
 
 	stageForEdit.getContent().addEventListener(
 	  'touchmove',
-	  function(evt) {
-	    var touch1 = evt.touches[0];
-	    var touch2 = evt.touches[1];
+	  function( evt ) {
+	    let touch1 = evt.touches[ 0 ];
+	    let touch2 = evt.touches[ 1 ];
 
-	    if (touch1 && touch2 && activeImg) {
-	      var dist = getDistance(
+	    if ( touch1 && touch2 ) {
+	      let dist = getDistance(
 	        {
 	          x: touch1.clientX,
 	          y: touch1.clientY
@@ -394,14 +562,15 @@ function pinchInOut() {
 	        }
 	      );
 
-	      if (!lastDist) {
+	      if ( !lastDist ) {
 	        lastDist = dist;
 	      }
 
-	      var scale = (uploadImgObj.scaleX() * dist) / lastDist;
+	      let scale = ( uploadImgObj.scaleX() * dist ) / lastDist;
 
-	      uploadImgObj.scaleX(scale);
-	      uploadImgObj.scaleY(scale);
+	      // rotateAroundCenter(uploadImgObj , uploadImgObj.rotation() )
+	      uploadImgObj.scaleX( scale );
+	      uploadImgObj.scaleY( scale );
 	      edit.draw();
 	      lastDist = dist;
 
@@ -417,10 +586,10 @@ function pinchInOut() {
 
 	    lastDist = 0;
 
-	    scalex = uploadImgObj.scaleX();
-	    scaley = uploadImgObj.scaleY();
-	    console.log(scalex);
-	    console.log(scaley);
+	    scaleX = uploadImgObj.scaleX();
+	    scaleY = uploadImgObj.scaleY();
+	    console.log( scaleX );
+	    console.log( scaleY );
 	  
 	  },
 	  
@@ -429,37 +598,52 @@ function pinchInOut() {
 	);
 
 }
+
 pinchInOut();
 
 
 // 削除
-removeCanvas.addEventListener('click', () => {
+removeCanvas.addEventListener( 'click', () => {
 
 	event.preventDefault();
 
 	edit.destroy();
 	uploadImgObj.clearCache();
 
-	file.value = null;
-	console.log(file.value);
+	fileUpload.value = null;
+	console.log( fileUpload.value );
+
+  canvasQuality.classList.remove( 'is-show' );
 
 } , false );
 
+
 // 確定画面へ
-confirm.addEventListener('click', () => {
+confirm.addEventListener( 'click', () => {
 
 	event.preventDefault();
 
-	showCanvas();
-	// historyToggle();
+	showPreview();
 
 	window.history.pushState( null , null , 'preview.html' );
+
+	saveValues.uploadImgSrc = uploadImgSrc;
+	// saveValues.previewImgSrc = previewImgSrc;
+	saveValues.origX = origX;
+	saveValues.origY = origY;
+	saveValues.scaleX = scaleX;
+	saveValues.scaleY = scaleY;
+	saveValues.angle = angle;
+	saveValues.saveWindowWidth = startWindowWidth;
+	saveValues.saveWindowHight = startWindowHight;
+
+	console.log( saveValues );
 
 } , false );
 
 
 // トリミング
-function showCanvas() {
+function showPreview() {
 
 	// first we need to create a stage
 	let stageForPreview = new Konva.Stage({ 
@@ -473,8 +657,8 @@ function showCanvas() {
 
 	let previewGroup = new Konva.Group({
 			x: -( stageForEdit.width() / 2 - 75 ),
-			y: -( stageForEdit.height() / 2 - 150 / templateImg.width * templateImg.height / 2 ),
-      clipFunc: function(ctx) {
+			y: -( stageForEdit.height() / 2 - 150 / guideImg.width * guideImg.height / 2 ),
+      clipFunc: function( ctx ) {
 				  drawRect({
 				    ctx : ctx,
 				    x : stageForEdit.width() / 2 - 75,
@@ -488,155 +672,102 @@ function showCanvas() {
       draggable: false
 	});
 
-	var cloneGuide = guideImgObj.clone();
-	var cloneTemplate = templateImgObj.clone();
-	var cloneUploadImg = uploadImgObj.clone();
+	let cloneGuide = guideImgObj.clone();
+	let cloneTemplate = templateImgObj.clone();
+	let cloneUploadImg = uploadImgObj.clone();
 
-	previewGroup.add(cloneGuide);
-  previewGroup.add(cloneTemplate);
-  previewGroup.add(cloneUploadImgObj);
+	previewGroup.add( cloneGuide );
+  previewGroup.add( cloneTemplate );
+  previewGroup.add( cloneUploadImg );
   cloneGuide.moveToTop();
   cloneTemplate.moveToBottom();
   preview.draw();
 
-  preview.add(previewGroup);
-  stageForPreview.add(preview);
+  preview.add( previewGroup );
+  stageForPreview.add( preview );
 
-  let cropData = stageForPreview.toDataURL();
+  previewImgSrc = stageForPreview.toDataURL( { mimetype: 'image/jpeg' } );
 
-  console.log(cropData);
-
-  store.set('mobicul', {
-  	cropData: cropData
-  });
+  console.log( previewImgSrc );
 
 }
 
 // 角丸長方形生成
-function drawRect(param) {
+function drawRect( param ) {
 
-    var ctx = param.ctx;
-    var x = param.x;
-    var y =param.y;
-    var width = param.width;
-    var height = param.height;
-    var radius = param.radius || 0;
-    var color = param.color;
-    
-    ctx.save();
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + width - radius, y);
-    ctx.arc(x + width - radius, y + radius, radius, Math.PI * 1.5, 0, false);
-    ctx.lineTo(x + width, y + height - radius);
-    ctx.arc(x + width - radius, y + height - radius, radius, 0, Math.PI * 0.5, false);
-    ctx.lineTo(x + radius, y + height);
-    ctx.arc(x + radius, y + height - radius, radius, Math.PI * 0.5, Math.PI, false);
-    ctx.lineTo(x, y + radius);
-    ctx.arc(x + radius, y + radius, radius, Math.PI, Math.PI * 1.5, false);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
+  let ctx = param.ctx;
+  let x = param.x;
+  let y =param.y;
+  let width = param.width;
+  let height = param.height;
+  let radius = param.radius || 0;
+  let color = param.color;
+  
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo( x + radius, y );
+  ctx.lineTo( x + width - radius, y );
+  ctx.arc( x + width - radius, y + radius, radius, Math.PI * 1.5, 0, false );
+  ctx.lineTo( x + width, y + height - radius);
+  ctx.arc( x + width - radius, y + height - radius, radius, 0, Math.PI * 0.5, false );
+  ctx.lineTo( x + radius, y + height );
+  ctx.arc( x + radius, y + height - radius, radius, Math.PI * 0.5, Math.PI, false );
+  ctx.lineTo( x, y + radius );
+  ctx.arc( x + radius, y + radius, radius, Math.PI, Math.PI * 1.5, false );
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
 
 }
 
+ // 保存一覧からの再描画 
+const trafficURL = document.referrer;
 
-// function cropCanvas() {
+console.log( trafficURL );
 
-// 	// first we need to create a stage
-// 	stageForCrop = new Konva.Stage({ 
-// 	  container: 'js-konva-crop',// id of container <div> 
-// 	  width: 150,
-// 	  height: 150 / guideImg.width * guideImg.height
-// 	});
+window.addEventListener( 'load' , () => {
 
-// 	// then create edit
-// 	crop = new Konva.Layer({
-// 		x: -( stageForEdit.width() / 2 - 75 ),
-// 		y: -( stageForEdit.height() / 2 - 150 / templateImg.width * templateImg.height / 2 ),
-// 	});
+	if ( trafficURL.match( /save_data/ ) ) {
 
-//   crop.add(previewGroup);
-//   stageForCrop.add(crop);
+	 optimisationImg( reDrawValues.uploadImgSrc );
 
-//   let cropData = stageForCrop.toDataURL();
+	 setTimeout(() => {
 
-//   store.set('mobicul', {
-//   	cropData: cropData
-//   });
+		rotateAroundCenter( uploadImgObj , reDrawValues.angle );
 
-// }
+		 uploadImgObj
+		 .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 )
+		 .y( reDrawValues.origY + ( initWindowHight - reDrawValues.saveWindowHight ) / 2  )
+		 .scaleX( reDrawValues.scaleX )
+		 .scaleY( reDrawValues.scaleY )
 
+      edit.batchDraw();
+			edit.add( uploadImgObj );
+			stageForEdit.add( edit );
 
-// // ファイルアップロード
-// function loadLocalImage(e) {
-// 	var fileData = e.target.files[0];
-// 	if(!fileData.type.match('image.*')) {
-// 		alert('画像を選択してください');
-// 		return;
-// 	}	
-// 	var reader = new FileReader();
-// 	reader.readAsDataURL(fileData);
-// 	reader.onload = function() {
-// 		uploadImgObjSrc = reader.result;
-// 		// showCanvas();
+			initOrigX = reDrawValues.origX;
+			initOrigY = reDrawValues.origY;
+			initAngle = reDrawValues.angle;
+			initScaleX = reDrawValues.scaleX;
+			initScaleY = reDrawValues.scaleY;
 
-// 		customImg = document.getElementById('canvas-image');
-// 		customImg.src = uploadImgSrc;
+			origX = initOrigX;
+			origY = initOrigY;
+			angle = initAngle;
+			scaleX = initScaleX;
+			scaleY = initScaleY;
 
-// 		customImg.style.top = '50%';
-// 		customImg.style.left = '50%';
-// 		customImg.style.marginTop = -customImg.height / 2 + 'px';
-// 		customImg.style.marginLeft = -customImg.width / 2 + 'px';
+			rotateRange.value = angle;
 
-// 		console.log(customImg.width);
-// 		console.log(customImg.height);
+			console.log( uploadImgObj.x() );
+			console.log( uploadImgObj.y() );
+			console.log( uploadImgObj.scaleX() );
+			console.log( uploadImgObj.scaleY() );
+			console.log( uploadImgObj.rotation() );
 
-// 	}
-// }
-// file.addEventListener('change', loadLocalImage, false);
+	 	}, 100);
 
-// // レンジスライダー
-// function setVal(which , val) {
-// 	console.log( which+ ',' + val)
-// 	switch(which) {
-// 		case 'x':origx=parseFloat(val);
-// 		break;
-// 		case 'y':origy=parseFloat(val);
-// 		break;
-// 		case 'sx':scalex=parseFloat(val);
-// 		break;
-// 		case 'sy':scaley=parseFloat(val);
-// 		break;  
-// 		case 'r':rotation=parseFloat(val);
-// 		break;      
-// 	}
-// 	showCanvas();
-// }
-// rotateSlider.addEventListener('input', function() {
-// 	setVal('r' , this.value);
-// }, false);
-// rotateSlider.addEventListener('change', function() {
-// 	setVal('r' , this.value);
-// }, false);
+	}
 
-// //Canvas描画
-// function showCanvas() {
-// 	ctx.setTransform(1 , 0 , 0 , 1 , 0 , 0);
-// 	ctx.clearRect(0 , 0, canvasWrapper.offsetWidth , canvasWrapper.offsetHeight);
-// 	counter++;
-// 	var img = new Image();
-// 	img.src = uploadImgSrc;
-// 	var angle = Math.PI * rotation / 180;
-// 	ctx.setTransform(
-// 		scalex * Math.cos(angle),
-// 		scalex * Math.sin(angle),
-// 		-scaley * Math.sin(angle),
-// 		scaley * Math.cos(angle),
-// 		origx,
-// 		origy);
-// 	img.onload = function() {
-// 		ctx.drawImage(img, 0 , 0 , img.width , img.height , -img.width / 2 , -img.height / 2 , img.width , img.height);
-// 	}
-// }
+}, false);

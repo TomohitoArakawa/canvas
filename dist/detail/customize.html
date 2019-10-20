@@ -9,14 +9,12 @@
 <body>
 	<form action="" id="" class="">
 
-		<!-- customize -->
-		<div id="js-wrapper" class="js-toggle-wrapper wrapper wrapper-for-cutomize">
+		<div id="js-wrapper" class="wrapper wrapper-for-cutomize">
 
-			<!-- navigation -->
 			<nav id="js-head" class="nav-wrapper nav-wrapper-top nav-wrapper-color-tertiary nav-wrapper-height-low">
 				<ul class="nav-holizontal nav-space-between">
 					<li class="nav-item">
-						<a href="javascript:history.back();" id="" class="link link-color-secondary">戻る</a>
+						<a href="" id="" class="link link-color-secondary">戻る</a>
 					</li>
 					<li class="nav-item">
 						<a href="./preview.html" id="js-confirm" class="link link-color-secondary">確定画面へ</a>
@@ -24,8 +22,8 @@
 				</ul>
 			</nav>
 
-			<!-- canvas -->
-			<div id="js-canvas-wrapper" class="canvas-wrapper">
+			<!-- customize -->
+			<div id="js-canvas-wrapper" class="js-customize-element canvas-wrapper">
 
 				<div id="js-konva-guide" class="konva-guide"></div>
 
@@ -33,10 +31,18 @@
 
 				<div id="js-konva-edit" class="konva-edit"></div>
 
+				<p id="js-canvas-quality" class="canvas-quality">
+					画像品質:
+					<span class="">★</span>
+					<span class="">★</span>
+					<span class="">★</span>
+					<span class="">★</span>
+					<span class="">★</span>
+				</p>
+
 			</div>
 
-			<!-- 回転 -->
-			<div id="js-rotate-slider" class="range-slider-wrapper">
+			<div id="js-rotate-slider" class="js-customize-element range-slider-wrapper">
 				<button id="js-rotate-negative" class="button-icon">
 					<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 40 40">
 					  <title>rotate-left</title>
@@ -46,7 +52,7 @@
 					  </g>
 					</svg>
 				</button>
-				<input type="range" id="js-range" class="range-slider" min="-180" max="180">
+				<input type="range" id="js-range" class="range-slider" value="0" min="-180" max="180">
 				<button class="button-icon">
 					<svg id="rotate-right" xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 40 40">
 					  <title>rotate-right</title>
@@ -56,8 +62,7 @@
 				</button>
 			</div>
 
-			<!-- ボタン -->
-			<nav id="js-foot" class="nav-wrapper nav-wrapper-color-tertiary nav-space-between nav-wrapper-height-low">
+			<nav id="js-foot" class="js-customize-element nav-wrapper nav-wrapper-color-tertiary nav-space-between nav-wrapper-height-low">
 				<ul class="nav-holizontal nav-space-between">
 					<li class="nav-item">
 						<div class="file-uploader-wrapper">
@@ -78,22 +83,11 @@
 					</li>
 				</ul>
 			</nav>
+			<!-- //customize -->
 
-		</div>
-
-		<!-- preview -->
-		<div id="" class="js-toggle-wrapper wrapper is-hide">
-
-			<!-- navigation -->
-			<nav class="nav-wrapper nav-wrapper-top nav-wrapper-color-tertiary nav-wrapper-height-low">
-				<ul class="nav-holizontal nav-space-between">
-					<li class="nav-item">
-						<a href="javascript:void(0);" id="" class="link link-color-secondary">戻る</a>
-					</li>
-				</ul>
-			</nav>
-
-			<div id="js-konva-preview" class="konva-preview"></div>
+			<!-- preview -->
+			<div id="js-konva-preview" class="js-customize-element konva-preview"></div>
+			<!-- //preview -->
 
 		</div>
 
