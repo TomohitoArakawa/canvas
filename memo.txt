@@ -1,0 +1,31 @@
+■再描画の問題点
+・拡大・縮小・回転時にx,y座標変わる
+
+□TODO
+【DONE】・UAによるテンプレートサイズの出し分け
+initGuideWidt
+initGuideHight
+150/303
+200/405
+
+・保存一覧から再描画時にテンプレートサイズの差分に対する調整
+uploadImgWidth * reDrawValues.scaleX - reDrawValues.uploadImgWidth
+uploadImgHeight * reDrawValues.scaleY - reDrawValues.uploadImgHeight
+
+[OK]
+デフォルト
+拡大
+
+[NG]
+移動
+回転
+
+・リセット
+通常時:アップロード時
+差描画時:訪問時
+
+・フルスクリーン表示/通常表示切替時の再描画
+https://lab.syncer.jp/Web/API_Interface/Reference/IDL/Document/fullscreen/
+
+・画像角度検知
+撮影即使用だと動いていない

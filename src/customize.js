@@ -7,7 +7,7 @@ let initAngle = 0;
 let initScaleX = 1;
 let initScaleY = 1;
 let initGuideWidth;
-let initGuideHight;
+let initGuideHeight;
 
 let origX = 0;
 let origY = 0;
@@ -16,11 +16,11 @@ let scaleX = 1;
 let scaleY = 1;
 
 let initWindowWidth = window.innerWidth;
-let initWindowHight = window.innerHeight;
+let initWindowHeight = window.innerHeight;
 let startWindowWidth = window.innerWidth;
-let startWindowHight = window.innerHeight;
+let startWindowHeight = window.innerHeight;
 let resizeWindowWidth;
-let resizeWindowHight;
+let resizeWindowHeight;
 
 const store = require( 'store' );
 
@@ -51,6 +51,8 @@ const customizeElement = document.querySelectorAll( '.js-customize-element' );
 let uploadImg;
 let uploadImgObj;
 let uploadImgSrc;
+let uploadImgWidth;
+let uploadImgHeight;
 
 let guideImg;
 let guideImgObj;
@@ -74,7 +76,38 @@ let stageForOverlay;
 
 let transFormForEdit;
 
-//
+
+//ユーザーエージェント
+const getDevice = (() => {
+
+    let ua = navigator.userAgent;
+
+    if ( ua.indexOf( 'iPhone' ) > 0 || ua.indexOf( 'iPod' ) > 0 || ua.indexOf( 'Android' ) > 0 && ua.indexOf( 'Mobile' ) > 0 ) {
+
+        return 'smartphone';
+
+    } else if ( ua.indexOf( 'iPad' ) > 0 || ua.indexOf( 'Android' ) > 0 ) {
+
+        return 'tablet';
+
+    } else {
+
+        return 'pc';
+    }
+})();
+
+
+if ( getDevice == 'smartphone' ) {
+
+	initGuideWidth = 150;
+	initGuideHeight = 303;
+
+} else if ( getDevice == 'talet' || getDevice == 'pc' ) {
+
+	initGuideWidth = 200;
+	initGuideHeight = 405;
+
+}
 
 
 
@@ -98,7 +131,7 @@ window.addEventListener( 'resize' , () => {
   timeoutId = setTimeout(() => {
 
   	resizeWindowWidth = window.innerWidth;
-  	resizeWindowHight = window.innerHeight;
+  	resizeWindowHeight = window.innerHeight;
 
     wrapper.style.minHeight = window.innerHeight + 'px';
     canvasWrapper.style.minHeight = window.innerHeight - 140 + 'px';
@@ -106,8 +139,8 @@ window.addEventListener( 'resize' , () => {
     createStageLayer();
 
     guideImgObj
-    .x( stageForEdit.width() / 2 - 75 )
-    .y( stageForEdit.height() / 2 - 150 / templateImg.width * templateImg.height / 2 );
+    .x( stageForEdit.width() / 2 - initGuideWidth / 2 )
+    .y( stageForEdit.height() / 2 - initGuideWidth / templateImg.width * templateImg.height / 2 );
     guide.add( guideImgObj );
     guide.batchDraw();
     stageForGuide.add( guide );
@@ -120,8 +153,8 @@ window.addEventListener( 'resize' , () => {
 		stageForOverlay.add( overLay );
 
     templateImgObj
-    .x( stageForEdit.width() / 2 - 75 )
-    .y( stageForEdit.height() / 2 - 150 / templateImg.width * templateImg.height / 2 );
+    .x( stageForEdit.width() / 2 - initGuideWidth / 2 )
+    .y( stageForEdit.height() / 2 - initGuideWidth / templateImg.width * templateImg.height / 2 );
     template.batchDraw();
 		template.add( templateImgObj );
 		stageForEdit.add( template );
@@ -130,7 +163,7 @@ window.addEventListener( 'resize' , () => {
 
 			uploadImgObj
 			.x( uploadImgObj.x() + ( resizeWindowWidth - startWindowWidth ) / 2 )
-			.y( uploadImgObj.y() + ( resizeWindowHight - startWindowHight ) / 2 )
+			.y( uploadImgObj.y() + ( resizeWindowHeight - startWindowHeight ) / 2 )
 			.scaleX( scaleX )
 			.scaleY( scaleY )
 			.rotation( angle );
@@ -150,7 +183,7 @@ window.addEventListener( 'resize' , () => {
 		pinchInOut();
 
 		startWindowWidth = resizeWindowWidth;
-		startWindowHight = resizeWindowHight;
+		startWindowHeight = resizeWindowHeight;
 
   }, 100);
 
@@ -174,7 +207,7 @@ function createStageLayer() {
 	stageForEdit = new Konva.Stage({ 
 	  container: 'js-konva-edit',// id of container <div> 
 	  width: window.innerWidth,
-	  height: window.innerHeight - 140
+	  height: window.innerHeight - 140,
 	});
 }
 createStageLayer();
@@ -193,11 +226,11 @@ function templateCanvas( templateImgPath ) {
 	templateImg.onload = () => {
 
 		templateImgObj = new Konva.Image({
-			x: stageForEdit.width() / 2 - 75,
-			y: stageForEdit.height() / 2 - 150 / templateImg.width * templateImg.height / 2,
+			x: stageForEdit.width() / 2 - initGuideWidth / 2,
+			y: stageForEdit.height() / 2 - initGuideWidth / templateImg.width * templateImg.height / 2,
 		  image: templateImg,
-		  width: 150,
-		  height: 150 / templateImg.width * templateImg.height,
+		  width: initGuideWidth,
+		  height: initGuideWidth / templateImg.width * templateImg.height,
 		  draggable: false
 		});
 
@@ -227,11 +260,11 @@ function overLayCanvas( guideImgPath ) {
 				ctx.beginPath();
 				ctx.fillStyle = '#000';
 				drawRect({
-				    ctx : ctx,
-				    x : stageForOverlay.width() / 2 - 75,
-				    y : stageForOverlay.height() / 2 - 150 / overLayImg.width * overLayImg.height / 2,
-				    width: 150,
-				    height: 150 / overLayImg.width * overLayImg.height,
+						ctx : ctx,
+				    x : stageForOverlay.width() / 2 - initGuideWidth / 2,
+				    y : stageForOverlay.height() / 2 - initGuideWidth / overLayImg.width * overLayImg.height / 2,
+				    width: initGuideWidth,
+				    height: initGuideWidth / overLayImg.width * overLayImg.height,
 				    radius: 22,
 				    color: 'rgba(0, 0, 0, 0)'
 				});
@@ -256,11 +289,11 @@ function guideCanvas( guideImgPath ) {
 
 		// GuideImage
 		guideImgObj = new Konva.Image({
-			x: stageForGuide.width() / 2 - 75,
-			y: stageForGuide.height() / 2 - 150 / guideImg.width * guideImg.height / 2,
+			x: stageForGuide.width() / 2 - initGuideWidth / 2,
+			y: stageForGuide.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2,
 		  image: guideImg,
-		  width: 150,
-		  height: 150 / guideImg.width * guideImg.height,
+		  width: initGuideWidth,
+		  height: initGuideWidth / guideImg.width * guideImg.height,
 		  draggable: false
 		});
 
@@ -368,11 +401,11 @@ function optimisationImg( uploadImgSrc ) {
 
     uploadImgObj = new Konva.Image({
     	name: 'uploadImg',
-    	x: stageForEdit.width() / 2 - 75,
-    	y: stageForEdit.height() / 2 - 150 / uploadImg.width * uploadImg.height / 2,
+    	x: stageForEdit.width() / 2 - initGuideWidth / 2,
+    	y: stageForEdit.height() / 2 - initGuideWidth / uploadImg.width * uploadImg.height / 2,
       image: uploadImg,
-      width: 150,
-      height: 150 / uploadImg.width * uploadImg.height,
+      width: initGuideWidth,
+      height: initGuideWidth / uploadImg.width * uploadImg.height,
       draggable: true
     });
 
@@ -401,11 +434,15 @@ function optimisationImg( uploadImgSrc ) {
 
     stageForEdit.add( edit );
 
+    uploadImgWidth = uploadImgObj.width();
+    uploadImgHeight = uploadImgObj.height();
   	origX = uploadImgObj.x();
   	origY = uploadImgObj.y();
   	initOrigX = uploadImgObj.x();
   	initOrigY = uploadImgObj.y();
 
+    console.log( uploadImgWidth );
+    console.log( uploadImgHeight );
     console.log( origX );
     console.log( origY );
     console.log( initOrigX );
@@ -419,10 +456,14 @@ function optimisationImg( uploadImgSrc ) {
 	    scaleY = uploadImgObj.scaleY();
 			origX = uploadImgObj.x();
 			origY = uploadImgObj.y();
+	    uploadImgWidth = uploadImgObj.width() * scaleX;
+	    uploadImgHeight = uploadImgObj.height() * scaleY;
 	    console.log( scaleX );
 	    console.log( scaleY );
 	    console.log( origX );
 	    console.log( origY );
+	    console.log( uploadImgWidth );
+	    console.log( uploadImgHeight );
 
     });
 
@@ -635,7 +676,11 @@ confirm.addEventListener( 'click', () => {
 	saveValues.scaleY = scaleY;
 	saveValues.angle = angle;
 	saveValues.saveWindowWidth = startWindowWidth;
-	saveValues.saveWindowHight = startWindowHight;
+	saveValues.saveWindowHeight = startWindowHeight;
+	saveValues.saveGuideWidth = initGuideWidth;
+	saveValues.saveGuideHeight = initGuideHeight;
+	saveValues.uploadImgWidth = uploadImgWidth;
+	saveValues.uploadImgHeight = uploadImgHeight;
 
 	console.log( saveValues );
 
@@ -648,23 +693,23 @@ function showPreview() {
 	// first we need to create a stage
 	let stageForPreview = new Konva.Stage({ 
 	  container: 'js-konva-preview',// id of container <div> 
-	  width: 150,
-	  height: 150 / guideImg.width * guideImg.height + 2
+	  width: initGuideWidth,
+	  height: initGuideWidth / guideImg.width * guideImg.height + 2
 	});
 
 	// then create layer
 	let preview = new Konva.Layer();
 
 	let previewGroup = new Konva.Group({
-			x: -( stageForEdit.width() / 2 - 75 ),
-			y: -( stageForEdit.height() / 2 - 150 / guideImg.width * guideImg.height / 2 ),
+			x: -( stageForEdit.width() / 2 - initGuideWidth / 2 ),
+			y: -( stageForEdit.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2 ),
       clipFunc: function( ctx ) {
 				  drawRect({
 				    ctx : ctx,
-				    x : stageForEdit.width() / 2 - 75,
-				    y : stageForEdit.height() / 2 - 150 / guideImg.width * guideImg.height / 2,
-				    width: 150,
-				    height: 150 / guideImg.width * guideImg.height,
+				    x : stageForEdit.width() / 2 - initGuideWidth / 2,
+				    y : stageForEdit.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2,
+				    width: initGuideWidth,
+				    height: initGuideWidth / guideImg.width * guideImg.height,
 				    radius: 22,
 				    color: "rgba(0, 0, 0, 0)"
 				});
@@ -737,10 +782,21 @@ window.addEventListener( 'load' , () => {
 		rotateAroundCenter( uploadImgObj , reDrawValues.angle );
 
 		 uploadImgObj
-		 .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 )
-		 .y( reDrawValues.origY + ( initWindowHight - reDrawValues.saveWindowHight ) / 2  )
+		 // .width( uploadImgObj.width() / ( initGuideWidth / reDrawValues.saveGuideWidth ) )
+		 // .height( uploadImgObj.height() / ( initGuideHeight / reDrawValues.saveGuideHeight ) )
+		 // .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 + ( initGuideWidth - reDrawValues.saveGuideWidth ) / 2 )
+		 // .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 + ( initGuideHeight - reDrawValues.saveGuideHeight ) / 2 )
+		 // .x( ( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 ) * ( ( initGuideWidth / reDrawValues.saveGuideWidth ) / 2 ) )
+		 // .y( ( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 ) * ( ( initGuideHeight / reDrawValues.saveGuideHeight ) / 2 ) )
+		 // .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 - ( initGuideWidth - reDrawValues.saveGuideWidth ) )
+		 // .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 - ( initGuideHeight - reDrawValues.saveGuideHeight ) )
+		 // .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 - ( ( initGuideWidth - reDrawValues.saveGuideWidth ) / 2 ) )
+		 // .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 - ( ( initGuideHeight - reDrawValues.saveGuideHeight ) / 2 ) )
+		 .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 - ( ( uploadImgWidth * reDrawValues.scaleX - reDrawValues.uploadImgWidth ) / 2 ) )
+		 .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 - ( ( uploadImgHeight * reDrawValues.scaleY - reDrawValues.uploadImgHeight ) / 2 ) )
 		 .scaleX( reDrawValues.scaleX )
 		 .scaleY( reDrawValues.scaleY )
+		 // .rotation( reDrawValues.angle )
 
       edit.batchDraw();
 			edit.add( uploadImgObj );
@@ -758,13 +814,19 @@ window.addEventListener( 'load' , () => {
 			scaleX = initScaleX;
 			scaleY = initScaleY;
 
+			// rotateSlider( reDrawValues.angle );
 			rotateRange.value = angle;
 
-			console.log( uploadImgObj.x() );
-			console.log( uploadImgObj.y() );
-			console.log( uploadImgObj.scaleX() );
-			console.log( uploadImgObj.scaleY() );
-			console.log( uploadImgObj.rotation() );
+			console.log( reDrawValues );
+			console.log( initGuideWidth - reDrawValues.saveGuideWidth );
+			console.log( initGuideHeight - reDrawValues.saveGuideHeight );
+			console.log( uploadImgWidth * reDrawValues.scaleX - reDrawValues.uploadImgWidth );
+			console.log( uploadImgHeight * reDrawValues.scaleY - reDrawValues.uploadImgHeight );
+			console.log( 'origX:' + uploadImgObj.x() );
+			console.log( 'origY:' + uploadImgObj.y() );
+			console.log( 'scaleX:' + uploadImgObj.scaleX() );
+			console.log( 'scaleY:' + uploadImgObj.scaleY() );
+			console.log( 'angle:' + uploadImgObj.rotation() );
 
 	 	}, 100);
 
