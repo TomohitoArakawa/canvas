@@ -6,8 +6,13 @@ let initOrigY = 0;
 let initAngle = 0;
 let initScaleX = 1;
 let initScaleY = 1;
-let initGuideWidth;
-let initGuideHeight;
+let initGuideWidth = 150;
+let initGuideHeight = 303;
+
+let initGuideWidthForSm = 150;
+let initGuideHeightForSm = 303;
+let initGuideWidthForPc = 200;
+let initGuideHeightForPc = 405;
 
 let origX = 0;
 let origY = 0;
@@ -73,8 +78,11 @@ let edit;
 let stageForEdit;
 let stageForGuide;
 let stageForOverlay;
+let stageForTemplate;
 
 let transFormForEdit;
+
+const trafficURL = document.referrer;
 
 
 //ユーザーエージェント
@@ -97,17 +105,27 @@ const getDevice = (() => {
 })();
 
 
-if ( getDevice == 'smartphone' ) {
+// if ( getDevice == 'smartphone' ) {
 
-	initGuideWidth = 150;
-	initGuideHeight = 303;
+// 	initGuideWidth = initGuideWidthForSm;
+// 	initGuideHeight = initGuideHeightForSm;
 
-} else if ( getDevice == 'talet' || getDevice == 'pc' ) {
+// } else if ( getDevice == 'talet' || getDevice == 'pc' ) {
 
-	initGuideWidth = 200;
-	initGuideHeight = 405;
+// 	initGuideWidth = initGuideWidthForPc;
+// 	initGuideHeight = initGuideHeightForPc;
 
-}
+// }
+
+// if ( getDevice == 'smartphone' ) {
+
+
+
+// } else if ( getDevice == 'tablet' || getDevice == 'pc' ) {
+
+
+
+// }
 
 
 
@@ -192,32 +210,78 @@ window.addEventListener( 'resize' , () => {
 
 // first we need to create a stage
 function createStageLayer() {
-	stageForGuide = new Konva.Stage({ 
-	  container: 'js-konva-guide',// id of container <div> 
-	  width: window.innerWidth,
-	  height: window.innerHeight - 140
-	});
 
-	stageForOverlay = new Konva.Stage({ 
-	  container: 'js-konva-overlay',// id of container <div> 
-	  width: window.innerWidth,
-	  height: window.innerHeight - 140
-	});
+	if ( getDevice == 'smartphone' ) {
 
-	stageForEdit = new Konva.Stage({ 
-	  container: 'js-konva-edit',// id of container <div> 
-	  width: window.innerWidth,
-	  height: window.innerHeight - 140,
-	});
+		stageForGuide = new Konva.Stage({ 
+		  container: 'js-konva-guide',// id of container <div> 
+		  width: window.innerWidth,
+		  height: window.innerHeight - 140
+		});
+
+		stageForOverlay = new Konva.Stage({ 
+		  container: 'js-konva-overlay',// id of container <div> 
+		  width: window.innerWidth,
+		  height: window.innerHeight - 140
+		});
+
+		stageForEdit = new Konva.Stage({ 
+		  container: 'js-konva-edit',// id of container <div> 
+		  width: window.innerWidth,
+		  height: window.innerHeight - 140,
+		});
+
+		stageForTemplate = new Konva.Stage({ 
+		  container: 'js-konva-template',// id of container <div> 
+		  width: window.innerWidth,
+		  height: window.innerHeight - 140
+		});
+
+	} else if ( getDevice == 'tablet' || getDevice == 'pc' ) {
+
+		stageForGuide = new Konva.Stage({ 
+		  container: 'js-konva-guide',// id of container <div> 
+		  width: window.innerWidth,
+		  height: window.innerHeight - 140,
+		  // scale: { x: 1.3333 , y: 1.3333 },
+		  // offsetX: - ( ( window.innerWidth - window.innerWidth * 1.3333 ) / 2 )
+		});
+
+		stageForOverlay = new Konva.Stage({ 
+		  container: 'js-konva-overlay',// id of container <div> 
+		  width: window.innerWidth,
+		  height: window.innerHeight - 140,
+		  // scale: { x: 1.3333 , y: 1.3333 },
+		  // offsetX: - ( ( window.innerWidth - window.innerWidth * 1.3333 ) / 2 )
+		});
+
+		stageForEdit = new Konva.Stage({ 
+		  container: 'js-konva-edit',// id of container <div> 
+		  width: window.innerWidth,
+		  height: window.innerHeight - 140,
+		  // scale: { x: 1.3333 , y: 1.3333 },
+		  // offsetX: - ( ( window.innerWidth - window.innerWidth * 1.3333 ) / 2 )
+		});
+
+		stageForTemplate = new Konva.Stage({ 
+		  container: 'js-konva-template',// id of container <div> 
+		  width: window.innerWidth,
+		  height: window.innerHeight - 140,
+		  // scale: { x: 1.3333 , y: 1.3333 },
+		  // offsetX: - ( ( window.innerWidth - window.innerWidth * 1.3333 ) / 2 )
+		});
+
+	}
+
 }
 createStageLayer();
 
 
 // then create layer
-template = new Konva.Layer();
 guide = new Konva.Layer();
 overLay = new Konva.Layer();
 edit = new Konva.Layer();
+template = new Konva.Layer();
 
 
 // Template
@@ -225,9 +289,36 @@ function templateCanvas( templateImgPath ) {
 	templateImg = new Image();
 	templateImg.onload = () => {
 
+		// if ( getDevice == 'smartphone' ) {
+
+		// 	templateImgObj = new Konva.Image({
+	 //    	id: 'templateImgObj',
+		// 		x: stageForTemplate.width() / 2 - initGuideWidth / 2,
+		// 		y: stageForTemplate.height() / 2 - initGuideWidth / templateImg.width * templateImg.height / 2,
+		// 	  image: templateImg,
+		// 	  width: initGuideWidth,
+		// 	  height: initGuideWidth / templateImg.width * templateImg.height,
+		// 	  draggable: false
+		// 	});
+
+		// } else if ( getDevice == 'tablet' || getDevice == 'pc' ) {
+
+		// 	templateImgObj = new Konva.Image({
+	 //    	id: 'templateImgObj',
+		// 		x: stageForTemplate.width() / 2 - initGuideWidth * 1.3333 / 2,
+		// 		y: stageForTemplate.height() / 2 - initGuideWidth / templateImg.width * templateImg.height * 1.3333 / 2,
+		// 	  image: templateImg,
+		// 	  width: initGuideWidth * 1.3333,
+		// 	  height: initGuideWidth / templateImg.width * templateImg.height * 1.3333,
+		// 	  draggable: false,
+		// 	});
+
+		// }
+
 		templateImgObj = new Konva.Image({
-			x: stageForEdit.width() / 2 - initGuideWidth / 2,
-			y: stageForEdit.height() / 2 - initGuideWidth / templateImg.width * templateImg.height / 2,
+    	id: 'templateImgObj',
+			x: stageForTemplate.width() / 2 - initGuideWidth / 2,
+			y: stageForTemplate.height() / 2 - initGuideWidth / templateImg.width * templateImg.height / 2,
 		  image: templateImg,
 		  width: initGuideWidth,
 		  height: initGuideWidth / templateImg.width * templateImg.height,
@@ -235,7 +326,7 @@ function templateCanvas( templateImgPath ) {
 		});
 
 		template.add( templateImgObj );
-		stageForEdit.add( template );
+		stageForTemplate.add( template );
 
 	};
 	templateImg.src = templateImgPath;
@@ -259,6 +350,33 @@ function overLayCanvas( guideImgPath ) {
 				ctx.globalCompositeOperation = 'xor';
 				ctx.beginPath();
 				ctx.fillStyle = '#000';
+
+				// if ( getDevice == 'smartphone' ) {
+
+				// 	drawRect({
+				// 			ctx : ctx,
+				// 	    x : stageForOverlay.width() / 2 - initGuideWidth / 2,
+				// 	    y : stageForOverlay.height() / 2 - initGuideWidth / overLayImg.width * overLayImg.height / 2,
+				// 	    width: initGuideWidth,
+				// 	    height: initGuideWidth / overLayImg.width * overLayImg.height,
+				// 	    radius: 22,
+				// 	    color: 'rgba(0, 0, 0, 0)'
+				// 	});
+
+				// } else if ( getDevice == 'tablet' || getDevice == 'pc' ) {
+
+				// 	drawRect({
+				// 			ctx : ctx,
+				// 	    x : stageForOverlay.width() / 2 - initGuideWidth * 1.3333 / 2,
+				// 	    y : stageForOverlay.height() / 2 - initGuideWidth / overLayImg.width * overLayImg.height * 1.3333 / 2,
+				// 	    width: initGuideWidth * 1.3333,
+				// 	    height: initGuideWidth / overLayImg.width * overLayImg.height * 1.3333,
+				// 	    radius: 22,
+				// 	    color: 'rgba(0, 0, 0, 0)'
+				// 	});
+
+				// }
+
 				drawRect({
 						ctx : ctx,
 				    x : stageForOverlay.width() / 2 - initGuideWidth / 2,
@@ -287,8 +405,35 @@ function guideCanvas( guideImgPath ) {
 	guideImg = new Image();
 	guideImg.onload = () => {
 
+		// if ( getDevice == 'smartphone' ) {
+
+		// 	guideImgObj = new Konva.Image({
+	 //    	id: 'guideImgObj',
+		// 		x: stageForGuide.width() / 2 - initGuideWidth / 2,
+		// 		y: stageForGuide.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2,
+		// 	  image: guideImg,
+		// 	  width: initGuideWidth,
+		// 	  height: initGuideWidth / guideImg.width * guideImg.height,
+		// 	  draggable: false
+		// 	});
+
+		// } else if ( getDevice == 'tablet' || getDevice == 'pc' ) {
+
+		// 	guideImgObj = new Konva.Image({
+	 //    	id: 'guideImgObj',
+		// 		x: stageForGuide.width() / 2 - initGuideWidth * 1.3333 / 2,
+		// 		y: stageForGuide.height() / 2 - initGuideWidth / guideImg.width * guideImg.height * 1.3333 / 2,
+		// 	  image: guideImg,
+		// 	  width: initGuideWidth * 1.3333,
+		// 	  height: initGuideWidth / guideImg.width * guideImg.height * 1.3333,
+		// 	  draggable: false,
+		// 	});
+
+		// }
+
 		// GuideImage
 		guideImgObj = new Konva.Image({
+    	id: 'guideImgObj',
 			x: stageForGuide.width() / 2 - initGuideWidth / 2,
 			y: stageForGuide.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2,
 		  image: guideImg,
@@ -399,15 +544,43 @@ function optimisationImg( uploadImgSrc ) {
     uploadImg.src = uploadImgSrc;
     uploadImg.onload = () => {
 
-    uploadImgObj = new Konva.Image({
-    	name: 'uploadImg',
-    	x: stageForEdit.width() / 2 - initGuideWidth / 2,
-    	y: stageForEdit.height() / 2 - initGuideWidth / uploadImg.width * uploadImg.height / 2,
-      image: uploadImg,
-      width: initGuideWidth,
-      height: initGuideWidth / uploadImg.width * uploadImg.height,
-      draggable: true
-    });
+     //  if ( getDevice == 'smartphone' ) {
+
+			  // uploadImgObj = new Konva.Image({
+		   //  	name: 'uploadImgObj',
+		   //  	x: stageForEdit.width() / 2 - initGuideWidth / 2,
+		   //  	y: stageForEdit.height() / 2 - initGuideWidth / uploadImg.width * uploadImg.height / 2,
+		   //    image: uploadImg,
+		   //    width: initGuideWidth,
+		   //    height: initGuideWidth / uploadImg.width * uploadImg.height,
+		   //    draggable: true,
+		   //  });
+
+     //  } else if ( getDevice == 'tablet' || getDevice == 'pc' ) {
+
+			  // uploadImgObj = new Konva.Image({
+		   //  	name: 'uploadImgObj',
+		   //  	x: stageForEdit.width() / 2 - initGuideWidth * 1.3333 / 2,
+		   //  	y: stageForEdit.height() / 2 - initGuideWidth / uploadImg.width * uploadImg.height * 1.3333 / 2,
+		   //    image: uploadImg,
+		   //    width: initGuideWidth * 1.3333,
+		   //    height: initGuideWidth / uploadImg.width * uploadImg.height * 1.3333,
+		   //    draggable: true,
+		   //  });
+
+     //  }
+
+		  uploadImgObj = new Konva.Image({
+	    	name: 'uploadImgObj',
+	    	x: stageForEdit.width() / 2 - initGuideWidth / 2,
+	    	y: stageForEdit.height() / 2 - initGuideWidth / uploadImg.width * uploadImg.height / 2,
+	      image: uploadImg,
+	      width: initGuideWidth,
+	      height: initGuideWidth / uploadImg.width * uploadImg.height,
+	      // width: initGuideWidth * 1.3333,
+	      // height: initGuideWidth / uploadImg.width * uploadImg.height * 1.3333,
+	      draggable: true
+	    });
 
     transFormForEdit = new Konva.Transformer({
       node: uploadImgObj,
@@ -456,8 +629,8 @@ function optimisationImg( uploadImgSrc ) {
 	    scaleY = uploadImgObj.scaleY();
 			origX = uploadImgObj.x();
 			origY = uploadImgObj.y();
-	    uploadImgWidth = uploadImgObj.width() * scaleX;
-	    uploadImgHeight = uploadImgObj.height() * scaleY;
+	    // uploadImgWidth = uploadImgObj.width() * scaleX;
+	    // uploadImgHeight = uploadImgObj.height() * scaleY;
 	    console.log( scaleX );
 	    console.log( scaleY );
 	    console.log( origX );
@@ -767,7 +940,6 @@ function drawRect( param ) {
 }
 
  // 保存一覧からの再描画 
-const trafficURL = document.referrer;
 
 console.log( trafficURL );
 
@@ -775,9 +947,26 @@ window.addEventListener( 'load' , () => {
 
 	if ( trafficURL.match( /save_data/ ) ) {
 
-	 optimisationImg( reDrawValues.uploadImgSrc );
+	optimisationImg( reDrawValues.uploadImgSrc );
 
 	 setTimeout(() => {
+
+		// let testWidth = ( uploadImgWidth * reDrawValues.scaleX ) - ( reDrawValues.saveGuideWidth * reDrawValues.scaleX );
+		// let testHeight = ( uploadImgHeight * reDrawValues.scaleY ) - ( reDrawValues.saveGuideWidth / uploadImg.width * uploadImg.height * reDrawValues.scaleY );
+		// let testWidth = ( uploadImgWidth * reDrawValues.scaleX ) - ( reDrawValues.uploadImgWidth * reDrawValues.scaleX );
+		// let testHeight = ( uploadImgHeight * reDrawValues.scaleY ) - ( reDrawValues.uploadImgHeight * reDrawValues.scaleY );
+
+		// console.log( testWidth );
+		// console.log( testHeight );
+		// console.log( uploadImgWidth );
+		// console.log( uploadImgHeight );
+		// console.log( initGuideWidth - reDrawValues.saveGuideWidth )
+
+		let testWidth = initGuideWidth * reDrawValues.scaleX - reDrawValues.uploadImgWidth;
+		let testHeight = initGuideWidth / uploadImg.width * uploadImg.height * reDrawValues.scaleY - reDrawValues.uploadImgHeight;
+
+		console.log( testWidth );
+		console.log( testHeight );
 
 		rotateAroundCenter( uploadImgObj , reDrawValues.angle );
 
@@ -792,8 +981,8 @@ window.addEventListener( 'load' , () => {
 		 // .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 - ( initGuideHeight - reDrawValues.saveGuideHeight ) )
 		 // .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 - ( ( initGuideWidth - reDrawValues.saveGuideWidth ) / 2 ) )
 		 // .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 - ( ( initGuideHeight - reDrawValues.saveGuideHeight ) / 2 ) )
-		 .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 - ( ( uploadImgWidth * reDrawValues.scaleX - reDrawValues.uploadImgWidth ) / 2 ) )
-		 .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 - ( ( uploadImgHeight * reDrawValues.scaleY - reDrawValues.uploadImgHeight ) / 2 ) )
+		 .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 )
+		 .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 )
 		 .scaleX( reDrawValues.scaleX )
 		 .scaleY( reDrawValues.scaleY )
 		 // .rotation( reDrawValues.angle )

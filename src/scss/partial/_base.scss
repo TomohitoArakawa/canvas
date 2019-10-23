@@ -5,6 +5,18 @@ $color-yellow: #ff0;
 $color-red: #f00;
 
 /* mixin */
+@mixin smartphone {
+  @media (max-width: 768px) { 
+  	@content; 
+  }
+}
+
+@mixin pc {
+  @media (min-width: 769px) {
+  	@content;
+  }
+}
+
 @mixin plain-text {
 	font-size: 1.4rem;
 	font-weight: normal;

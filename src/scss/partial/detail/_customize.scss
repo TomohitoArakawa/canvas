@@ -1,4 +1,9 @@
+html , body {
+  overflow-x: hidden; 
+}
+
 .canvas-wrapper {
+  overflow: hidden;
   position: relative;
   width: 100%;
   min-height: 100%;
@@ -27,24 +32,99 @@
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 3;
+  z-index: 4;
   pointer-events: none;
+  @include pc {
+    .konvajs-content {
+      // transform: scale3d( 1.3333 , 1.3333 , 1.3333 );
+      // zoom: 133%;
+    }
+    canvas {
+      transform: scale3d( 1.3333 , 1.3333 , 1.3333 );
+    }
+  }
+  @include smartphone {
+    .konvajs-content {
+
+    }
+    canvas {
+
+    }
+  }
 }
 
 .konva-overlay {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 2;
+  z-index: 3;
   pointer-events: none;
   opacity: .2;
+  @include pc {
+    .konvajs-content {
+      // transform: scale3d( 1.3333 , 1.3333 , 1.3333 );
+      // zoom: 133%;
+    }
+    canvas {
+      transform: scale3d( 1.3333 , 1.3333 , 1.3333 );
+    }
+  }
+  @include smartphone {
+    .konvajs-content {
+
+    }
+    canvas {
+      
+    }
+  }
 }
 
 .konva-edit {
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 2;
+  @include pc {
+    .konvajs-content {
+      // transform: scale3d( 1.3333 , 1.3333 , 1.3333 );
+      // zoom: 133%;
+    }
+    canvas {
+      transform: scale3d( 1.3333 , 1.3333 , 1.3333 );
+    }
+  }
+  @include smartphone {
+    .konvajs-content {
+
+    }
+    canvas {
+
+    }
+  }
+}
+
+.konva-template {
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: 1;
+  @include pc {
+    .konvajs-content {
+      // transform: scale3d( 1.3333 , 1.3333 , 1.3333 );
+      // zoom: 133%;
+    }
+    canvas {
+      transform: scale3d( 1.3333 , 1.3333 , 1.3333 );
+    }
+  }
+  @include smartphone {
+    .konvajs-content {
+
+    }
+    canvas {
+      
+    }
+  }
 }
 
 .konva-preview {
