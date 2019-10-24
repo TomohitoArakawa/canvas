@@ -35,6 +35,9 @@ let saveValues = new Object;
 // submit value
 let submitValues = new Object;
 
+// filedata
+let fileData;
+
 // trigger
 const fileUpload = document.getElementById( 'js-file' );
 const removeCanvas = document.getElementById( 'js-remove' );
@@ -228,7 +231,7 @@ function createStageLayer() {
 		stageForEdit = new Konva.Stage({ 
 		  container: 'js-konva-edit',// id of container <div> 
 		  width: window.innerWidth,
-		  height: window.innerHeight - 140,
+		  height: window.innerHeight - 140
 		});
 
 		stageForTemplate = new Konva.Stage({ 
@@ -242,33 +245,25 @@ function createStageLayer() {
 		stageForGuide = new Konva.Stage({ 
 		  container: 'js-konva-guide',// id of container <div> 
 		  width: window.innerWidth,
-		  height: window.innerHeight - 140,
-		  // scale: { x: 1.3333 , y: 1.3333 },
-		  // offsetX: - ( ( window.innerWidth - window.innerWidth * 1.3333 ) / 2 )
+		  height: window.innerHeight - 140
 		});
 
 		stageForOverlay = new Konva.Stage({ 
 		  container: 'js-konva-overlay',// id of container <div> 
 		  width: window.innerWidth,
-		  height: window.innerHeight - 140,
-		  // scale: { x: 1.3333 , y: 1.3333 },
-		  // offsetX: - ( ( window.innerWidth - window.innerWidth * 1.3333 ) / 2 )
+		  height: window.innerHeight - 140
 		});
 
 		stageForEdit = new Konva.Stage({ 
 		  container: 'js-konva-edit',// id of container <div> 
 		  width: window.innerWidth,
-		  height: window.innerHeight - 140,
-		  // scale: { x: 1.3333 , y: 1.3333 },
-		  // offsetX: - ( ( window.innerWidth - window.innerWidth * 1.3333 ) / 2 )
+		  height: window.innerHeight - 140
 		});
 
 		stageForTemplate = new Konva.Stage({ 
 		  container: 'js-konva-template',// id of container <div> 
 		  width: window.innerWidth,
-		  height: window.innerHeight - 140,
-		  // scale: { x: 1.3333 , y: 1.3333 },
-		  // offsetX: - ( ( window.innerWidth - window.innerWidth * 1.3333 ) / 2 )
+		  height: window.innerHeight - 140
 		});
 
 	}
@@ -454,7 +449,7 @@ guideCanvas( '../img/guide_iphone_x_xs.png' );
 // fileUpload
 function loadLocalImage( e ) {
 
-  const getOrientation = buffer => {
+  const getOrientation = ( buffer ) => {
     const dv = new DataView( buffer )
     if ( dv.getUint16( 2 ) !== 65505 ) {
       return 0
@@ -472,15 +467,28 @@ function loadLocalImage( e ) {
     return 0
   }
 
-  const arrayBufferToDataURL = arrBuf => {
+  const arrayBufferToDataURL = ( arrBuf ) => {
     const blob = new Blob([arrBuf], { type: 'image/jpeg' })
     return window.URL.createObjectURL( blob )
   }
 
-  const embedImageTag = dataURL => {
+  const embedImageTag = ( blob ) => {
     const img = new Image()
-    img.src = dataURL
+    img.src = blob
+	  img.id = 'js-upload-image'
+	  img.style.display = 'none'
+	  document.body.appendChild( img );
+
+	  uploadImgSrc = document.getElementById( 'js-upload-image' ).src;
+
+	  setTimeout(() => {
+
+	  	document.getElementById( 'js-upload-image' ).remove();
+
+	  }, 100);
+
     return img
+
   }
 
   const createTransformedCanvas = ( orientation, img ) => {
@@ -507,10 +515,29 @@ function loadLocalImage( e ) {
     return canvas
   }
 
-  const fileData = e.target.files[ 0 ]
+  // 引数のBase64の文字列をBlob形式にする
+	const base64ToBlob = ( base64 ) => {
+	    var base64Data = base64.split( ',' )[ 1 ], // Data URLからBase64のデータ部分のみを取得
+	          data = window.atob( base64Data ), // base64形式の文字列をデコード
+	          buff = new ArrayBuffer( data.length ),
+	          arr = new Uint8Array( buff ),
+	          blob,
+	          i,
+	          dataLen;
+	    // blobの生成
+	    for ( i = 0, dataLen = data.length; i < dataLen; i++ ) {
+	        arr[ i ] = data.charCodeAt( i );
+	    }
+	    blob = new Blob( [ arr ] , { type: 'image/jpeg' } );
+	    return blob;
+	}     
+
+  fileData = e.target.files[ 0 ]
   const reader = new FileReader()
 
   reader.addEventListener( 'load', () => {
+
+  	console.log( fileData.size )
 
   	const orientation = getOrientation( reader.result )
   	const img = new Image()
@@ -521,14 +548,43 @@ function loadLocalImage( e ) {
 
       const canvas = createTransformedCanvas( orientation, img )
       window.URL.revokeObjectURL( img.src )
-      embedImageTag( canvas.toDataURL( 'image/jpeg' ) )
 
-      uploadImgSrc = canvas.toDataURL( 'image/jpeg' )
+      //オリジナル容量(画質落としてない場合の容量)を取得
+      let originalBinary = canvas.toDataURL( 'image/jpeg' ); //画質落とさずバイナリ化
+      let originalBlob = base64ToBlob( originalBinary ); //オリジナル容量blobデータを取得
+
+      console.log( originalBinary );
+      console.log( originalBlob );
+      console.log( originalBlob[ 'size' ] );
+
+      //オリジナル容量blobデータをアップロード用blobに設定
+      let compressBlob = originalBlob;
+
+      if ( 2000000 <= originalBlob[ 'size' ] ) {
+
+      	let capacityRatio = 2000000 / originalBlob[ 'size' ];
+      	let compressBinary = canvas.toDataURL( 'image/jpeg' , capacityRatio );
+
+      	console.log( capacityRatio );
+
+      	compressBlob = base64ToBlob( compressBinary );
+
+      	console.log( compressBinary );
+      	console.log( compressBlob );
+      	console.log( compressBlob[ 'size' ] );
+
+      	embedImageTag( arrayBufferToDataURL( compressBlob ) )
+
+      } else {
+
+      	embedImageTag( arrayBufferToDataURL( originalBlob ) )
+
+      }
 
       optimisationImg( uploadImgSrc );
 
     })
-
+ 
   })
 
   reader.readAsArrayBuffer( fileData )
