@@ -782,7 +782,7 @@ function pinchInOut() {
 
 	      let scale = ( uploadImgObj.scaleX() * dist ) / lastDist;
 
-	      // rotateAroundCenter(uploadImgObj , uploadImgObj.rotation() )
+	      rotateAroundCenter( uploadImgObj , uploadImgObj.rotation() )
 	      uploadImgObj.scaleX( scale );
 	      uploadImgObj.scaleY( scale );
 	      edit.draw();
