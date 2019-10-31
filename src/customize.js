@@ -524,7 +524,7 @@ function loadLocalImage( e ) {
       case 8: ctx.transform( 0, -1, 1, 0, 0, img.width ); break
       default: break;
     }
-    ctx.drawImage( img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height )
+    ctx.drawImage( img, 0, 0 )
     return canvas
   }
 
