@@ -24,8 +24,8 @@ let initWindowWidth = window.innerWidth;
 let initWindowHeight = window.innerHeight;
 let startWindowWidth = window.innerWidth;
 let startWindowHeight = window.innerHeight;
-let resizeWindowWidth;
-let resizeWindowHeight;
+let resizeWindowWidth = window.innerWidth;
+let resizeWindowHeight = window.innerHeight;
 
 const store = require( 'store' );
 
@@ -34,6 +34,10 @@ let saveValues = new Object;
 
 // submit value
 let submitValues = new Object;
+
+//
+let fileData;
+let fileType;
 
 // trigger
 const fileUpload = document.getElementById( 'js-file' );
@@ -54,6 +58,7 @@ const customizeElement = document.querySelectorAll( '.js-customize-element' );
 // const overLayCtx = canvasOverLay.getContext( '2d' );
 
 let uploadImg;
+let uploadImgRect;
 let uploadImgObj;
 let uploadImgSrc;
 let uploadImgWidth;
@@ -80,6 +85,7 @@ let stageForGuide;
 let stageForOverlay;
 let stageForTemplate;
 
+let transFormForGuide;
 let transFormForEdit;
 
 const trafficURL = document.referrer;
@@ -179,6 +185,17 @@ window.addEventListener( 'resize' , () => {
 
 		if ( canvasQuality.classList.contains( 'is-show' ) ) {
 
+			uploadImgRect
+			.x( uploadImgRect.x() + ( resizeWindowWidth - startWindowWidth ) / 2 )
+			.y( uploadImgRect.y() + ( resizeWindowHeight - startWindowHeight ) / 2 )
+			.scaleX( scaleX )
+			.scaleY( scaleY )
+			.rotation( angle );
+
+      guide.batchDraw();
+			guide.add( uploadImgRect );
+			stageForGuide.add( guide );
+
 			uploadImgObj
 			.x( uploadImgObj.x() + ( resizeWindowWidth - startWindowWidth ) / 2 )
 			.y( uploadImgObj.y() + ( resizeWindowHeight - startWindowHeight ) / 2 )
@@ -190,11 +207,11 @@ window.addEventListener( 'resize' , () => {
 			edit.add( uploadImgObj );
 			stageForEdit.add( edit );
 
-			console.log( uploadImgObj.x() );
-			console.log( uploadImgObj.y() );
-			console.log( uploadImgObj.scaleX() );
-			console.log( uploadImgObj.scaleY() );
-			console.log( uploadImgObj.rotation() );
+			console.log( uploadImgRect.x() );
+			console.log( uploadImgRect.y() );
+			console.log( uploadImgRect.scaleX() );
+			console.log( uploadImgRect.scaleY() );
+			console.log( uploadImgRect.rotation() );
 
 		}
 
@@ -203,7 +220,7 @@ window.addEventListener( 'resize' , () => {
 		startWindowWidth = resizeWindowWidth;
 		startWindowHeight = resizeWindowHeight;
 
-  }, 100);
+  }, 10);
 
 });
 
@@ -211,7 +228,7 @@ window.addEventListener( 'resize' , () => {
 // first we need to create a stage
 function createStageLayer() {
 
-	if ( getDevice == 'smartphone' ) {
+	if ( startWindowWidth < 769 ) {
 
 		stageForGuide = new Konva.Stage({ 
 		  container: 'js-konva-guide',// id of container <div> 
@@ -237,38 +254,42 @@ function createStageLayer() {
 		  height: window.innerHeight - 140
 		});
 
-	} else if ( getDevice == 'tablet' || getDevice == 'pc' ) {
+	} else if ( startWindowWidth >= 769 ) {
 
 		stageForGuide = new Konva.Stage({ 
 		  container: 'js-konva-guide',// id of container <div> 
 		  width: window.innerWidth,
 		  height: window.innerHeight - 140,
-		  // scale: { x: 1.3333 , y: 1.3333 },
-		  // offsetX: - ( ( window.innerWidth - window.innerWidth * 1.3333 ) / 2 )
+		  scale: { x: 1.3333 , y: 1.3333 },
+		  x: window.innerWidth / 2 - window.innerWidth * 1.3333 / 2,
+		  y: ( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2
 		});
 
 		stageForOverlay = new Konva.Stage({ 
 		  container: 'js-konva-overlay',// id of container <div> 
 		  width: window.innerWidth,
 		  height: window.innerHeight - 140,
-		  // scale: { x: 1.3333 , y: 1.3333 },
-		  // offsetX: - ( ( window.innerWidth - window.innerWidth * 1.3333 ) / 2 )
+		  scale: { x: 1.3333 , y: 1.3333 },
+		  x: window.innerWidth / 2 - window.innerWidth * 1.3333 / 2,
+		  y: ( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2
 		});
 
 		stageForEdit = new Konva.Stage({ 
 		  container: 'js-konva-edit',// id of container <div> 
 		  width: window.innerWidth,
 		  height: window.innerHeight - 140,
-		  // scale: { x: 1.3333 , y: 1.3333 },
-		  // offsetX: - ( ( window.innerWidth - window.innerWidth * 1.3333 ) / 2 )
+		  scale: { x: 1.3333 , y: 1.3333 },
+		  x: window.innerWidth / 2 - window.innerWidth * 1.3333 / 2,
+		  y: ( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2
 		});
 
 		stageForTemplate = new Konva.Stage({ 
 		  container: 'js-konva-template',// id of container <div> 
 		  width: window.innerWidth,
 		  height: window.innerHeight - 140,
-		  // scale: { x: 1.3333 , y: 1.3333 },
-		  // offsetX: - ( ( window.innerWidth - window.innerWidth * 1.3333 ) / 2 )
+		  scale: { x: 1.3333 , y: 1.3333 },
+		  x: window.innerWidth / 2 - window.innerWidth * 1.3333 / 2,
+		  y: ( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2
 		});
 
 	}
@@ -473,7 +494,7 @@ function loadLocalImage( e ) {
   }
 
   const arrayBufferToDataURL = arrBuf => {
-    const blob = new Blob([arrBuf], { type: 'image/jpeg' })
+    const blob = new Blob([arrBuf], { type: fileType })
     return window.URL.createObjectURL( blob )
   }
 
@@ -503,27 +524,35 @@ function loadLocalImage( e ) {
       case 8: ctx.transform( 0, -1, 1, 0, 0, img.width ); break
       default: break;
     }
-    ctx.drawImage( img, 0, 0 )
+    ctx.drawImage( img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height )
     return canvas
   }
 
-  const fileData = e.target.files[ 0 ]
+  fileData = e.target.files[ 0 ]
+  fileType = fileData.type
+
+  console.log( fileType )
+
   const reader = new FileReader()
 
   reader.addEventListener( 'load', () => {
+
+  	console.log( reader.result )
 
   	const orientation = getOrientation( reader.result )
   	const img = new Image()
 
     img.src = arrayBufferToDataURL( reader.result )
 
+    console.log( img.src )
+
     img.addEventListener( 'load', () => {
 
       const canvas = createTransformedCanvas( orientation, img )
       window.URL.revokeObjectURL( img.src )
-      embedImageTag( canvas.toDataURL( 'image/jpeg' ) )
+      embedImageTag( canvas.toDataURL( fileType ) )
 
-      uploadImgSrc = canvas.toDataURL( 'image/jpeg' )
+      uploadImgSrc = canvas.toDataURL( fileType )
 
       optimisationImg( uploadImgSrc );
 
@@ -546,8 +575,8 @@ function optimisationImg( uploadImgSrc ) {
 
      //  if ( getDevice == 'smartphone' ) {
 
-			  // uploadImgObj = new Konva.Image({
-		   //  	name: 'uploadImgObj',
+			  // uploadImgRect = new Konva.Image({
+		   //  	name: 'uploadImgRect',
 		   //  	x: stageForEdit.width() / 2 - initGuideWidth / 2,
 		   //  	y: stageForEdit.height() / 2 - initGuideWidth / uploadImg.width * uploadImg.height / 2,
 		   //    image: uploadImg,
@@ -558,8 +587,8 @@ function optimisationImg( uploadImgSrc ) {
 
      //  } else if ( getDevice == 'tablet' || getDevice == 'pc' ) {
 
-			  // uploadImgObj = new Konva.Image({
-		   //  	name: 'uploadImgObj',
+			  // uploadImgRect = new Konva.Image({
+		   //  	name: 'uploadImgRect',
 		   //  	x: stageForEdit.width() / 2 - initGuideWidth * 1.3333 / 2,
 		   //  	y: stageForEdit.height() / 2 - initGuideWidth / uploadImg.width * uploadImg.height * 1.3333 / 2,
 		   //    image: uploadImg,
@@ -570,20 +599,39 @@ function optimisationImg( uploadImgSrc ) {
 
      //  }
 
-		  uploadImgObj = new Konva.Image({
-	    	name: 'uploadImgObj',
-	    	x: stageForEdit.width() / 2 - initGuideWidth / 2,
-	    	y: stageForEdit.height() / 2 - initGuideWidth / uploadImg.width * uploadImg.height / 2,
-	      image: uploadImg,
-	      width: initGuideWidth,
-	      height: initGuideWidth / uploadImg.width * uploadImg.height,
-	      // width: initGuideWidth * 1.3333,
-	      // height: initGuideWidth / uploadImg.width * uploadImg.height * 1.3333,
-	      draggable: true
-	    });
+	  uploadImgRect = new Konva.Rect({
+    	name: 'uploadImgRect',
+    	x: stageForEdit.width() / 2 - initGuideWidth / 2,
+    	y: stageForEdit.height() / 2 - initGuideWidth / uploadImg.width * uploadImg.height / 2,
+      width: initGuideWidth,
+      height: initGuideWidth / uploadImg.width * uploadImg.height,
+      strokewidth: 0,
+      draggable: true
+    });
+
+	  uploadImgObj = new Konva.Image({
+    	name: 'uploadImgObj',
+    	x: stageForEdit.width() / 2 - initGuideWidth / 2,
+    	y: stageForEdit.height() / 2 - initGuideWidth / uploadImg.width * uploadImg.height / 2,
+      image: uploadImg,
+      width: initGuideWidth,
+      height: initGuideWidth / uploadImg.width * uploadImg.height,
+      strokewidth: 0,
+      draggable: true
+    });
 
     transFormForEdit = new Konva.Transformer({
       node: uploadImgObj,
+      keepRatio: true,
+      centeredScaling: true,
+      enabledAnchors: [],
+      rotateEnabled: false,
+      resizeEnabled: true,
+      rotateAnchorOffset: 0,
+    });
+
+    transFormForGuide = new Konva.Transformer({
+      node: uploadImgRect,
       keepRatio: true,
       centeredScaling: true,
       enabledAnchors: [ 'top-left', 'top-right', 'bottom-left', 'bottom-right' ],
@@ -597,22 +645,39 @@ function optimisationImg( uploadImgSrc ) {
       borderStrokeWidth: 0
     });
 
+
+    guide.add( uploadImgRect );
+    guide.batchDraw();
+    guide.add( transFormForGuide );
+    transFormForGuide.attachTo( uploadImgRect );
+    guide.draw();
+    stageForGuide.add( guide );
+
     // add the image to the edit
     edit.add( uploadImgObj) ;
     edit.batchDraw();
-
     edit.add( transFormForEdit );
     transFormForEdit.attachTo( uploadImgObj );
     edit.draw();
-
     stageForEdit.add( edit );
 
-    uploadImgWidth = uploadImgObj.width();
-    uploadImgHeight = uploadImgObj.height();
-  	origX = uploadImgObj.x();
-  	origY = uploadImgObj.y();
-  	initOrigX = uploadImgObj.x();
-  	initOrigY = uploadImgObj.y();
+		uploadImgObj
+		.x( uploadImgRect.x() )
+		.y( uploadImgRect.y() )
+		.scaleX( uploadImgRect.scaleX() )
+		.scaleY( uploadImgRect.scaleY() )
+		.rotation( uploadImgRect.rotation() );
+
+    edit.add( uploadImgObj) ;
+    edit.batchDraw();
+    stageForEdit.add( edit );
+
+    uploadImgWidth = uploadImgRect.width();
+    uploadImgHeight = uploadImgRect.height();
+  	origX = uploadImgRect.x();
+  	origY = uploadImgRect.y();
+  	initOrigX = uploadImgRect.x();
+  	initOrigY = uploadImgRect.y();
 
     console.log( uploadImgWidth );
     console.log( uploadImgHeight );
@@ -623,14 +688,29 @@ function optimisationImg( uploadImgSrc ) {
     console.log( uploadImgSrc );
     console.log( fileUpload.value );
 
-    uploadImgObj.on( 'transformend' , () => {
+    uploadImgRect.on( 'transform' , () => {
 
-	    scaleX = uploadImgObj.scaleX();
-	    scaleY = uploadImgObj.scaleY();
-			origX = uploadImgObj.x();
-			origY = uploadImgObj.y();
-	    // uploadImgWidth = uploadImgObj.width() * scaleX;
-	    // uploadImgHeight = uploadImgObj.height() * scaleY;
+			uploadImgObj
+			.x( uploadImgRect.x() )
+			.y( uploadImgRect.y() )
+			.scaleX( uploadImgRect.scaleX() )
+			.scaleY( uploadImgRect.scaleY() )
+			.rotation( uploadImgRect.rotation() );
+
+	    edit.add( uploadImgObj) ;
+	    edit.batchDraw();
+	    stageForEdit.add( edit );
+
+    });
+
+    uploadImgRect.on( 'transformend' , () => {
+
+	    scaleX = uploadImgRect.scaleX();
+	    scaleY = uploadImgRect.scaleY();
+			origX = uploadImgRect.x();
+			origY = uploadImgRect.y();
+	    // uploadImgWidth = uploadImgRect.width() * scaleX;
+	    // uploadImgHeight = uploadImgRect.height() * scaleY;
 	    console.log( scaleX );
 	    console.log( scaleY );
 	    console.log( origX );
@@ -640,10 +720,25 @@ function optimisationImg( uploadImgSrc ) {
 
     });
 
-    uploadImgObj.on( 'dragend' , () => {
+    uploadImgRect.on( 'dragmove' , () => {
 
-    	origX = uploadImgObj.x();
-    	origY = uploadImgObj.y();
+			uploadImgObj
+			.x( uploadImgRect.x() )
+			.y( uploadImgRect.y() )
+			.scaleX( uploadImgObj.scaleX() )
+			.scaleY( uploadImgObj.scaleY() )
+			.rotation( uploadImgObj.rotation() );
+
+	    edit.add( uploadImgObj) ;
+	    edit.batchDraw();
+	    stageForEdit.add( edit );
+    	
+    });
+
+    uploadImgRect.on( 'dragend' , () => {
+
+    	origX = uploadImgRect.x();
+    	origY = uploadImgRect.y();
 	    console.log( origX );
 	    console.log( origY );
 
@@ -686,7 +781,15 @@ function rotateAroundCenter( target , angle ) {
 // TODO:回転スライダー
 function rotateSlider( angle ) {
 
+	rotateAroundCenter( uploadImgRect , angle );
 	rotateAroundCenter( uploadImgObj , angle );
+
+	uploadImgRect
+	.rotation( Number( angle ) );
+
+  guide.batchDraw();
+	guide.add( uploadImgRect );
+	stageForGuide.add( guide );
 
 	uploadImgObj
 	.rotation( Number( angle ) );
@@ -702,8 +805,8 @@ rotateRange.addEventListener( 'input', function() {
 	rotateSlider( Number( this.value ) );
 
 	angle = Number( this.value );
-	origX = uploadImgObj.x();
-	origY = uploadImgObj.y();
+	origX = uploadImgRect.x();
+	origY = uploadImgRect.y();
 
 	console.log( angle );
 	console.log( origX );
@@ -716,8 +819,8 @@ rotateRange.addEventListener( 'change', function() {
 	rotateSlider( Number( this.value ) );
 
 	angle = Number( this.value );
-	origX = uploadImgObj.x();
-	origY = uploadImgObj.y();
+	origX = uploadImgRect.x();
+	origY = uploadImgRect.y();
 
 	console.log( angle );
 	console.log( origX );
@@ -748,7 +851,7 @@ function pinchInOut() {
   //       : img;
 
   //   // sync scene graph
-  //   uploadImgObj.setAttrs({
+  //   uploadImgRect.setAttrs({
   //     stroke:
   //       activeImg && activeImg.getName() === img.getName()
   //         ? 'yellow'
@@ -758,7 +861,7 @@ function pinchInOut() {
   //   edit.draw();
   // });
 
-	stageForEdit.getContent().addEventListener(
+	stageForGuide.getContent().addEventListener(
 	  'touchmove',
 	  function( evt ) {
 	    let touch1 = evt.touches[ 0 ];
@@ -780,12 +883,16 @@ function pinchInOut() {
 	        lastDist = dist;
 	      }
 
-	      let scale = ( uploadImgObj.scaleX() * dist ) / lastDist;
+	      let scale = ( uploadImgRect.scaleX() * dist ) / lastDist;
 
-	      rotateAroundCenter( uploadImgObj , uploadImgObj.rotation() )
+	      rotateAroundCenter( uploadImgRect , uploadImgRect.rotation() )
+	      uploadImgRect.scaleX( scale );
+	      uploadImgRect.scaleY( scale );
+	      edit.batchDraw();
+
 	      uploadImgObj.scaleX( scale );
 	      uploadImgObj.scaleY( scale );
-	      edit.draw();
+	      edit.batchDraw();
 	      lastDist = dist;
 
 	    }
@@ -796,12 +903,12 @@ function pinchInOut() {
 
 	);
 
-	stageForEdit.getContent().addEventListener( 'touchend' , function() {
+	stageForGuide.getContent().addEventListener( 'touchend' , function() {
 
 	    lastDist = 0;
 
-	    scaleX = uploadImgObj.scaleX();
-	    scaleY = uploadImgObj.scaleY();
+	    scaleX = uploadImgRect.scaleX();
+	    scaleY = uploadImgRect.scaleY();
 	    console.log( scaleX );
 	    console.log( scaleY );
 	  
@@ -812,14 +919,18 @@ function pinchInOut() {
 	);
 
 }
-
-pinchInOut();
+window.addEventListener( 'load', pinchInOut, false);
 
 
 // 削除
 removeCanvas.addEventListener( 'click', () => {
 
 	event.preventDefault();
+
+	guide.destroy();
+	uploadImgRect.clearCache();
+
+	guideCanvas( '../img/guide_iphone_x_xs.png' );
 
 	edit.destroy();
 	uploadImgObj.clearCache();
@@ -892,7 +1003,7 @@ function showPreview() {
 
 	let cloneGuide = guideImgObj.clone();
 	let cloneTemplate = templateImgObj.clone();
-	let cloneUploadImg = uploadImgObj.clone();
+	let cloneUploadImg = uploadImgRect.clone();
 
 	previewGroup.add( cloneGuide );
   previewGroup.add( cloneTemplate );
@@ -904,7 +1015,7 @@ function showPreview() {
   preview.add( previewGroup );
   stageForPreview.add( preview );
 
-  previewImgSrc = stageForPreview.toDataURL( { mimetype: 'image/jpeg' } );
+  previewImgSrc = stageForPreview.toDataURL( { mimetype: fileType } );
 
   console.log( previewImgSrc );
 
@@ -968,11 +1079,11 @@ window.addEventListener( 'load' , () => {
 		console.log( testWidth );
 		console.log( testHeight );
 
-		rotateAroundCenter( uploadImgObj , reDrawValues.angle );
+		rotateAroundCenter( uploadImgRect , reDrawValues.angle );
 
-		 uploadImgObj
-		 // .width( uploadImgObj.width() / ( initGuideWidth / reDrawValues.saveGuideWidth ) )
-		 // .height( uploadImgObj.height() / ( initGuideHeight / reDrawValues.saveGuideHeight ) )
+		 uploadImgRect
+		 // .width( uploadImgRect.width() / ( initGuideWidth / reDrawValues.saveGuideWidth ) )
+		 // .height( uploadImgRect.height() / ( initGuideHeight / reDrawValues.saveGuideHeight ) )
 		 // .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 + ( initGuideWidth - reDrawValues.saveGuideWidth ) / 2 )
 		 // .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 + ( initGuideHeight - reDrawValues.saveGuideHeight ) / 2 )
 		 // .x( ( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 ) * ( ( initGuideWidth / reDrawValues.saveGuideWidth ) / 2 ) )
@@ -988,7 +1099,7 @@ window.addEventListener( 'load' , () => {
 		 // .rotation( reDrawValues.angle )
 
       edit.batchDraw();
-			edit.add( uploadImgObj );
+			edit.add( uploadImgRect );
 			stageForEdit.add( edit );
 
 			initOrigX = reDrawValues.origX;
@@ -1011,11 +1122,11 @@ window.addEventListener( 'load' , () => {
 			console.log( initGuideHeight - reDrawValues.saveGuideHeight );
 			console.log( uploadImgWidth * reDrawValues.scaleX - reDrawValues.uploadImgWidth );
 			console.log( uploadImgHeight * reDrawValues.scaleY - reDrawValues.uploadImgHeight );
-			console.log( 'origX:' + uploadImgObj.x() );
-			console.log( 'origY:' + uploadImgObj.y() );
-			console.log( 'scaleX:' + uploadImgObj.scaleX() );
-			console.log( 'scaleY:' + uploadImgObj.scaleY() );
-			console.log( 'angle:' + uploadImgObj.rotation() );
+			console.log( 'origX:' + uploadImgRect.x() );
+			console.log( 'origY:' + uploadImgRect.y() );
+			console.log( 'scaleX:' + uploadImgRect.scaleX() );
+			console.log( 'scaleY:' + uploadImgRect.scaleY() );
+			console.log( 'angle:' + uploadImgRect.rotation() );
 
 	 	}, 100);
 
