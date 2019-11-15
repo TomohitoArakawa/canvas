@@ -141,11 +141,11 @@ const getDevice = (() => {
 
 //レスポンシブ対応
 // body読み込み時に一度だけbodyサイズを設定
-document.body.onload = ()=>{
+window.addEventListener( 'load' , () => {
 
 	initSize();
 
-}
+}, false);
 
 const initSize = () => {
 
@@ -174,7 +174,7 @@ if ( getDevice == 'pc' ) {
 
 	window.addEventListener( 'orientationchange' , () => {
 
-		reponsiveDraw(100);
+		reponsiveDraw(1);
 
 	}, false);
 
@@ -272,29 +272,59 @@ function createStageLayer() {
 
 	if ( startWindowWidth < 769 ) {
 
-		stageForGuide = new Konva.Stage({ 
-		  container: 'js-konva-guide',// id of container <div> 
-		  width: window.innerWidth,
-		  height: window.innerHeight - 140
-		});
+		if ( getDevice == 'smartphone' && orientation !== 0 ) {
 
-		stageForOverlay = new Konva.Stage({ 
-		  container: 'js-konva-overlay',// id of container <div> 
-		  width: window.innerWidth,
-		  height: window.innerHeight - 140
-		});
+			stageForGuide = new Konva.Stage({ 
+			  container: 'js-konva-guide',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight
+			});
 
-		stageForEdit = new Konva.Stage({ 
-		  container: 'js-konva-edit',// id of container <div> 
-		  width: window.innerWidth,
-		  height: window.innerHeight - 140,
-		});
+			stageForOverlay = new Konva.Stage({ 
+			  container: 'js-konva-overlay',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight
+			});
 
-		stageForTemplate = new Konva.Stage({ 
-		  container: 'js-konva-template',// id of container <div> 
-		  width: window.innerWidth,
-		  height: window.innerHeight - 140
-		});
+			stageForEdit = new Konva.Stage({ 
+			  container: 'js-konva-edit',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight,
+			});
+
+			stageForTemplate = new Konva.Stage({ 
+			  container: 'js-konva-template',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight
+			});
+
+		} else {
+
+			stageForGuide = new Konva.Stage({ 
+			  container: 'js-konva-guide',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight - 140
+			});
+
+			stageForOverlay = new Konva.Stage({ 
+			  container: 'js-konva-overlay',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight - 140
+			});
+
+			stageForEdit = new Konva.Stage({ 
+			  container: 'js-konva-edit',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight - 140,
+			});
+
+			stageForTemplate = new Konva.Stage({ 
+			  container: 'js-konva-template',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight - 140
+			});
+
+		}
 
 	} else if ( startWindowWidth >= 769 ) {
 
