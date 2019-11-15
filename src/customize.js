@@ -89,6 +89,7 @@ let transFormForGuide;
 let transFormForEdit;
 
 const trafficURL = document.referrer;
+const url = location.href;
 
 
 //ユーザーエージェント
@@ -160,7 +161,7 @@ window.addEventListener( 'resize' , () => {
     wrapper.style.minHeight = window.innerHeight + 'px';
     canvasWrapper.style.minHeight = window.innerHeight - 140 + 'px';
 
-    createStageLayer();
+    resizeKonvaLayer();
 
     guideImgObj
     .x( stageForEdit.width() / 2 - initGuideWidth / 2 )
@@ -296,6 +297,73 @@ function createStageLayer() {
 
 }
 createStageLayer();
+
+
+function resizeKonvaLayer() {
+
+	if ( startWindowWidth < 769 ) {
+
+    stageForGuide.width(window.innerWidth);
+    stageForGuide.height(window.innerHeight - 140);
+    stageForGuide.scale({ x: 1 , y: 1 });
+    stageForGuide.x(0);
+    stageForGuide.y(0);
+    stageForGuide.batchDraw();
+
+    stageForOverlay.width(window.innerWidth);
+    stageForOverlay.height(window.innerHeight - 140);
+    stageForOverlay.scale({ x: 1 , y: 1 });
+    stageForOverlay.x(0);
+    stageForOverlay.y(0);
+    stageForOverlay.batchDraw();
+
+    stageForEdit.width(window.innerWidth);
+    stageForEdit.height(window.innerHeight - 140);
+    stageForEdit.scale({ x: 1 , y: 1 });
+    stageForEdit.x(0);
+    stageForEdit.y(0);
+    stageForEdit.batchDraw();
+
+    stageForTemplate.width(window.innerWidth);
+    stageForTemplate.height(window.innerHeight - 140);
+    stageForTemplate.scale({ x: 1 , y: 1 });
+    stageForTemplate.x(0);
+    stageForTemplate.y(0);
+    stageForTemplate.batchDraw();
+
+	} else if ( startWindowWidth >= 769 ) {
+
+    stageForGuide.width(window.innerWidth);
+    stageForGuide.height(window.innerHeight - 140);
+    stageForGuide.scale({ x: 1.3333 , y: 1.3333 });
+    stageForGuide.x(window.innerWidth / 2 - window.innerWidth * 1.3333 / 2);
+    stageForGuide.y(( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2);
+    stageForGuide.batchDraw();
+
+    stageForOverlay.width(window.innerWidth);
+    stageForOverlay.height(window.innerHeight - 140);
+    stageForOverlay.scale({ x: 1.3333 , y: 1.3333 });
+    stageForOverlay.x(window.innerWidth / 2 - window.innerWidth * 1.3333 / 2);
+    stageForOverlay.y(( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2);
+    stageForOverlay.batchDraw();
+
+    stageForEdit.width(window.innerWidth);
+    stageForEdit.height(window.innerHeight - 140);
+    stageForEdit.scale({ x: 1.3333 , y: 1.3333 });
+    stageForEdit.x(window.innerWidth / 2 - window.innerWidth * 1.3333 / 2);
+    stageForEdit.y(( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2);
+    stageForEdit.batchDraw();
+
+    stageForTemplate.width(window.innerWidth);
+    stageForTemplate.height(window.innerHeight - 140);
+    stageForTemplate.scale({ x: 1.3333 , y: 1.3333 });
+    stageForTemplate.x(window.innerWidth / 2 - window.innerWidth * 1.3333 / 2);
+    stageForTemplate.y(( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2);
+    stageForTemplate.batchDraw();
+
+	}
+
+}
 
 
 // then create layer
@@ -498,11 +566,11 @@ function loadLocalImage( e ) {
     return window.URL.createObjectURL( blob )
   }
 
-  const embedImageTag = dataURL => {
-    const img = new Image()
-    img.src = dataURL
-    return img
-  }
+  // const embedImageTag = dataURL => {
+  //   const img = new Image()
+  //   img.src = dataURL
+  //   return img
+  // }
 
   const createTransformedCanvas = ( orientation, img ) => {
     const canvas = document.createElement( 'canvas' )
@@ -550,7 +618,7 @@ function loadLocalImage( e ) {
 
       const canvas = createTransformedCanvas( orientation, img )
       window.URL.revokeObjectURL( img.src )
-      embedImageTag( canvas.toDataURL( fileType ) )
+      // embedImageTag( canvas.toDataURL( fileType ) )
 
       uploadImgSrc = canvas.toDataURL( fileType )
 
@@ -1056,7 +1124,7 @@ console.log( trafficURL );
 
 window.addEventListener( 'load' , () => {
 
-	if ( trafficURL.match( /save_data/ ) ) {
+	if ( url.match( /save_data/ ) ) {
 
 	optimisationImg( reDrawValues.uploadImgSrc );
 
@@ -1079,28 +1147,33 @@ window.addEventListener( 'load' , () => {
 		console.log( testWidth );
 		console.log( testHeight );
 
-		rotateAroundCenter( uploadImgRect , reDrawValues.angle );
+		// rotateAroundCenter( uploadImgRect , reDrawValues.angle );
 
 		 uploadImgRect
-		 // .width( uploadImgRect.width() / ( initGuideWidth / reDrawValues.saveGuideWidth ) )
-		 // .height( uploadImgRect.height() / ( initGuideHeight / reDrawValues.saveGuideHeight ) )
-		 // .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 + ( initGuideWidth - reDrawValues.saveGuideWidth ) / 2 )
-		 // .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 + ( initGuideHeight - reDrawValues.saveGuideHeight ) / 2 )
-		 // .x( ( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 ) * ( ( initGuideWidth / reDrawValues.saveGuideWidth ) / 2 ) )
-		 // .y( ( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 ) * ( ( initGuideHeight / reDrawValues.saveGuideHeight ) / 2 ) )
-		 // .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 - ( initGuideWidth - reDrawValues.saveGuideWidth ) )
-		 // .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 - ( initGuideHeight - reDrawValues.saveGuideHeight ) )
-		 // .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 - ( ( initGuideWidth - reDrawValues.saveGuideWidth ) / 2 ) )
-		 // .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 - ( ( initGuideHeight - reDrawValues.saveGuideHeight ) / 2 ) )
 		 .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 )
 		 .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 )
 		 .scaleX( reDrawValues.scaleX )
 		 .scaleY( reDrawValues.scaleY )
-		 // .rotation( reDrawValues.angle )
+		 .rotation( reDrawValues.angle )
 
-      edit.batchDraw();
-			edit.add( uploadImgRect );
-			stageForEdit.add( edit );
+		 guide.draw();
+		 guide.add( uploadImgRect );
+		 guide.add( transFormForGuide );
+		 transFormForGuide.attachTo( uploadImgRect );
+		 stageForGuide.add( guide );
+
+		 uploadImgObj
+		 .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 )
+		 .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 )
+		 .scaleX( reDrawValues.scaleX )
+		 .scaleY( reDrawValues.scaleY )
+		 .rotation( reDrawValues.angle )
+
+		 edit.draw();
+		 edit.add( uploadImgObj );
+		 edit.add( transFormForEdit );
+		 transFormForEdit.attachTo( uploadImgObj );
+		 stageForGuide.add( edit );
 
 			initOrigX = reDrawValues.origX;
 			initOrigY = reDrawValues.origY;
@@ -1128,7 +1201,7 @@ window.addEventListener( 'load' , () => {
 			console.log( 'scaleY:' + uploadImgRect.scaleY() );
 			console.log( 'angle:' + uploadImgRect.rotation() );
 
-	 	}, 100);
+	 	}, 500);
 
 	}
 
