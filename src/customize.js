@@ -91,6 +91,8 @@ let transFormForEdit;
 const trafficURL = document.referrer;
 const url = location.href;
 
+let orientation = window.orientation;
+
 
 //ユーザーエージェント
 const getDevice = (() => {
@@ -141,15 +143,53 @@ const getDevice = (() => {
 // body読み込み時に一度だけbodyサイズを設定
 document.body.onload = ()=>{
 
+	initSize();
+
+}
+
+const initSize = () => {
+
   wrapper.style.minHeight = window.innerHeight + 'px';
   canvasWrapper.style.minHeight = window.innerHeight - 140 + 'px';
+
+	if ( getDevice == 'smartphone' && orientation !== 0 ) {
+
+	  wrapper.style.minHeight = window.innerHeight + 'px';
+	  canvasWrapper.style.minHeight = window.innerHeight + 'px';
+
+	}
 
 }
 
 // リサイズを停止して1ms後にbodyサイズを設定
+if ( getDevice == 'pc' ) {
+
+	window.addEventListener( 'resize' , () => {
+
+		reponsiveDraw(1);
+
+	}, false);
+
+} else if ( getDevice == 'smartphone' || getDevice == 'tablet' ) {
+
+	window.addEventListener( 'orientationchange' , () => {
+
+		reponsiveDraw(100);
+
+	}, false);
+
+}
+
+
 let timeoutId;
 
-window.addEventListener( 'resize' , () => {
+const reponsiveDraw = ( millisecond ) => {
+
+	if ( getDevice == 'smartphone' || getDevice == 'tablet' ) {
+
+		orientation = window.orientation;
+
+	}
 
   clearTimeout( timeoutId );
 
@@ -161,6 +201,7 @@ window.addEventListener( 'resize' , () => {
     wrapper.style.minHeight = window.innerHeight + 'px';
     canvasWrapper.style.minHeight = window.innerHeight - 140 + 'px';
 
+		initSize();
     resizeKonvaLayer();
 
     guideImgObj
@@ -221,9 +262,9 @@ window.addEventListener( 'resize' , () => {
 		startWindowWidth = resizeWindowWidth;
 		startWindowHeight = resizeWindowHeight;
 
-  }, 10);
+  }, millisecond);
 
-});
+}
 
 
 // first we need to create a stage
@@ -303,33 +344,67 @@ function resizeKonvaLayer() {
 
 	if ( startWindowWidth < 769 ) {
 
-    stageForGuide.width(window.innerWidth);
-    stageForGuide.height(window.innerHeight - 140);
-    stageForGuide.scale({ x: 1 , y: 1 });
-    stageForGuide.x(0);
-    stageForGuide.y(0);
-    stageForGuide.batchDraw();
+		if ( getDevice == 'smartphone' && orientation !== 0 ) {
 
-    stageForOverlay.width(window.innerWidth);
-    stageForOverlay.height(window.innerHeight - 140);
-    stageForOverlay.scale({ x: 1 , y: 1 });
-    stageForOverlay.x(0);
-    stageForOverlay.y(0);
-    stageForOverlay.batchDraw();
+	    stageForGuide.width(window.innerWidth);
+	    stageForGuide.height(window.innerHeight);
+	    stageForGuide.scale({ x: 1 , y: 1 });
+	    stageForGuide.x(0);
+	    stageForGuide.y(0);
+	    stageForGuide.batchDraw();
 
-    stageForEdit.width(window.innerWidth);
-    stageForEdit.height(window.innerHeight - 140);
-    stageForEdit.scale({ x: 1 , y: 1 });
-    stageForEdit.x(0);
-    stageForEdit.y(0);
-    stageForEdit.batchDraw();
+	    stageForOverlay.width(window.innerWidth);
+	    stageForOverlay.height(window.innerHeight);
+	    stageForOverlay.scale({ x: 1 , y: 1 });
+	    stageForOverlay.x(0);
+	    stageForOverlay.y(0);
+	    stageForOverlay.batchDraw();
 
-    stageForTemplate.width(window.innerWidth);
-    stageForTemplate.height(window.innerHeight - 140);
-    stageForTemplate.scale({ x: 1 , y: 1 });
-    stageForTemplate.x(0);
-    stageForTemplate.y(0);
-    stageForTemplate.batchDraw();
+	    stageForEdit.width(window.innerWidth);
+	    stageForEdit.height(window.innerHeight);
+	    stageForEdit.scale({ x: 1 , y: 1 });
+	    stageForEdit.x(0);
+	    stageForEdit.y(0);
+	    stageForEdit.batchDraw();
+
+	    stageForTemplate.width(window.innerWidth);
+	    stageForTemplate.height(window.innerHeight);
+	    stageForTemplate.scale({ x: 1 , y: 1 });
+	    stageForTemplate.x(0);
+	    stageForTemplate.y(0);
+	    stageForTemplate.batchDraw();
+
+		} else {
+
+	    stageForGuide.width(window.innerWidth);
+	    stageForGuide.height(window.innerHeight - 140);
+	    stageForGuide.scale({ x: 1 , y: 1 });
+	    stageForGuide.x(0);
+	    stageForGuide.y(0);
+	    stageForGuide.batchDraw();
+
+	    stageForOverlay.width(window.innerWidth);
+	    stageForOverlay.height(window.innerHeight - 140);
+	    stageForOverlay.scale({ x: 1 , y: 1 });
+	    stageForOverlay.x(0);
+	    stageForOverlay.y(0);
+	    stageForOverlay.batchDraw();
+
+	    stageForEdit.width(window.innerWidth);
+	    stageForEdit.height(window.innerHeight - 140);
+	    stageForEdit.scale({ x: 1 , y: 1 });
+	    stageForEdit.x(0);
+	    stageForEdit.y(0);
+	    stageForEdit.batchDraw();
+
+	    stageForTemplate.width(window.innerWidth);
+	    stageForTemplate.height(window.innerHeight - 140);
+	    stageForTemplate.scale({ x: 1 , y: 1 });
+	    stageForTemplate.x(0);
+	    stageForTemplate.y(0);
+	    stageForTemplate.batchDraw();
+
+		}
 
 	} else if ( startWindowWidth >= 769 ) {
 
