@@ -678,6 +678,9 @@ guideCanvas( '../img/guide_iphone_x_xs.png' );
 // fileUpload
 function loadLocalImage( e ) {
 
+  fileData = e.target.files[ 0 ]
+  fileType = fileData.type
+
   const getOrientation = buffer => {
     const dv = new DataView( buffer )
     if ( dv.getUint16( 2 ) !== 65505 ) {
@@ -708,33 +711,103 @@ function loadLocalImage( e ) {
   // }
 
   const createTransformedCanvas = ( orientation, img ) => {
+
     const canvas = document.createElement( 'canvas' )
     const ctx = canvas.getContext( '2d' )
-    if ( [ 5 , 6 , 7 , 8 ].indexOf( orientation ) > -1 ) {
-      canvas.width = img.height
-      canvas.height = img.width
-    } else {
-      canvas.width = img.width
-      canvas.height = img.height
-    }
-    switch ( orientation ) {
-      case 2: ctx.transform( -1, 0, 0, 1, img.width, 0 ); break
-      case 3: ctx.transform( -1, 0, 0, -1, img.width, img.height ); break
-      case 4: ctx.transform( 1, 0, 0, -1, 0, img.height ); break
-      case 5: ctx.transform( 0, 1, 1, 0, 0, 0 ); break
-      case 6: ctx.transform( 0, 1, -1, 0, img.height, 0 ); break
-      case 7: ctx.transform( 0, -1, -1, 0, img.height, img.width ); break
-      case 8: ctx.transform( 0, -1, 1, 0, 0, img.width ); break
-      default: break;
-    }
-    ctx.drawImage( img, 0, 0 )
+
+    let compressWidth = 1000
+
+		if ( 2000000 <= fileData.size ) {
+
+	    if ( [ 5 , 6 , 7 , 8 ].indexOf( orientation ) > -1 ) {
+	    
+	      canvas.width = compressWidth / img.width * img.height
+	      canvas.height = compressWidth
+	    
+	    } else {
+	    
+	      canvas.width = compressWidth
+	      canvas.height = compressWidth / img.width * img.height
+	    
+	    }
+
+	    console.log( canvas.width )
+	    console.log( canvas.height )
+
+	    switch ( orientation ) {
+	      case 2: ctx.transform( -1, 0, 0, 1, img.width, 0 ); break
+	      case 3: ctx.transform( -1, 0, 0, -1, img.width, img.height ); break
+	      case 4: ctx.transform( 1, 0, 0, -1, 0, img.height ); break
+	      case 5: ctx.transform( 0, 1, 1, 0, 0, 0 ); break
+	      case 6: ctx.transform( 0, 1, -1, 0, img.height, 0 ); break
+	      case 7: ctx.transform( 0, -1, -1, 0, img.height, img.width ); break
+	      case 8: ctx.transform( 0, -1, 1, 0, 0, img.width ); break
+	      default: break;
+	    }
+	    
+	    ctx.drawImage( img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height )
+
+		} else {
+
+	    if ( [ 5 , 6 , 7 , 8 ].indexOf( orientation ) > -1 ) {
+	    
+	      canvas.width = img.height
+	      canvas.height = img.width
+	    
+	    } else {
+	    
+	      canvas.width = img.width
+	      canvas.height = img.height
+	    
+	    }
+
+	    switch ( orientation ) {
+	      case 2: ctx.transform( -1, 0, 0, 1, img.width, 0 ); break
+	      case 3: ctx.transform( -1, 0, 0, -1, img.width, img.height ); break
+	      case 4: ctx.transform( 1, 0, 0, -1, 0, img.height ); break
+	      case 5: ctx.transform( 0, 1, 1, 0, 0, 0 ); break
+	      case 6: ctx.transform( 0, 1, -1, 0, img.height, 0 ); break
+	      case 7: ctx.transform( 0, -1, -1, 0, img.height, img.width ); break
+	      case 8: ctx.transform( 0, -1, 1, 0, 0, img.width ); break
+	      default: break;
+	    }
+	    
+	    ctx.drawImage( img, 0, 0 )
+
+		}
+    
+    // if ( [ 5 , 6 , 7 , 8 ].indexOf( orientation ) > -1 ) {
+    
+    //   canvas.width = img.height
+    //   canvas.height = img.width
+    
+    // } else {
+    
+    //   canvas.width = img.width
+    //   canvas.height = img.height
+    
+    // }
+
     return canvas
+  
   }
 
-  fileData = e.target.files[ 0 ]
-  fileType = fileData.type
-
-  console.log( fileType )
+  // 引数のBase64の文字列をBlob形式にする
+	const base64ToBlob = ( base64 ) => {
+	let base64Data = base64.split(',')[1], // Data URLからBase64のデータ部分のみを取得
+	     data = window.atob(base64Data), // base64形式の文字列をデコード
+	     buff = new ArrayBuffer(data.length),
+	     arr = new Uint8Array(buff),
+	     blob,
+	     i,
+	     dataLen;
+	    // blobの生成
+	    for (i = 0, dataLen = data.length; i < dataLen; i++) {
+	        arr[i] = data.charCodeAt(i);
+	    }
+	    blob = new Blob([arr], {type: 'image/jpeg'});
+	    return blob;
+	}
 
   const reader = new FileReader()
 
@@ -751,11 +824,18 @@ function loadLocalImage( e ) {
 
     img.addEventListener( 'load', () => {
 
+    	// 元データ(幅/高さ)
+    	console.log( img.width )
+    	console.log( img.height )
+    	// originalImgWidth = img.width;
+    	// originalImgHeight = img.height;
+
       const canvas = createTransformedCanvas( orientation, img )
       window.URL.revokeObjectURL( img.src )
       // embedImageTag( canvas.toDataURL( fileType ) )
 
       uploadImgSrc = canvas.toDataURL( fileType )
+      // let uploadImgBlob = base64ToBlob( uploadImgSrc )
 
       optimisationImg( uploadImgSrc );
 
