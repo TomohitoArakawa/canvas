@@ -174,7 +174,7 @@ if ( getDevice == 'pc' ) {
 
 	window.addEventListener( 'orientationchange' , () => {
 
-		reponsiveDraw(1);
+		reponsiveDraw(300);
 
 	}, false);
 
@@ -328,41 +328,71 @@ function createStageLayer() {
 
 	} else if ( startWindowWidth >= 769 ) {
 
-		stageForGuide = new Konva.Stage({ 
-		  container: 'js-konva-guide',// id of container <div> 
-		  width: window.innerWidth,
-		  height: window.innerHeight - 140,
-		  scale: { x: 1.3333 , y: 1.3333 },
-		  x: window.innerWidth / 2 - window.innerWidth * 1.3333 / 2,
-		  y: ( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2
-		});
+		if ( getDevice == 'smartphone' && startWindowWidth >= 812 && orientation !== 0 ) {
 
-		stageForOverlay = new Konva.Stage({ 
-		  container: 'js-konva-overlay',// id of container <div> 
-		  width: window.innerWidth,
-		  height: window.innerHeight - 140,
-		  scale: { x: 1.3333 , y: 1.3333 },
-		  x: window.innerWidth / 2 - window.innerWidth * 1.3333 / 2,
-		  y: ( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2
-		});
+			stageForGuide = new Konva.Stage({ 
+			  container: 'js-konva-guide',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight,
+			});
 
-		stageForEdit = new Konva.Stage({ 
-		  container: 'js-konva-edit',// id of container <div> 
-		  width: window.innerWidth,
-		  height: window.innerHeight - 140,
-		  scale: { x: 1.3333 , y: 1.3333 },
-		  x: window.innerWidth / 2 - window.innerWidth * 1.3333 / 2,
-		  y: ( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2
-		});
+			stageForOverlay = new Konva.Stage({ 
+			  container: 'js-konva-overlay',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight,
+			});
 
-		stageForTemplate = new Konva.Stage({ 
-		  container: 'js-konva-template',// id of container <div> 
-		  width: window.innerWidth,
-		  height: window.innerHeight - 140,
-		  scale: { x: 1.3333 , y: 1.3333 },
-		  x: window.innerWidth / 2 - window.innerWidth * 1.3333 / 2,
-		  y: ( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2
-		});
+			stageForEdit = new Konva.Stage({ 
+			  container: 'js-konva-edit',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight,
+			});
+
+			stageForTemplate = new Konva.Stage({ 
+			  container: 'js-konva-template',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight,
+			});
+
+		} else {
+
+			stageForGuide = new Konva.Stage({ 
+			  container: 'js-konva-guide',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight - 140,
+			  scale: { x: 1.3333 , y: 1.3333 },
+			  x: window.innerWidth / 2 - window.innerWidth * 1.3333 / 2,
+			  y: ( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2
+			});
+
+			stageForOverlay = new Konva.Stage({ 
+			  container: 'js-konva-overlay',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight - 140,
+			  scale: { x: 1.3333 , y: 1.3333 },
+			  x: window.innerWidth / 2 - window.innerWidth * 1.3333 / 2,
+			  y: ( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2
+			});
+
+			stageForEdit = new Konva.Stage({ 
+			  container: 'js-konva-edit',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight - 140,
+			  scale: { x: 1.3333 , y: 1.3333 },
+			  x: window.innerWidth / 2 - window.innerWidth * 1.3333 / 2,
+			  y: ( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2
+			});
+
+			stageForTemplate = new Konva.Stage({ 
+			  container: 'js-konva-template',// id of container <div> 
+			  width: window.innerWidth,
+			  height: window.innerHeight - 140,
+			  scale: { x: 1.3333 , y: 1.3333 },
+			  x: window.innerWidth / 2 - window.innerWidth * 1.3333 / 2,
+			  y: ( window.innerHeight - 140 ) / 2 - ( window.innerHeight - 140 ) * 1.3333 / 2
+			});
+
+		}
 
 	}
 
@@ -741,6 +771,12 @@ fileUpload.addEventListener( 'change', loadLocalImage, false);
 
 // 
 function optimisationImg( uploadImgSrc ) {
+
+	// if ( canvasQuality.classList.contains( 'is-show' ) ) {
+
+	// 	removeMethod();
+
+	// }
 
     uploadImg = new Image();
     uploadImg.src = uploadImgSrc;
