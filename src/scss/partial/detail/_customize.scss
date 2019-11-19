@@ -128,5 +128,8 @@ html , body {
 }
 
 .konva-preview {
-  display: none;
+  // display: none;
+  .konvajs-content {
+    margin: 0 auto;
+  }
 }

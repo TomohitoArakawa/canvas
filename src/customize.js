@@ -53,6 +53,7 @@ const canvasWrapper = document.getElementById( 'js-canvas-wrapper' );
 const canvasQuality = document.getElementById( 'js-canvas-quality' );
 const konvaOverLay = document.getElementById( 'js-konva-overlay' );
 const konvaEdit = document.getElementById( 'js-konva-edit' );
+const konvaPreview = document.getElementById( 'js-konva-preview' );
 const customizeElement = document.querySelectorAll( '.js-customize-element' );
 
 // const overLayCtx = canvasOverLay.getContext( '2d' );
@@ -73,17 +74,27 @@ let templateImgObj;
 let overLayImg;
 let overLayGroup;
 
+let baseImg;
+let baseImgObj;
+
+let cameraImg;
+let cameraImgObj;
+
 let previewImgSrc;
 
 let template;
 let guide;
 let overLay;
 let edit;
+let preview;
+let base;
+let camera;
 
 let stageForEdit;
 let stageForGuide;
 let stageForOverlay;
 let stageForTemplate;
+let stageForPreview;
 
 let transFormForGuide;
 let transFormForEdit;
@@ -396,6 +407,20 @@ function createStageLayer() {
 
 	}
 
+	window.addEventListener( 'load' , () => {
+
+		// first we need to create a stage
+		stageForPreview = new Konva.Stage({ 
+		  container: 'js-konva-preview',// id of container <div> 
+		  width: initGuideWidth,
+		  height: initGuideWidth / guideImg.width * guideImg.height
+		});
+
+		baseCanvas( '../img/base_iphone_x_xs.png' );
+		cameraCanvas( '../img/camera_iphone_x_xs.png' );
+
+	}, false);
+
 }
 createStageLayer();
 
@@ -506,38 +531,15 @@ guide = new Konva.Layer();
 overLay = new Konva.Layer();
 edit = new Konva.Layer();
 template = new Konva.Layer();
+preview = new Konva.Layer();
+base = new Konva.Layer();
+camera = new Konva.Layer();
 
 
 // Template
 function templateCanvas( templateImgPath ) {
 	templateImg = new Image();
 	templateImg.onload = () => {
-
-		// if ( getDevice == 'smartphone' ) {
-
-		// 	templateImgObj = new Konva.Image({
-	 //    	id: 'templateImgObj',
-		// 		x: stageForTemplate.width() / 2 - initGuideWidth / 2,
-		// 		y: stageForTemplate.height() / 2 - initGuideWidth / templateImg.width * templateImg.height / 2,
-		// 	  image: templateImg,
-		// 	  width: initGuideWidth,
-		// 	  height: initGuideWidth / templateImg.width * templateImg.height,
-		// 	  draggable: false
-		// 	});
-
-		// } else if ( getDevice == 'tablet' || getDevice == 'pc' ) {
-
-		// 	templateImgObj = new Konva.Image({
-	 //    	id: 'templateImgObj',
-		// 		x: stageForTemplate.width() / 2 - initGuideWidth * 1.3333 / 2,
-		// 		y: stageForTemplate.height() / 2 - initGuideWidth / templateImg.width * templateImg.height * 1.3333 / 2,
-		// 	  image: templateImg,
-		// 	  width: initGuideWidth * 1.3333,
-		// 	  height: initGuideWidth / templateImg.width * templateImg.height * 1.3333,
-		// 	  draggable: false,
-		// 	});
-
-		// }
 
 		templateImgObj = new Konva.Image({
     	id: 'templateImgObj',
@@ -575,32 +577,6 @@ function overLayCanvas( guideImgPath ) {
 				ctx.beginPath();
 				ctx.fillStyle = '#000';
 
-				// if ( getDevice == 'smartphone' ) {
-
-				// 	drawRect({
-				// 			ctx : ctx,
-				// 	    x : stageForOverlay.width() / 2 - initGuideWidth / 2,
-				// 	    y : stageForOverlay.height() / 2 - initGuideWidth / overLayImg.width * overLayImg.height / 2,
-				// 	    width: initGuideWidth,
-				// 	    height: initGuideWidth / overLayImg.width * overLayImg.height,
-				// 	    radius: 22,
-				// 	    color: 'rgba(0, 0, 0, 0)'
-				// 	});
-
-				// } else if ( getDevice == 'tablet' || getDevice == 'pc' ) {
-
-				// 	drawRect({
-				// 			ctx : ctx,
-				// 	    x : stageForOverlay.width() / 2 - initGuideWidth * 1.3333 / 2,
-				// 	    y : stageForOverlay.height() / 2 - initGuideWidth / overLayImg.width * overLayImg.height * 1.3333 / 2,
-				// 	    width: initGuideWidth * 1.3333,
-				// 	    height: initGuideWidth / overLayImg.width * overLayImg.height * 1.3333,
-				// 	    radius: 22,
-				// 	    color: 'rgba(0, 0, 0, 0)'
-				// 	});
-
-				// }
-
 				drawRect({
 						ctx : ctx,
 				    x : stageForOverlay.width() / 2 - initGuideWidth / 2,
@@ -629,32 +605,6 @@ function guideCanvas( guideImgPath ) {
 	guideImg = new Image();
 	guideImg.onload = () => {
 
-		// if ( getDevice == 'smartphone' ) {
-
-		// 	guideImgObj = new Konva.Image({
-	 //    	id: 'guideImgObj',
-		// 		x: stageForGuide.width() / 2 - initGuideWidth / 2,
-		// 		y: stageForGuide.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2,
-		// 	  image: guideImg,
-		// 	  width: initGuideWidth,
-		// 	  height: initGuideWidth / guideImg.width * guideImg.height,
-		// 	  draggable: false
-		// 	});
-
-		// } else if ( getDevice == 'tablet' || getDevice == 'pc' ) {
-
-		// 	guideImgObj = new Konva.Image({
-	 //    	id: 'guideImgObj',
-		// 		x: stageForGuide.width() / 2 - initGuideWidth * 1.3333 / 2,
-		// 		y: stageForGuide.height() / 2 - initGuideWidth / guideImg.width * guideImg.height * 1.3333 / 2,
-		// 	  image: guideImg,
-		// 	  width: initGuideWidth * 1.3333,
-		// 	  height: initGuideWidth / guideImg.width * guideImg.height * 1.3333,
-		// 	  draggable: false,
-		// 	});
-
-		// }
-
 		// GuideImage
 		guideImgObj = new Konva.Image({
     	id: 'guideImgObj',
@@ -673,6 +623,50 @@ function guideCanvas( guideImgPath ) {
 	guideImg.src = guideImgPath;
 }
 guideCanvas( '../img/guide_iphone_x_xs.png' );
+
+// Base
+function baseCanvas( baseImgPath ) {
+	baseImg = new Image();
+	baseImg.onload = () => {
+
+		// baseImage
+		baseImgObj = new Konva.Image({
+	    x : stageForGuide.width() / 2 - initGuideWidth / 2 - ( baseImg.width - guideImg.width ) / 2,
+	    y : stageForGuide.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2 - ( baseImg.height - guideImg.height ) / 2,
+		  image: baseImg,
+	    width: initGuideWidth + ( baseImg.width - guideImg.width ),
+	    height: initGuideWidth / guideImg.width * guideImg.height + ( baseImg.height - guideImg.height ),
+		  draggable: false
+		});
+
+		base.add( baseImgObj );
+		stageForPreview.add( base );
+
+	};
+	baseImg.src = baseImgPath;
+}
+
+// Camera
+function cameraCanvas( cameraImgPath ) {
+	cameraImg = new Image();
+	cameraImg.onload = () => {
+
+		// cameraImage
+		cameraImgObj = new Konva.Image({
+	    x : stageForGuide.width() / 2 - initGuideWidth / 2 - ( cameraImg.width - guideImg.width ) / 2,
+	    y : stageForGuide.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2 - ( cameraImg.height - guideImg.height ) / 2,
+		  image: cameraImg,
+	    width: initGuideWidth + ( cameraImg.width - guideImg.width ),
+	    height: initGuideWidth / guideImg.width * guideImg.height + ( cameraImg.height - guideImg.height ),
+		  draggable: false
+		});
+
+		camera.add( cameraImgObj );
+		stageForPreview.add( camera );
+
+	};
+	cameraImg.src = cameraImgPath;
+}
 
 
 // fileUpload
@@ -715,78 +709,70 @@ function loadLocalImage( e ) {
     const canvas = document.createElement( 'canvas' )
     const ctx = canvas.getContext( '2d' )
 
-    let compressWidth = 1000
+    let compressRatio = 1
 
-		if ( 2000000 <= fileData.size ) {
+		if ( img.width > img.height ) {
 
-	    if ( [ 5 , 6 , 7 , 8 ].indexOf( orientation ) > -1 ) {
-	    
-	      canvas.width = compressWidth / img.width * img.height
-	      canvas.height = compressWidth
-	    
-	    } else {
-	    
-	      canvas.width = compressWidth
-	      canvas.height = compressWidth / img.width * img.height
-	    
-	    }
+			if ( img.width >= 1000 ) {
 
-	    console.log( canvas.width )
-	    console.log( canvas.height )
+				compressRatio = 1000 / img.width;
 
-	    switch ( orientation ) {
-	      case 2: ctx.transform( -1, 0, 0, 1, img.width, 0 ); break
-	      case 3: ctx.transform( -1, 0, 0, -1, img.width, img.height ); break
-	      case 4: ctx.transform( 1, 0, 0, -1, 0, img.height ); break
-	      case 5: ctx.transform( 0, 1, 1, 0, 0, 0 ); break
-	      case 6: ctx.transform( 0, 1, -1, 0, img.height, 0 ); break
-	      case 7: ctx.transform( 0, -1, -1, 0, img.height, img.width ); break
-	      case 8: ctx.transform( 0, -1, 1, 0, 0, img.width ); break
-	      default: break;
-	    }
-	    
-	    ctx.drawImage( img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height )
+			} else {
 
-		} else {
+				compressRatio = 1;
 
-	    if ( [ 5 , 6 , 7 , 8 ].indexOf( orientation ) > -1 ) {
-	    
-	      canvas.width = img.height
-	      canvas.height = img.width
-	    
-	    } else {
-	    
-	      canvas.width = img.width
-	      canvas.height = img.height
-	    
-	    }
+			}
 
-	    switch ( orientation ) {
-	      case 2: ctx.transform( -1, 0, 0, 1, img.width, 0 ); break
-	      case 3: ctx.transform( -1, 0, 0, -1, img.width, img.height ); break
-	      case 4: ctx.transform( 1, 0, 0, -1, 0, img.height ); break
-	      case 5: ctx.transform( 0, 1, 1, 0, 0, 0 ); break
-	      case 6: ctx.transform( 0, 1, -1, 0, img.height, 0 ); break
-	      case 7: ctx.transform( 0, -1, -1, 0, img.height, img.width ); break
-	      case 8: ctx.transform( 0, -1, 1, 0, 0, img.width ); break
-	      default: break;
-	    }
-	    
-	    ctx.drawImage( img, 0, 0 )
+		} else if ( img.height > img.width ) {
+
+			if ( img.height >= 1000 ) {
+
+				compressRatio = 1000 / img.height;
+
+			} else {
+
+				compressRatio = 1;
+
+			}
+
+		} else if ( img.width == img.height ) {
+
+			if ( img.width >= 1000 ) {
+
+				compressRatio = 1000 / img.width;
+
+			} else {
+
+				compressRatio = 1;
+
+			}
 
 		}
+
+    if ( [ 5 , 6 , 7 , 8 ].indexOf( orientation ) > -1 ) {
     
-    // if ( [ 5 , 6 , 7 , 8 ].indexOf( orientation ) > -1 ) {
+      canvas.width = img.height * compressRatio
+      canvas.height = img.width * compressRatio
     
-    //   canvas.width = img.height
-    //   canvas.height = img.width
+    } else {
     
-    // } else {
+      canvas.width = img.width * compressRatio
+      canvas.height = img.height * compressRatio
     
-    //   canvas.width = img.width
-    //   canvas.height = img.height
+    }
+
+    switch ( orientation ) {
+      case 2: ctx.transform( -1, 0, 0, 1, img.width, 0 ); break
+      case 3: ctx.transform( -1, 0, 0, -1, img.width, img.height ); break
+      case 4: ctx.transform( 1, 0, 0, -1, 0, img.height ); break
+      case 5: ctx.transform( 0, 1, 1, 0, 0, 0 ); break
+      case 6: ctx.transform( 0, 1, -1, 0, img.height, 0 ); break
+      case 7: ctx.transform( 0, -1, -1, 0, img.height, img.width ); break
+      case 8: ctx.transform( 0, -1, 1, 0, 0, img.width ); break
+      default: break;
+    }
     
-    // }
+    ctx.drawImage( img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height )
 
     return canvas
   
@@ -833,6 +819,9 @@ function loadLocalImage( e ) {
       const canvas = createTransformedCanvas( orientation, img )
       window.URL.revokeObjectURL( img.src )
       // embedImageTag( canvas.toDataURL( fileType ) )
+
+    	console.log( canvas.width )
+    	console.log( canvas.height )
 
       uploadImgSrc = canvas.toDataURL( fileType )
       // let uploadImgBlob = base64ToBlob( uploadImgSrc )
@@ -1239,7 +1228,9 @@ confirm.addEventListener( 'click', () => {
 
 	showPreview();
 
-	window.history.pushState( null , null , 'preview.html' );
+	// window.history.pushState( null , null , 'preview.html' );
+
+	konvaPreview.style.display = 'block';
 
 	saveValues.uploadImgSrc = uploadImgSrc;
 	// saveValues.previewImgSrc = previewImgSrc;
@@ -1263,26 +1254,20 @@ confirm.addEventListener( 'click', () => {
 // トリミング
 function showPreview() {
 
-	// first we need to create a stage
-	let stageForPreview = new Konva.Stage({ 
-	  container: 'js-konva-preview',// id of container <div> 
-	  width: initGuideWidth,
-	  height: initGuideWidth / guideImg.width * guideImg.height + 2
-	});
+	stageForPreview
+	.width( initGuideWidth + ( baseImg.width - guideImg.width ) )
+	.height( initGuideWidth / guideImg.width * guideImg.height + ( baseImg.height - guideImg.height ) )
 
-	// then create layer
-	let preview = new Konva.Layer();
-
-	let previewGroup = new Konva.Group({
-			x: -( stageForEdit.width() / 2 - initGuideWidth / 2 ),
-			y: -( stageForEdit.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2 ),
+	let previewTop = new Konva.Group({
+			x: -( stageForEdit.width() / 2 - initGuideWidth / 2 - ( baseImg.width - guideImg.width ) / 2 ),
+			y: -( stageForEdit.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2 - ( baseImg.height - guideImg.height ) / 2 ),
       clipFunc: function( ctx ) {
 				  drawRect({
 				    ctx : ctx,
-				    x : stageForEdit.width() / 2 - initGuideWidth / 2,
-				    y : stageForEdit.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2,
-				    width: initGuideWidth,
-				    height: initGuideWidth / guideImg.width * guideImg.height,
+				    x : stageForEdit.width() / 2 - initGuideWidth / 2 - ( baseImg.width - guideImg.width ) / 2,
+				    y : stageForEdit.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2 - ( baseImg.height - guideImg.height ) / 2,
+				    width: initGuideWidth + ( baseImg.width - guideImg.width ),
+				    height: initGuideWidth / guideImg.width * guideImg.height + ( baseImg.height - guideImg.height ),
 				    radius: 22,
 				    color: "rgba(0, 0, 0, 0)"
 				});
@@ -1290,18 +1275,52 @@ function showPreview() {
       draggable: false
 	});
 
-	let cloneGuide = guideImgObj.clone();
-	let cloneTemplate = templateImgObj.clone();
-	let cloneUploadImg = uploadImgRect.clone();
+	let previewMiddle = new Konva.Group({
+			x: -( stageForEdit.width() / 2 - initGuideWidth / 2 - ( baseImg.width - guideImg.width ) / 2),
+			y: -( stageForEdit.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2 - ( baseImg.height - guideImg.height ) / 2 ),
+      clipFunc: function( ctx ) {
+				  drawRect({
+				    ctx : ctx,
+				    x : stageForEdit.width() / 2 - initGuideWidth / 2,
+				    y : stageForEdit.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2,
+				    width: initGuideWidth,
+				    height: initGuideWidth / guideImg.width * guideImg.height,
+				    radius: 16,
+				    color: "rgba(0, 0, 0, 0)"
+				});
+      },
+      draggable: false
+	});
 
-	previewGroup.add( cloneGuide );
-  previewGroup.add( cloneTemplate );
-  previewGroup.add( cloneUploadImg );
-  cloneGuide.moveToTop();
-  cloneTemplate.moveToBottom();
+	let previewBottom = new Konva.Group({
+			x: -( stageForEdit.width() / 2 - initGuideWidth / 2 - ( baseImg.width - guideImg.width ) / 2 ),
+			y: -( stageForEdit.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2 - ( baseImg.height - guideImg.height ) / 2 ),
+      clipFunc: function( ctx ) {
+				  drawRect({
+				    ctx : ctx,
+				    x : stageForEdit.width() / 2 - initGuideWidth / 2 - ( baseImg.width - guideImg.width ) / 2,
+				    y : stageForEdit.height() / 2 - initGuideWidth / guideImg.width * guideImg.height / 2 - ( baseImg.height - guideImg.height ) / 2,
+				    width: initGuideWidth + ( baseImg.width - guideImg.width ),
+				    height: initGuideWidth / guideImg.width * guideImg.height + ( baseImg.height - guideImg.height ),
+				    radius: 22,
+				    color: "rgba(0, 0, 0, 0)"
+				});
+      },
+      draggable: false
+	});
+
+	let cloneCameraImg = cameraImgObj.clone();
+	let cloneUploadImg = uploadImgObj.clone();
+	let cloneBaseImg = baseImgObj.clone();
+
+	previewTop.add( cloneCameraImg );
+  previewMiddle.add( cloneUploadImg );
+  previewBottom.add( cloneBaseImg );
   preview.draw();
 
-  preview.add( previewGroup );
+  preview.add( previewBottom );
+  preview.add( previewMiddle );
+  preview.add( previewTop );
   stageForPreview.add( preview );
 
   previewImgSrc = stageForPreview.toDataURL( { mimetype: fileType } );
