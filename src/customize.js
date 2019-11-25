@@ -133,21 +133,20 @@ window.addEventListener( 'load' , () => {
 	edit = new Konva.Layer();
 	template = new Konva.Layer();
 
-	templateCanvas( '../img/temp_iphone_x_xs.png' );
-
-	overLayCanvas( '../img/guide_iphone_x_xs.png' );
-
-	guideCanvas( '../img/guide_iphone_x_xs.png' );
-
+  Promise.resolve()
+  .then( () => templateCanvas( '../img/temp_iphone_x_xs.png' ) )
+  .then( () => overLayCanvas( '../img/guide_iphone_x_xs.png' ) )
+  .then( () => guideCanvas( '../img/guide_iphone_x_xs.png' ) );
+	
 	if ( url.match( /save_data/ ) ) {
 
 		reDrawCanvas();
 
-		loadingOverlay();
+		loadingOverlay(300);
 
 	} else {
 
-		loadingOverlay();
+		loadingOverlay(300);
 
 	}
 
@@ -181,11 +180,21 @@ if ( getDevice == 'pc' ) {
 
 	window.addEventListener( 'orientationchange' , () => {
 
-		loadingOverlay();
+	 //  const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+	 //  Promise.resolve()
+	 //  .then( () => loadingOverlay() )
+	 //  .then( () => reponsiveDraw(300) )
+	 //  .then( () => loadingOverlay() );
 
-		reponsiveDraw(300);
+		loadingOverlay(0);
+
+		// reponsiveDraw(300);
 
 		// loadingOverlay();
+
+	  Promise.resolve()
+	  .then( () => reponsiveDraw(300) )
+	  .then( () => loadingOverlay(300) );
 
 	}, false);
 
@@ -1334,7 +1343,9 @@ const reDrawCanvas = () => {
 
 
  // ローディング
- const loadingOverlay = () => {
+ const loadingOverlay = ( millisecond ) => {
+
+ 	setTimeout(() => {
 
   const loading = document.getElementById( 'js-loading' );
 
@@ -1349,5 +1360,7 @@ const reDrawCanvas = () => {
  	// 	loading.classList.add( 'is-show' );
 
  	// }
+
+ 	}, millisecond);
  
  }
