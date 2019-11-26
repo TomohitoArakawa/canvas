@@ -850,6 +850,8 @@ function optimisationImg( uploadImgSrc ) {
 	    edit.batchDraw();
 	    stageForEdit.add( edit );
 
+			transFormForGuide.anchorSize( 20 / 1.3333 );
+
     });
 
     uploadImgRect.on( 'transformend' , () => {
@@ -895,6 +897,14 @@ function optimisationImg( uploadImgSrc ) {
 
 	   	createPreview();
 
+    });
+
+    uploadImgRect.on('mouseenter', function() {
+      stageForGuide.container().style.cursor = 'move';
+    });
+
+    uploadImgRect.on('mouseleave', function() {
+      stageForGuide.container().style.cursor = 'default';
     });
       
   }
@@ -1280,11 +1290,7 @@ const reDrawCanvas = () => {
 
  setTimeout(() => {
 
-	let testWidth = initGuideWidth * reDrawValues.scaleX - reDrawValues.uploadImgWidth;
-	let testHeight = initGuideWidth / uploadImg.width * uploadImg.height * reDrawValues.scaleY - reDrawValues.uploadImgHeight;
-
-	console.log( testWidth );
-	console.log( testHeight );
+ 	// let guideGroup = new Konva.Group();
 
 	 uploadImgRect
 	 .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 )
@@ -1293,11 +1299,23 @@ const reDrawCanvas = () => {
 	 .scaleY( reDrawValues.scaleY )
 	 .rotation( reDrawValues.angle )
 
-	 guide.draw();
-	 guide.add( uploadImgRect );
-	 guide.add( transFormForGuide );
-	 transFormForGuide.attachTo( uploadImgRect );
-	 stageForGuide.add( guide );
+	 console.log( stageForGuide.findOne( '._anchor' ).scaleX() )
+
+	 if ( stageForGuide.findOne( '._anchor' ).scaleX() == 1 ) {
+
+		 transFormForGuide.anchorSize( 20 / 1.3333 );
+		 transFormForGuide.add( uploadImgRect );
+		 uploadImgRect.moveToTop();
+		 guideImgObj.moveToBottom();
+		 guide.add( uploadImgRect );
+
+	 }
+
+	 guide.batchDraw();
+	 // guide.add( uploadImgRect );
+	 // guide.add( transFormForGuide );
+	 // transFormForGuide.attachTo( uploadImgRect );
+	 // stageForGuide.add( guide );
 
 	 uploadImgObj
 	 .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 )
@@ -1306,11 +1324,11 @@ const reDrawCanvas = () => {
 	 .scaleY( reDrawValues.scaleY )
 	 .rotation( reDrawValues.angle )
 
-	 edit.draw();
-	 edit.add( uploadImgObj );
-	 edit.add( transFormForEdit );
-	 transFormForEdit.attachTo( uploadImgObj );
-	 stageForEdit.add( edit );
+	 edit.batchDraw();
+	 // edit.add( uploadImgObj );
+	 // edit.add( transFormForEdit );
+	 // transFormForEdit.attachTo( uploadImgObj );
+	 // stageForEdit.add( edit );
 
 		initOrigX = reDrawValues.origX;
 		initOrigY = reDrawValues.origY;
