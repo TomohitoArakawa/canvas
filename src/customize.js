@@ -137,7 +137,7 @@ window.addEventListener( 'load' , () => {
   .then( () => initSize() )
   .then( () => createStageLayer() )
   .then( () => guide = new Konva.Layer() )
-  .then( () => guide = new Konva.Layer() )
+  .then( () => overLay = new Konva.Layer() )
   .then( () => edit = new Konva.Layer() )
   .then( () => template = new Konva.Layer() )
   .then( () => templateCanvas( '../img/temp_iphone_x_xs.png' ) )
