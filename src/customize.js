@@ -124,29 +124,36 @@ const getDevice = (() => {
 //レスポンシブ対応
 window.addEventListener( 'load' , () => {
 
-	initSize();
+	// initSize();
 
-	createStageLayer();
+	// createStageLayer();
 
-	guide = new Konva.Layer();
-	overLay = new Konva.Layer();
-	edit = new Konva.Layer();
-	template = new Konva.Layer();
+	// guide = new Konva.Layer();
+	// overLay = new Konva.Layer();
+	// edit = new Konva.Layer();
+	// template = new Konva.Layer();
 
   Promise.resolve()
+  .then( () => initSize() )
+  .then( () => createStageLayer() )
+  .then( () => guide = new Konva.Layer() )
+  .then( () => guide = new Konva.Layer() )
+  .then( () => edit = new Konva.Layer() )
+  .then( () => template = new Konva.Layer() )
   .then( () => templateCanvas( '../img/temp_iphone_x_xs.png' ) )
   .then( () => overLayCanvas( '../img/guide_iphone_x_xs.png' ) )
   .then( () => guideCanvas( '../img/guide_iphone_x_xs.png' ) );
 	
 	if ( url.match( /save_data/ ) ) {
 
-		reDrawCanvas();
-
-		loadingOverlay(300);
+	  Promise.resolve()
+	  .then( () => optimisationImg( reDrawValues.uploadImgSrc , 500 ) )
+	  .then( () => reDrawCanvas( 2500 ) )
+	  .then( () => loadingOverlay( 3000 ) );
 
 	} else {
 
-		loadingOverlay(300);
+		loadingOverlay( 500 );
 
 	}
 
@@ -180,7 +187,7 @@ if ( getDevice == 'pc' ) {
 
 	window.addEventListener( 'orientationchange' , () => {
 
-	 //  const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+	 //  const wait = (millisecondss) => new Promise((resolve) => setTimeout(resolve, millisecondss));
 	 //  Promise.resolve()
 	 //  .then( () => loadingOverlay() )
 	 //  .then( () => reponsiveDraw(300) )
@@ -203,7 +210,7 @@ if ( getDevice == 'pc' ) {
 
 let timeoutId;
 
-const reponsiveDraw = ( millisecond ) => {
+const reponsiveDraw = ( milliseconds ) => {
 
 	if ( getDevice == 'smartphone' || getDevice == 'tablet' ) {
 
@@ -282,7 +289,7 @@ const reponsiveDraw = ( millisecond ) => {
 		startWindowWidth = resizeWindowWidth;
 		startWindowHeight = resizeWindowHeight;
 
-  }, millisecond);
+  }, milliseconds);
 
 }
 
@@ -723,7 +730,7 @@ function loadLocalImage( e ) {
       uploadImgSrc = canvas.toDataURL( fileType )
       // let uploadImgBlob = base64ToBlob( uploadImgSrc )
 
-      optimisationImg( uploadImgSrc );
+      optimisationImg( uploadImgSrc , 0 );
 
     })
 
@@ -736,7 +743,7 @@ fileUpload.addEventListener( 'change', loadLocalImage, false);
 
 
 // 
-function optimisationImg( uploadImgSrc ) {
+function optimisationImg( uploadImgSrc , milliseconds ) {
 
 	// if ( canvasQuality.classList.contains( 'is-show' ) ) {
 
@@ -744,172 +751,260 @@ function optimisationImg( uploadImgSrc ) {
 
 	// }
 
+	setTimeout(() => {
+
     uploadImg = new Image();
     uploadImg.src = uploadImgSrc;
     uploadImg.onload = () => {
 
-	  uploadImgRect = new Konva.Rect({
-    	name: 'uploadImgRect',
-    	x: stageForEdit.width() / 2 - initGuideWidth / 2,
-    	y: stageForEdit.height() / 2 - initGuideWidth / uploadImg.width * uploadImg.height / 2,
-      width: initGuideWidth,
-      height: initGuideWidth / uploadImg.width * uploadImg.height,
-      strokewidth: 0,
-      draggable: true
-    });
+		  uploadImgRect = new Konva.Rect({
+	    	name: 'uploadImgRect',
+	    	x: stageForEdit.width() / 2 - initGuideWidth / 2,
+	    	y: stageForEdit.height() / 2 - initGuideWidth / uploadImg.width * uploadImg.height / 2,
+	      width: initGuideWidth,
+	      height: initGuideWidth / uploadImg.width * uploadImg.height,
+	      strokewidth: 0,
+	      draggable: true
+	    });
 
-	  uploadImgObj = new Konva.Image({
-    	name: 'uploadImgObj',
-    	x: stageForEdit.width() / 2 - initGuideWidth / 2,
-    	y: stageForEdit.height() / 2 - initGuideWidth / uploadImg.width * uploadImg.height / 2,
-      image: uploadImg,
-      width: initGuideWidth,
-      height: initGuideWidth / uploadImg.width * uploadImg.height,
-      strokewidth: 0,
-      draggable: true
-    });
+		  uploadImgObj = new Konva.Image({
+	    	name: 'uploadImgObj',
+	    	x: stageForEdit.width() / 2 - initGuideWidth / 2,
+	    	y: stageForEdit.height() / 2 - initGuideWidth / uploadImg.width * uploadImg.height / 2,
+	      image: uploadImg,
+	      width: initGuideWidth,
+	      height: initGuideWidth / uploadImg.width * uploadImg.height,
+	      strokewidth: 0,
+	      draggable: true
+	    });
 
-    transFormForEdit = new Konva.Transformer({
-      node: uploadImgObj,
-      keepRatio: true,
-      centeredScaling: true,
-      enabledAnchors: [],
-      rotateEnabled: false,
-      resizeEnabled: true,
-      rotateAnchorOffset: 0,
-    });
+	    transFormForGuide = new Konva.Transformer({
+	      node: uploadImgRect,
+	      keepRatio: true,
+	      centeredScaling: true,
+	      enabledAnchors: [ 'top-left', 'top-right', 'bottom-left', 'bottom-right' ],
+	      rotateEnabled: false,
+	      resizeEnabled: true,
+	      rotateAnchorOffset: 0,
+	      anchorSize: 20,
+	      anchorStroke: 'black',
+	      anchorStrokeWidth: 1,
+	      anchorFill: 'white',
+	      borderStrokeWidth: 0
+	    });
 
-    transFormForGuide = new Konva.Transformer({
-      node: uploadImgRect,
-      keepRatio: true,
-      centeredScaling: true,
-      enabledAnchors: [ 'top-left', 'top-right', 'bottom-left', 'bottom-right' ],
-      rotateEnabled: false,
-      resizeEnabled: true,
-      rotateAnchorOffset: 0,
-      anchorSize: 20,
-      anchorStroke: 'black',
-      anchorStrokeWidth: 1,
-      anchorFill: 'white',
-      borderStrokeWidth: 0
-    });
+	    transFormForEdit = new Konva.Transformer({
+	      node: uploadImgObj,
+	      keepRatio: true,
+	      centeredScaling: true,
+	      enabledAnchors: [],
+	      rotateEnabled: false,
+	      resizeEnabled: true,
+	      rotateAnchorOffset: 0,
+	    });
 
+	    guide.add( uploadImgRect );
+	    // guide.batchDraw();
+	    guide.add( transFormForGuide );
+	    transFormForGuide.attachTo( uploadImgRect );
+	    guide.batchDraw();
+	    stageForGuide.add( guide );
 
-    guide.add( uploadImgRect );
-    guide.batchDraw();
-    guide.add( transFormForGuide );
-    transFormForGuide.attachTo( uploadImgRect );
-    guide.draw();
-    stageForGuide.add( guide );
-
-    // add the image to the edit
-    edit.add( uploadImgObj) ;
-    edit.batchDraw();
-    edit.add( transFormForEdit );
-    transFormForEdit.attachTo( uploadImgObj );
-    edit.draw();
-    stageForEdit.add( edit );
-
-		uploadImgObj
-		.x( uploadImgRect.x() )
-		.y( uploadImgRect.y() )
-		.scaleX( uploadImgRect.scaleX() )
-		.scaleY( uploadImgRect.scaleY() )
-		.rotation( uploadImgRect.rotation() );
-
-    edit.add( uploadImgObj) ;
-    edit.batchDraw();
-    stageForEdit.add( edit );
-
-    uploadImgWidth = uploadImgRect.width();
-    uploadImgHeight = uploadImgRect.height();
-  	origX = uploadImgRect.x();
-  	origY = uploadImgRect.y();
-  	initOrigX = uploadImgRect.x();
-  	initOrigY = uploadImgRect.y();
-
-    console.log( uploadImgWidth );
-    console.log( uploadImgHeight );
-    console.log( origX );
-    console.log( origY );
-    console.log( initOrigX );
-    console.log( initOrigX );
-    console.log( uploadImgSrc );
-    console.log( fileUpload.value );
-
-    uploadImgRect.on( 'transform' , () => {
-
-			uploadImgObj
-			.x( uploadImgRect.x() )
-			.y( uploadImgRect.y() )
-			.scaleX( uploadImgRect.scaleX() )
-			.scaleY( uploadImgRect.scaleY() )
-			.rotation( uploadImgRect.rotation() );
-
+	    // add the image to the edit
 	    edit.add( uploadImgObj) ;
+	    // edit.batchDraw();
+	    edit.add( transFormForEdit );
+	    transFormForEdit.attachTo( uploadImgObj );
 	    edit.batchDraw();
 	    stageForEdit.add( edit );
 
-			transFormForGuide.anchorSize( 20 / 1.3333 );
+			// uploadImgObj
+			// .x( uploadImgRect.x() )
+			// .y( uploadImgRect.y() )
+			// .scaleX( uploadImgRect.scaleX() )
+			// .scaleY( uploadImgRect.scaleY() )
+			// .rotation( uploadImgRect.rotation() );
 
-    });
+	  //   edit.add( uploadImgObj) ;
+	  //   edit.batchDraw();
+	  //   stageForEdit.add( edit );
 
-    uploadImgRect.on( 'transformend' , () => {
+		  // if ( stageForGuide.findOne( '._anchor' ).scaleX() == 1 ) {
 
-	    scaleX = uploadImgRect.scaleX();
-	    scaleY = uploadImgRect.scaleY();
-			origX = uploadImgRect.x();
-			origY = uploadImgRect.y();
-	    // uploadImgWidth = uploadImgRect.width() * scaleX;
-	    // uploadImgHeight = uploadImgRect.height() * scaleY;
-	    console.log( scaleX );
-	    console.log( scaleY );
-	    console.log( origX );
-	    console.log( origY );
+			 //  transFormForGuide.anchorSize( 20 / 1.3333 );
+
+		  // }
+
+	    uploadImgWidth = uploadImgRect.width();
+	    uploadImgHeight = uploadImgRect.height();
+	  	origX = uploadImgRect.x();
+	  	origY = uploadImgRect.y();
+	  	initOrigX = uploadImgRect.x();
+	  	initOrigY = uploadImgRect.y();
+
 	    console.log( uploadImgWidth );
 	    console.log( uploadImgHeight );
-
-	   	createPreview();
-
-    });
-
-    uploadImgRect.on( 'dragmove' , () => {
-
-			uploadImgObj
-			.x( uploadImgRect.x() )
-			.y( uploadImgRect.y() )
-			.scaleX( uploadImgObj.scaleX() )
-			.scaleY( uploadImgObj.scaleY() )
-			.rotation( uploadImgObj.rotation() );
-
-	    edit.add( uploadImgObj) ;
-	    edit.batchDraw();
-	    stageForEdit.add( edit );
-    	
-    });
-
-    uploadImgRect.on( 'dragend' , () => {
-
-    	origX = uploadImgRect.x();
-    	origY = uploadImgRect.y();
 	    console.log( origX );
 	    console.log( origY );
+	    console.log( initOrigX );
+	    console.log( initOrigX );
+	    console.log( uploadImgSrc );
+	    console.log( fileUpload.value );
 
-	   	createPreview();
+	    uploadImgRect.on( 'transform' , () => {
 
-    });
+				uploadImgObj
+				.x( uploadImgRect.x() )
+				.y( uploadImgRect.y() )
+				.scaleX( uploadImgRect.scaleX() )
+				.scaleY( uploadImgRect.scaleY() )
+				.rotation( uploadImgRect.rotation() );
 
-    uploadImgRect.on('mouseenter', function() {
-      stageForGuide.container().style.cursor = 'move';
-    });
+		    edit.add( uploadImgObj) ;
+		    edit.batchDraw();
+		    stageForEdit.add( edit );
 
-    uploadImgRect.on('mouseleave', function() {
-      stageForGuide.container().style.cursor = 'default';
-    });
-      
-  }
+				// if ( stageForGuide.findOne( '._anchor' ).scaleX() == 1 ) {
 
-  canvasQuality.classList.add( 'is-show' );
+				// 	transFormForGuide.anchorSize( 20 / 1.3333 );
+
+				// }
+
+	    });
+
+	    uploadImgRect.on( 'transformend' , () => {
+
+		    scaleX = uploadImgRect.scaleX();
+		    scaleY = uploadImgRect.scaleY();
+				origX = uploadImgRect.x();
+				origY = uploadImgRect.y();
+		    // uploadImgWidth = uploadImgRect.width() * scaleX;
+		    // uploadImgHeight = uploadImgRect.height() * scaleY;
+		    console.log( scaleX );
+		    console.log( scaleY );
+		    console.log( origX );
+		    console.log( origY );
+		    console.log( uploadImgWidth );
+		    console.log( uploadImgHeight );
+
+		   	createPreview();
+
+	    });
+
+	    uploadImgRect.on( 'dragmove' , () => {
+
+				uploadImgObj
+				.x( uploadImgRect.x() )
+				.y( uploadImgRect.y() )
+				.scaleX( uploadImgObj.scaleX() )
+				.scaleY( uploadImgObj.scaleY() )
+				.rotation( uploadImgObj.rotation() );
+
+		    edit.add( uploadImgObj) ;
+		    edit.batchDraw();
+		    stageForEdit.add( edit );
+	    	
+	    });
+
+	    uploadImgRect.on( 'dragend' , () => {
+
+	    	origX = uploadImgRect.x();
+	    	origY = uploadImgRect.y();
+		    console.log( origX );
+		    console.log( origY );
+
+		   	createPreview();
+
+	    });
+
+	    uploadImgRect.on('mouseenter', function() {
+	      stageForGuide.container().style.cursor = 'move';
+	    });
+
+	    uploadImgRect.on('mouseleave', function() {
+	      stageForGuide.container().style.cursor = 'default';
+	    });
+
+	  }
+
+	  canvasQuality.classList.add( 'is-show' );
+
+  }, milliseconds);
+
+}
+
+
+ // 保存一覧からの再描画 
+const reDrawCanvas = ( milliseconds ) => {
+
+ setTimeout(() => {
+
+ 	// let guideGroup = new Konva.Group();
+
+	 uploadImgRect
+	 .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 )
+	 .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 )
+	 .scaleX( reDrawValues.scaleX )
+	 .scaleY( reDrawValues.scaleY )
+	 .rotation( reDrawValues.angle )
+
+	 console.log( stageForGuide.findOne( '._anchor' ) )
+
+	 // if ( stageForGuide.findOne( '._anchor' ).scaleX() == 1 ) {
+
+		//  // transFormForGuide.anchorSize( 20 / 1.3333 );
+		//  // transFormForGuide.add( uploadImgRect );
+		//  uploadImgRect.moveToTop();
+		//  guideImgObj.moveToBottom();
+		//  guide.add( uploadImgRect );
+
+	 // }
+
+	 guide.batchDraw();
+	 // guide.add( uploadImgRect );
+	 // guide.add( transFormForGuide );
+	 // transFormForGuide.attachTo( uploadImgRect );
+	 // stageForGuide.add( guide );
+
+	 uploadImgObj
+	 .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 )
+	 .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 )
+	 .scaleX( reDrawValues.scaleX )
+	 .scaleY( reDrawValues.scaleY )
+	 .rotation( reDrawValues.angle )
+
+	 edit.batchDraw();
+	 // edit.add( uploadImgObj );
+	 // edit.add( transFormForEdit );
+	 // transFormForEdit.attachTo( uploadImgObj );
+	 // stageForEdit.add( edit );
+
+		initOrigX = reDrawValues.origX;
+		initOrigY = reDrawValues.origY;
+		initAngle = reDrawValues.angle;
+		initScaleX = reDrawValues.scaleX;
+		initScaleY = reDrawValues.scaleY;
+
+		origX = initOrigX;
+		origY = initOrigY;
+		angle = initAngle;
+		scaleX = initScaleX;
+		scaleY = initScaleY;
+
+		rotateRange.value = angle;
+
+		console.log( reDrawValues );
+		console.log( initGuideWidth - reDrawValues.saveGuideWidth );
+		console.log( initGuideHeight - reDrawValues.saveGuideHeight );
+		console.log( uploadImgWidth * reDrawValues.scaleX - reDrawValues.uploadImgWidth );
+		console.log( uploadImgHeight * reDrawValues.scaleY - reDrawValues.uploadImgHeight );
+		console.log( 'origX:' + uploadImgRect.x() );
+		console.log( 'origY:' + uploadImgRect.y() );
+		console.log( 'scaleX:' + uploadImgRect.scaleX() );
+		console.log( 'scaleY:' + uploadImgRect.scaleY() );
+		console.log( 'angle:' + uploadImgRect.rotation() );
+
+ 	}, milliseconds);
 
 }
 
@@ -1283,85 +1378,9 @@ function drawRect( param ) {
 
 }
 
- // 保存一覧からの再描画 
-const reDrawCanvas = () => {
-
- optimisationImg( reDrawValues.uploadImgSrc );
-
- setTimeout(() => {
-
- 	// let guideGroup = new Konva.Group();
-
-	 uploadImgRect
-	 .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 )
-	 .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 )
-	 .scaleX( reDrawValues.scaleX )
-	 .scaleY( reDrawValues.scaleY )
-	 .rotation( reDrawValues.angle )
-
-	 console.log( stageForGuide.findOne( '._anchor' ).scaleX() )
-
-	 if ( stageForGuide.findOne( '._anchor' ).scaleX() == 1 ) {
-
-		 transFormForGuide.anchorSize( 20 / 1.3333 );
-		 transFormForGuide.add( uploadImgRect );
-		 uploadImgRect.moveToTop();
-		 guideImgObj.moveToBottom();
-		 guide.add( uploadImgRect );
-
-	 }
-
-	 guide.batchDraw();
-	 // guide.add( uploadImgRect );
-	 // guide.add( transFormForGuide );
-	 // transFormForGuide.attachTo( uploadImgRect );
-	 // stageForGuide.add( guide );
-
-	 uploadImgObj
-	 .x( reDrawValues.origX + ( initWindowWidth - reDrawValues.saveWindowWidth ) / 2 )
-	 .y( reDrawValues.origY + ( initWindowHeight - reDrawValues.saveWindowHeight ) / 2 )
-	 .scaleX( reDrawValues.scaleX )
-	 .scaleY( reDrawValues.scaleY )
-	 .rotation( reDrawValues.angle )
-
-	 edit.batchDraw();
-	 // edit.add( uploadImgObj );
-	 // edit.add( transFormForEdit );
-	 // transFormForEdit.attachTo( uploadImgObj );
-	 // stageForEdit.add( edit );
-
-		initOrigX = reDrawValues.origX;
-		initOrigY = reDrawValues.origY;
-		initAngle = reDrawValues.angle;
-		initScaleX = reDrawValues.scaleX;
-		initScaleY = reDrawValues.scaleY;
-
-		origX = initOrigX;
-		origY = initOrigY;
-		angle = initAngle;
-		scaleX = initScaleX;
-		scaleY = initScaleY;
-
-		rotateRange.value = angle;
-
-		console.log( reDrawValues );
-		console.log( initGuideWidth - reDrawValues.saveGuideWidth );
-		console.log( initGuideHeight - reDrawValues.saveGuideHeight );
-		console.log( uploadImgWidth * reDrawValues.scaleX - reDrawValues.uploadImgWidth );
-		console.log( uploadImgHeight * reDrawValues.scaleY - reDrawValues.uploadImgHeight );
-		console.log( 'origX:' + uploadImgRect.x() );
-		console.log( 'origY:' + uploadImgRect.y() );
-		console.log( 'scaleX:' + uploadImgRect.scaleX() );
-		console.log( 'scaleY:' + uploadImgRect.scaleY() );
-		console.log( 'angle:' + uploadImgRect.rotation() );
-
- 	}, 500);
-
-}
-
 
  // ローディング
- const loadingOverlay = ( millisecond ) => {
+ const loadingOverlay = ( milliseconds ) => {
 
  	setTimeout(() => {
 
@@ -1379,6 +1398,24 @@ const reDrawCanvas = () => {
 
  	// }
 
- 	}, millisecond);
+ 	}, milliseconds);
  
  }
+
+//  function rCheck() {
+// 	if (window.name != "reload-flug") {
+// 		console.log("リロードしました");
+// 		location.reload();
+// 		window.name = "reload-flug";
+// 	}
+// };
+// rCheck();
+
+//  function relodCheck() {
+// 	if (window.name != "bbb") {
+// 		alert("リロードしました");
+// 		location.reload();
+// 		window.name = "bbb";
+// 	}
+// };
+// relodCheck();

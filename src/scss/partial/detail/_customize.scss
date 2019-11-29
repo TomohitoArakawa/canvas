@@ -147,6 +147,8 @@ html , body {
 // loading
 .loading-wrap {
   position: fixed;
+  top: 0;
+  left: 0;
   z-index: 5;
   display: none;
   &.is-show {
