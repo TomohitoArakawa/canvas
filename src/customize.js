@@ -100,6 +100,10 @@ const url = location.href;
 
 let orientation = window.orientation;
 
+//確定データ
+let centerOrigX;
+let centerOrigY;
+
 
 //ユーザーエージェント
 const getDevice = (() => {
@@ -781,7 +785,8 @@ function optimisationImg( uploadImgSrc , milliseconds ) {
 	    transFormForGuide = new Konva.Transformer({
 	      node: uploadImgRect,
 	      keepRatio: true,
-	      centeredScaling: true,
+	      // centeredScaling: true,
+	      centeredScaling: false,
 	      enabledAnchors: [ 'top-left', 'top-right', 'bottom-left', 'bottom-right' ],
 	      rotateEnabled: false,
 	      resizeEnabled: true,
@@ -796,7 +801,8 @@ function optimisationImg( uploadImgSrc , milliseconds ) {
 	    transFormForEdit = new Konva.Transformer({
 	      node: uploadImgObj,
 	      keepRatio: true,
-	      centeredScaling: true,
+	      // centeredScaling: true,
+	      centeredScaling: false,
 	      enabledAnchors: [],
 	      rotateEnabled: false,
 	      resizeEnabled: true,
@@ -825,13 +831,13 @@ function optimisationImg( uploadImgSrc , milliseconds ) {
 			// .scaleY( uploadImgRect.scaleY() )
 			// .rotation( uploadImgRect.rotation() );
 
-	  //   edit.add( uploadImgObj) ;
-	  //   edit.batchDraw();
-	  //   stageForEdit.add( edit );
+		  //   edit.add( uploadImgObj) ;
+		  //   edit.batchDraw();
+		  //   stageForEdit.add( edit );
 
 		  // if ( stageForGuide.findOne( '._anchor' ).scaleX() == 1 ) {
 
-			 //  transFormForGuide.anchorSize( 20 / 1.3333 );
+			//  transFormForGuide.anchorSize( 20 / 1.3333 );
 
 		  // }
 
@@ -850,6 +856,10 @@ function optimisationImg( uploadImgSrc , milliseconds ) {
 	    console.log( initOrigX );
 	    console.log( uploadImgSrc );
 	    console.log( fileUpload.value );
+
+		  imageCenterOrigin( uploadImgRect , angle );
+	    console.log( 'centerOrigX:' + centerOrigX );
+	    console.log( 'centerOrigY:' + centerOrigY );
 
 	    uploadImgRect.on( 'transform' , () => {
 
@@ -887,6 +897,10 @@ function optimisationImg( uploadImgSrc , milliseconds ) {
 		    console.log( uploadImgWidth );
 		    console.log( uploadImgHeight );
 
+			  imageCenterOrigin( uploadImgRect , angle );
+		    console.log( 'centerOrigX:' + centerOrigX );
+		    console.log( 'centerOrigY:' + centerOrigY );
+
 		   	createPreview();
 
 	    });
@@ -912,6 +926,10 @@ function optimisationImg( uploadImgSrc , milliseconds ) {
 	    	origY = uploadImgRect.y();
 		    console.log( origX );
 		    console.log( origY );
+
+			  imageCenterOrigin( uploadImgRect , angle );
+		    console.log( 'centerOrigX:' + centerOrigX );
+		    console.log( 'centerOrigY:' + centerOrigY );
 
 		   	createPreview();
 
@@ -1033,6 +1051,24 @@ function rotateAroundCenter( target , angle ) {
   target.x( target.x() + dx );
   target.y( target.y() + dy );
 
+  // console.log( 'A:' + target.x() );
+  // console.log( 'B:' + dx );
+  // console.log( 'A:' + target.y() );
+  // console.log( 'B:' + dy );
+
+  // console.log( 'origX:' + target.x() )
+  // console.log( 'origY:' + target.y() ) 
+  // console.log( target.x() + centerOrig.x )
+  // console.log( target.y() + centerOrig.y ) 
+
+}
+
+function imageCenterOrigin ( target , angle ) {
+
+	  let centerOrig = rotatePoint( { x: target.width() * target.scaleX() / 2 , y: target.height() * target.scaleY() / 2 } , Konva.getAngle( target.rotation() ) );
+	  centerOrigX = target.x() + centerOrig.x;
+	  centerOrigY = target.y() + centerOrig.y;
+
 }
 
 
@@ -1072,6 +1108,10 @@ rotateRange.addEventListener( 'input', function() {
 	console.log( origX );
 	console.log( origY );
 
+  imageCenterOrigin( uploadImgRect , angle );
+  console.log( 'centerOrigX:' + centerOrigX );
+  console.log( 'centerOrigY:' + centerOrigY );
+
 }, false);
 
 rotateRange.addEventListener( 'change', function() {
@@ -1085,6 +1125,10 @@ rotateRange.addEventListener( 'change', function() {
 	console.log( angle );
 	console.log( origX );
 	console.log( origY );
+
+  imageCenterOrigin( uploadImgRect , angle );
+  console.log( 'centerOrigX:' + centerOrigX );
+  console.log( 'centerOrigY:' + centerOrigY );
 
 }, false);
 
@@ -1145,7 +1189,8 @@ function pinchInOut() {
 
 	      let scale = ( uploadImgRect.scaleX() * dist ) / lastDist;
 
-	      rotateAroundCenter( uploadImgRect , uploadImgRect.rotation() )
+	      // rotateAroundCenter( uploadImgRect , uploadImgRect.rotation() )
+
 	      uploadImgRect.scaleX( scale );
 	      uploadImgRect.scaleY( scale );
 	      edit.batchDraw();
@@ -1153,6 +1198,7 @@ function pinchInOut() {
 	      uploadImgObj.scaleX( scale );
 	      uploadImgObj.scaleY( scale );
 	      edit.batchDraw();
+
 	      lastDist = dist;
 
 	    }
@@ -1171,6 +1217,10 @@ function pinchInOut() {
 	    scaleY = uploadImgRect.scaleY();
 	    console.log( scaleX );
 	    console.log( scaleY );
+
+		  imageCenterOrigin( uploadImgRect , angle );
+		  console.log( 'centerOrigX:' + centerOrigX );
+		  console.log( 'centerOrigY:' + centerOrigY );
 
 	  	createPreview();
 	  
@@ -1229,6 +1279,11 @@ confirm.addEventListener( 'click', () => {
 	saveValues.uploadImgHeight = uploadImgHeight;
 
 	console.log( saveValues );
+
+	imageCenterOrigin( uploadImgRect , angle );
+
+	// console.log( uploadImgRect.x( uploadImgRect.x() - uploadImgRect.width() / 2 ) );
+	// console.log( uploadImgRect.y( uploadImgRect.y() - uploadImgRect.height() / 2 ) );
 
 } , false );
 
