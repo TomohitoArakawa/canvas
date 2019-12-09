@@ -6,13 +6,28 @@ let initOrigY = 0;
 let initAngle = 0;
 let initScaleX = 1;
 let initScaleY = 1;
-let initGuideWidth = 150;
-let initGuideHeight = 303;
 
-let initGuideWidthForSm = 150;
-let initGuideHeightForSm = 303;
-let initGuideWidthForPc = 200;
-let initGuideHeightForPc = 405;
+let print_width;
+let print_height;
+
+if ( typeof reDrawValues !== 'undefined' ) {
+
+	print_width = reDrawValues.print_width;
+	print_height = reDrawValues.print_height;
+
+} else {
+
+	print_width = initValues.print_width;
+	print_height = initValues.print_height;
+
+}
+
+let initGuideWidth = print_width * 72 / 25.4;
+let initGuideHeight = print_height * 72 / 25.4;
+let initGuideWidthForSm = initGuideWidth / 4;
+let initGuideHeightForSm = initGuideHeight / 4;
+let initGuideWidthForPc = initGuideWidth / 2;
+let initGuideHeightForPc = initGuideHeight / 2;
 
 let origX = 0;
 let origY = 0;
@@ -1037,6 +1052,15 @@ const rotatePoint = ( { x, y } , rad ) => {
 };
 
 
+function imageCenterOrigin ( target , angle ) {
+
+	  let centerOrig = rotatePoint( { x: target.width() * target.scaleX() / 2 , y: target.height() * target.scaleY() / 2 } , Konva.getAngle( target.rotation() ) );
+	  centerOrigX = target.x() + centerOrig.x;
+	  centerOrigY = target.y() + centerOrig.y;
+
+}
+
+
 // will work for shapes with top-left origin, like rectangle
 function rotateAroundCenter( target , angle ) {
 
@@ -1060,14 +1084,6 @@ function rotateAroundCenter( target , angle ) {
   // console.log( 'origY:' + target.y() ) 
   // console.log( target.x() + centerOrig.x )
   // console.log( target.y() + centerOrig.y ) 
-
-}
-
-function imageCenterOrigin ( target , angle ) {
-
-	  let centerOrig = rotatePoint( { x: target.width() * target.scaleX() / 2 , y: target.height() * target.scaleY() / 2 } , Konva.getAngle( target.rotation() ) );
-	  centerOrigX = target.x() + centerOrig.x;
-	  centerOrigY = target.y() + centerOrig.y;
 
 }
 
