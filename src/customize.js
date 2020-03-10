@@ -156,15 +156,12 @@ window.addEventListener( 'load' , () => {
 
 	if ( url.match( /save_data/ ) ) {
 
-		(() => {
-			if ( window.name != 'reload-flug' ) {
-				window.location.reload();
-				window.name = 'reload-flug';
-			}
-			setTimeout(() => {
-				window.name = null;
-			}, 100);
-		})();
+		if ( window.name != 'reload-flag' ) {
+			location.reload();
+			window.name = 'reload-flag';
+		} else {
+			window.name = "";
+		}
 
 	  Promise.resolve()
 	  .then( () => optimisationImg( reDrawValues.uploadImgSrc , 500 ) )
