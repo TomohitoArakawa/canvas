@@ -2,18 +2,23 @@ import Konva from 'konva';
 import Promise from 'promise';
 
 //bfcash対策
-window.onbeforeunload = function() {
-    // IE用。ここは空でOKです
-};
-window.onunload = function() {
-    // IE以外用。ここは空でOKです
-};
-window.addEventListener("pageshow", function(event){
-	if (event.persisted) {
-	  // ここにキャッシュ有効時の処理を書く
-	  window.location.reload();
+if ( typeof reDrawValues !== 'undefined' ) {
+
+	if ( window.name != 'reload-flag' ) {
+		window.location.reload();
+		window.name = 'reload-flag';
+	} else {
+		window.name = "";
 	}
-});
+	
+	window.addEventListener( 'pageshow' , ( e ) => {
+		if ( e.persisted ) {
+		  // ここにキャッシュ有効時の処理を書く
+		  window.location.reload();
+		}
+	});
+
+}
 
 let initOrigX = 0;
 let initOrigY = 0;
@@ -168,13 +173,6 @@ window.addEventListener( 'load' , () => {
   .then( () => guideCanvas( '../img/guide_iphone_x_xs.png' ) );
 
 	if ( url.match( /save_data/ ) ) {
-
-		// if ( window.name != 'reload-flag' ) {
-		// 	location.reload();
-		// 	window.name = 'reload-flag';
-		// } else {
-		// 	window.name = "";
-		// }
 
 	  Promise.resolve()
 	  .then( () => optimisationImg( reDrawValues.uploadImgSrc , 500 ) )
