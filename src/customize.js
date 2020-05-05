@@ -671,20 +671,44 @@ function loadLocalImage( e ) {
   }
 
   // const embedImageTag = dataURL => {
-  //   const img = new Image()
-  //   img.src = dataURL
-  //   return img
+  //   const img = new Image();
+  //   img.src = dataURL;
+  //   img.id = 'js-check-orientation__image';
+  //   img.style.imageOrientation = 'none';
+  //   img.style.display = 'none';
+  //   document.querySelector('body').appendChild(img);
   // }
 
   const createTransformedCanvas = ( orientation, img ) => {
 
-    const canvas = document.createElement( 'canvas' )
-    const ctx = canvas.getContext( '2d' )
+    const canvas = document.createElement( 'canvas' );
+    const ctx = canvas.getContext( '2d' );
+    const checkElement = document.getElementById( 'js-orientation-check' );
+    const cssStyleDeclaration = getComputedStyle( checkElement, null );
+    const result = cssStyleDeclaration.getPropertyValue( 'image-orientation' );
+
+    // img.style.imageOrientation = 'none';
+
+    // var cssStyleDeclaration = getComputedStyle( img, null ) ;
+    // var a = cssStyleDeclaration.getPropertyValue( 'image-orientation' );
+    // console.log( a );
 
     if ( [ 5 , 6 , 7 , 8 ].indexOf( orientation ) > -1 ) {
 
-      canvas.width = img.height
-      canvas.height = img.width
+    	if ( String(result) === 'from-image' ) {
+	      canvas.width = img.width
+	      canvas.height = img.height
+	      console.log('image-orientation:from-image')
+    	} else {
+	      canvas.width = img.height
+	      canvas.height = img.width
+	      console.log('image-orientation:none')
+    	}
+
+    // console.log('canvasW：' + canvas.width);
+    // console.log('canvasH：' + canvas.height);
+    // console.log('imgW：' + img.width);
+    // console.log('imgH：' + img.height);
 
     } else {
 
@@ -693,18 +717,31 @@ function loadLocalImage( e ) {
 
     }
 
-    switch ( orientation ) {
-      case 2: ctx.transform( -1, 0, 0, 1, img.width, 0 ); break
-      case 3: ctx.transform( -1, 0, 0, -1, img.width, img.height ); break
-      case 4: ctx.transform( 1, 0, 0, -1, 0, img.height ); break
-      case 5: ctx.transform( 0, 1, 1, 0, 0, 0 ); break
-      case 6: ctx.transform( 0, 1, -1, 0, img.height, 0 ); break
-      case 7: ctx.transform( 0, -1, -1, 0, img.height, img.width ); break
-      case 8: ctx.transform( 0, -1, 1, 0, 0, img.width ); break
-      default: break;
+    console.log('canvasW：' + canvas.width);
+    console.log('canvasH：' + canvas.height);
+    console.log('imgW：' + img.width);
+    console.log('imgH：' + img.height);
+
+    if ( String(result) === 'from-image' ) {
+    	ctx.drawImage( img, 0, 0 )
+    } else {
+	    switch ( orientation ) {
+	      case 2: ctx.transform( -1, 0, 0, 1, img.width, 0 ); break
+	      case 3: ctx.transform( -1, 0, 0, -1, img.width, img.height ); break
+	      case 4: ctx.transform( 1, 0, 0, -1, 0, img.height ); break
+	      case 5: ctx.transform( 0, 1, 1, 0, 0, 0 ); break
+	      case 6: ctx.transform( 0, 1, -1, 0, img.height, 0 ); break
+	      case 7: ctx.transform( 0, -1, -1, 0, img.height, img.width ); break
+	      case 8: ctx.transform( 0, -1, 1, 0, 0, img.width ); break
+	      default: break;
+	    }
+	    ctx.drawImage( img, 0, 0 )
     }
 
-    ctx.drawImage( img, 0, 0 )
+    // console.log('canvasW：' + canvas.width);
+    // console.log('canvasH：' + canvas.height);
+    // console.log('imgW：' + img.width);
+    // console.log('imgH：' + img.height);
 
     return canvas
 
@@ -731,14 +768,20 @@ function loadLocalImage( e ) {
 
   reader.addEventListener( 'load', () => {
 
-  	console.log( reader.result )
+  	// console.log( reader.result )
 
   	const orientation = getOrientation( reader.result )
+
+  	console.log( 'orientation:' + orientation )
+
   	const img = new Image()
 
+  	// img.style.imageOrientation = 'none';
     img.src = arrayBufferToDataURL( reader.result )
 
-    console.log( img.src )
+    // embedImageTag( img.src )
+
+    // console.log( img.src )
 
     img.addEventListener( 'load', () => {
 
@@ -750,10 +793,9 @@ function loadLocalImage( e ) {
 
       const canvas = createTransformedCanvas( orientation, img )
       window.URL.revokeObjectURL( img.src )
-      // embedImageTag( canvas.toDataURL( fileType ) )
 
-    	console.log( canvas.width )
-    	console.log( canvas.height )
+    	// console.log( canvas.width )
+    	// console.log( canvas.height )
 
       uploadImgSrc = canvas.toDataURL( fileType )
       // let uploadImgBlob = base64ToBlob( uploadImgSrc )
